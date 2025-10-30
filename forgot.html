@@ -1,0 +1,28 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Відновлення паролю</title>
+    <link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+    <div class="auth-page">
+        <img src="./logo.jpg" alt="Контакт" class="logo-big">
+        <h2 class="subtitle">Відновлення паролю</h2>
+
+        <form id="fpForm" class="auth-form">
+            <input type="text" name="username" placeholder="Логін" required>
+            <input type="password" name="password" placeholder="Новий пароль" required>
+            <button type="submit" class="btn-primary">Змінити пароль</button>
+        </form>
+
+        <p id="msg" class="hint" hidden></p>
+
+        <div class="links" style="justify-content:center; gap:6px; margin-top:10px;">
+            <a href="index.html">Повернутися до входу</a>
+        </div>
+    </div>
+
+    <script type="module" src="./forgot.js"></script>
+</body>
+</html>
