@@ -9,10 +9,11 @@ function createWindow(){
   });
   win.loadFile('renderer/index.html');
   win.once('ready-to-show', () => {
-    win.maximize();   // розгортаємо
-    win.show();       // показуємо без “мигання” розміру
+    win.maximize();
+    win.show(); 
   });
 }
 
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+
