@@ -1,0 +1,154 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <title>Клієнти</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- базові змінні/шапка/сайдбар із дашборда -->
+    <link rel="stylesheet" href="./dashboard.css">
+    <!-- стилі сторінки клієнтів (тонкі відмінності від sales) -->
+    <link rel="stylesheet" href="./clients.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- APPBAR -->
+        <header class="appbar">
+            <img src="./logo.jpg" alt="Контакт" class="brand-logo" />
+            <div class="today" id="today"></div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
+                <a><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a class="active"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a><img class="ico" src="./icons/products.png" alt=""><span>Продукти</span></a>
+                <a><img class="ico" src="./icons/analytics.png" alt=""><span>Аналітика</span></a>
+            </nav>
+
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
+                <a><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main clients">
+            <h1 class="page-title">КЛІЄНТИ</h1>
+
+            <!-- панель керування -->
+            <div class="toolbar">
+                <div class="left">
+                    <div class="search">
+                        <svg class="search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
+                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <input id="q" type="text" placeholder="Пошук: ім’я, телефон або email">
+                    </div>
+
+                    <details class="dropdown">
+                        <summary class="btn btn-ghost">Фільтри</summary>
+                        <div class="dropdown-menu">
+                            <label>Остання активність від <input type="date"></label>
+                            <label>Остання активність до <input type="date"></label>
+                            <label>
+                                Наявність email
+                                <select>
+                                    <option value="">Будь-що</option>
+                                    <option>Є email</option>
+                                    <option>Немає email</option>
+                                </select>
+                            </label>
+                            <label>
+                                Наявність телефону
+                                <select>
+                                    <option value="">Будь-що</option>
+                                    <option>Є телефон</option>
+                                    <option>Немає телефону</option>
+                                </select>
+                            </label>
+                            <div class="dropdown-actions">
+                                <button class="btn btn-ghost" type="button">Скинути</button>
+                                <button class="btn" type="button">Застосувати</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="dropdown">
+                        <summary class="btn btn-ghost">Сортування</summary>
+                        <div class="dropdown-menu narrow">
+                            <label>
+                                Поле
+                                <select>
+                                    <option>Ім’я</option>
+                                    <option>Остання покупка</option>
+                                    <option>К-ть замовлень</option>
+                                </select>
+                            </label>
+                            <label>
+                                Порядок
+                                <select>
+                                    <option>Спадання ↓</option>
+                                    <option>Зростання ↑</option>
+                                </select>
+                            </label>
+                            <div class="dropdown-actions">
+                                <button class="btn btn-ghost" type="button">Скинути</button>
+                                <button class="btn" type="button">Ок</button>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="right">
+                    <button id="btnAddClient" class="btn" type="button">Додати клієнта</button>
+                </div>
+            </div>
+
+            <!-- таблиця: макетні дані, щоб вигляд був повний -->
+            <div class="table-wrap">
+                <table class="table-clients">
+                    <thead>
+                        <tr>
+                            <th>Ім’я</th>
+                            <th>Телефон</th>
+                            <th>Email</th>
+                            <th>Остання покупка</th>
+                            <th>Замовлень</th>
+                            <th>Нотатки</th>
+                            <th>Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Анна П.</td><td>+380 67 123 45 67</td><td>anna@example.com</td><td>22.10.2025</td><td>5</td><td>VIP</td><td class="more">…</td></tr>
+                        <tr><td>Микола С.</td><td>+380 93 234 56 78</td><td>mykola@mail.com</td><td>21.10.2025</td><td>3</td><td></td><td class="more">…</td></tr>
+                        <tr><td>Сергій Т.</td><td>+380 50 345 67 89</td><td>serg@site.ua</td><td>21.10.2025</td><td>7</td><td>Любить знижки</td><td class="more">…</td></tr>
+                        <tr><td>Наталія К.</td><td>+380 68 111 22 33</td><td>natalia@uapp.io</td><td>18.10.2025</td><td>2</td><td></td><td class="more">…</td></tr>
+                        <tr><td>Олександр Б.</td><td>+380 66 987 65 43</td><td>-</td><td>18.10.2025</td><td>1</td><td>Без email</td><td class="more">…</td></tr>
+                        <tr><td>Оксана П.</td><td>+380 63 555 44 22</td><td>oksana@host.com</td><td>18.10.2025</td><td>4</td><td></td><td class="more">…</td></tr>
+                        <tr><td>Іван Г.</td><td>+380 97 765 43 21</td><td>ivan@gmail.com</td><td>17.10.2025</td><td>1</td><td>Повернення 2024</td><td class="more">…</td></tr>
+                        <tr><td>Андрій З.</td><td>+380 95 222 33 11</td><td>-</td><td>16.10.2025</td><td>2</td><td>Немає email</td><td class="more">…</td></tr>
+                        <tr><td>Віктор Д.</td><td>+380 99 123 00 99</td><td>victor@me.com</td><td>15.10.2025</td><td>6</td><td>Постійний</td><td class="more">…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- пагінація -->
+            <div class="pager">
+                <button class="active">1</button><button>2</button><button>3</button><button>4</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
+        const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
+    </script>
+</body>
+</html>
