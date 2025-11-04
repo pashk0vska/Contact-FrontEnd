@@ -1,4 +1,4 @@
-{
+﻿{
     "name": "contact-desktop",
     "version": "1.0.0",
     "description": "",
@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "electron": "^30.0.0",
+        "electron": "^30.5.1",
         "electron-builder": "^26.0.12"
     }
 }
