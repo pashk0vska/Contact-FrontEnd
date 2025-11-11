@@ -9,6 +9,7 @@ function renderDate(){
     day:"2-digit", month:"long", year:"numeric"
   });
 }
+
 renderDate();
 (function scheduleNextMidnight(){
   const now = new Date();

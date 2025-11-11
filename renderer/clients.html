@@ -25,8 +25,8 @@
                 <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
                 <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt="">Ремонти</a>
                 <a class="active"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a><img class="ico" src="./icons/products.png" alt=""><span>Продукти</span></a>
-                <a><img class="ico" src="./icons/analytics.png" alt=""><span>Аналітика</span></a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Продукти</a>
+                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
             </nav>
 
             <div class="menu-title small">ІНШЕ</div>
@@ -149,6 +149,9 @@
     <script>
         const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
         const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
+
+        const logout = document.getElementById('logout');
+        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
     </script>
 </body>
 </html>

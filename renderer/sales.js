@@ -11,8 +11,8 @@ function renderDate(){
 renderDate();
 
 /* ====== LOGOUT ====== */
-const logout = document.getElementById("logout");
-if (logout) logout.addEventListener("click", ()=>{ localStorage.removeItem("token"); location.href = "index.html"; });
+const logout = document.getElementById('logout');
+        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
 
 /* ====== STATE ====== */
 let page = 1, pageSize = 10, lastSelectedId = null;
