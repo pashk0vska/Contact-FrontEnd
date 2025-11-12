@@ -1,0 +1,30 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Авторизація</title>
+    <link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+    <div class="auth-page">
+        <img src="./logo.jpg" alt="Контакт" class="logo-big">
+        <p class="welcome">Вітаємо!</p>
+        <h2 class="subtitle">Увійдіть в систему</h2>
+
+        <form id="loginForm" class="auth-form">
+            <input type="text" name="username" placeholder="Логін або email" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+
+            <div class="links">
+                <a href="register.html">Реєстрація</a>
+                <a href="forgot.html">Забули пароль?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">Вхід</button>
+        </form>
+        <p id="msg" class="hint" hidden></p>
+    </div>
+
+    <script type="module" src="./login.js"></script>
+</body>
+</html>

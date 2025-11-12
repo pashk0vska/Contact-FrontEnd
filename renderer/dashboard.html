@@ -1,0 +1,90 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Дашборд</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./dashboard.css?v=1">
+</head>
+<body>
+    <div class="layout">
+        <!-- APPBAR -->
+        <header class="appbar">
+            <img src="./logo.jpg" alt="Контакт" class="brand-logo">
+            <div class="today" id="today"></div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a class="active"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt="">Продажі</a>
+                <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt="">Ремонти</a>
+                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt="">Клієнти</a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Продукти</a>
+                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
+            </nav>
+
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
+                <a><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <section class="welcome">
+                <h1>Вітаємо, <span id="who">…</span>!</h1>
+                <p class="muted">Гарного робочого дня!</p>
+            </section>
+
+            <!-- KPI -->
+            <section class="grid kpi">
+                <div class="card"><div class="title">Продажів сьогодні</div><div class="value" id="salesToday">0</div></div>
+                <div class="card"><div class="title">Прибуток сьогодні <span class="muted">(продажі)</span></div><div class="value" id="profitSales">₴0</div></div>
+                <div class="card"><div class="title">Дохід за тиждень <span class="muted">(загальний)</span></div><div class="value" id="incomeWeek">₴0</div></div>
+                <div class="card"><div class="title">Нових клієнтів</div><div class="value" id="newClients">0</div></div>
+
+                <div class="card"><div class="title">Ремонтів сьогодні</div><div class="value" id="repairsToday">0</div></div>
+                <div class="card"><div class="title">Прибуток сьогодні <span class="muted">(ремонт)</span></div><div class="value" id="profitRepair">₴0</div></div>
+
+                <!-- Об’єднаний блок -->
+                <div class="card card-clients">
+                    <div class="title">Всього клієнтів</div>
+                    <div class="clients-row">
+                        <div class="value" id="clientsTotal">0</div>
+                        <button id="addClient" class="btn">Додати клієнта</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUICK + RECENT -->
+            <section class="split">
+                <div class="panel">
+                    <h3>Швидкий доступ</h3>
+                    <div class="quick">
+                        <button class="quick-tile"><img src="./icons/sales.png" alt="">Зареєструвати продаж</button>
+                        <button class="quick-tile"><img src="./icons/repairs.png" alt="">Новий ремонт</button>
+                        <button class="quick-tile"><img src="./icons/productadd.png" alt="">Новий продукт</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Останні продажі</h3>
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead><tr><th>Ім’я</th><th>Товар</th><th>Ціна</th></tr></thead>
+                            <tbody id="recentSales"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="./dashboard.js?v=1"></script>
+</body>
+</html>
