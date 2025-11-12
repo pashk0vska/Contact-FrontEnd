@@ -1,0 +1,187 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <title>Аналітика</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./analytics.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- APPBAR -->
+        <header class="appbar">
+            <img src="./logo.jpg" alt="Контакт" class="brand-logo" />
+            <div class="today" id="today"></div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt=""><span>Продукти</span></a>
+                <a class="active"><img class="ico" src="./icons/analytics.png" alt=""><span>Аналітика</span></a>
+            </nav>
+
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
+                <a><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main analytics">
+            <h1 class="page-title">Аналітика</h1>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="left">
+                    <div class="range">
+                        <label>
+                            З
+                            <input type="date">
+                        </label>
+                        <label>
+                            По
+                            <input type="date">
+                        </label>
+                    </div>
+
+                    <details class="dropdown">
+                        <summary class="btn btn-ghost">Тип даних</summary>
+                        <div class="dropdown-menu narrow">
+                            <label>
+                                Показати
+                                <select>
+                                    <option>Продачі + Ремонти</option>
+                                    <option>Лише продажі</option>
+                                    <option>Лише ремонти</option>
+                                </select>
+                            </label>
+                            <label>
+                                Агрегація
+                                <select>
+                                    <option>День</option>
+                                    <option>Тиждень</option>
+                                    <option>Місяць</option>
+                                    <option>Рік</option>
+                                </select>
+                            </label>
+                            <div class="dropdown-actions">
+                                <button class="btn btn-ghost" type="button">Скинути</button>
+                                <button class="btn" type="button">Застосувати</button>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="right">
+                    <button class="btn btn-ghost" type="button">Експорт CSV</button>
+                    <button class="btn" type="button">Звіт (PDF)</button>
+                </div>
+            </div>
+
+            <!-- KPI -->
+            <section class="grid kpi">
+                <div class="card">
+                    <div class="title">Дохід за період</div>
+                    <div class="value">₴ 0</div>
+                </div>
+                <div class="card">
+                    <div class="title">К-ть продажів</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="card">
+                    <div class="title">К-ть ремонтів</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="card">
+                    <div class="title">Сер. чек</div>
+                    <div class="value">₴ 0</div>
+                </div>
+                <div class="card">
+                    <div class="title">Прибуток (оцінка)</div>
+                    <div class="value">₴ 0</div>
+                </div>
+                <div class="card">
+                    <div class="title">Нових клієнтів</div>
+                    <div class="value">0</div>
+                </div>
+            </section>
+
+            <!-- Charts + Table -->
+            <section class="split">
+                <div class="panel">
+                    <h3>Продажі за 30 днів</h3>
+                    <div class="chart-box">
+                        <!-- плейсхолдер під майбутній графік -->
+                        <svg viewBox="0 0 100 32" preserveAspectRatio="none" class="spark">
+                            <polyline fill="none" stroke="#1fe26a" stroke-width="2"
+                                      points="0,20 8,22 16,18 24,24 32,16 40,18 48,12 56,14 64,10 72,12 80,8 88,9 96,6" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Прибуток за 12 місяців</h3>
+                    <div class="chart-box">
+                        <div class="bars">
+                            <span style="height:35%"></span>
+                            <span style="height:55%"></span>
+                            <span style="height:40%"></span>
+                            <span style="height:65%"></span>
+                            <span style="height:48%"></span>
+                            <span style="height:75%"></span>
+                            <span style="height:58%"></span>
+                            <span style="height:82%"></span>
+                            <span style="height:50%"></span>
+                            <span style="height:70%"></span>
+                            <span style="height:60%"></span>
+                            <span style="height:90%"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel wide">
+                    <h3>ТОП-10 продуктів</h3>
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Мишка Logitech M185</td><td>Периферія</td><td>32</td><td>₴ 12 768</td></tr>
+                                <tr><td>Клавіатура Redragon K552</td><td>Периферія</td><td>18</td><td>₴ 34 182</td></tr>
+                                <tr><td>SSD Kingston NV2 1TB</td><td>Комплектуючі</td><td>12</td><td>₴ 26 388</td></tr>
+                                <tr><td>Навушники HyperX Cloud</td><td>Периферія</td><td>9</td><td>₴ 26 991</td></tr>
+                                <tr><td>Антивірус ESET 1 рік</td><td>ПЗ / Послуги</td><td>41</td><td>₴ 32 759</td></tr>
+                                <tr><td>HDD Seagate 2TB</td><td>Комплектуючі</td><td>10</td><td>₴ 23 990</td></tr>
+                                <tr><td>Кабель HDMI 2.1 2м</td><td>Периферія</td><td>77</td><td>₴ 23 023</td></tr>
+                                <tr><td>Блок живлення 600W</td><td>Комплектуючі</td><td>7</td><td>₴ 14 490</td></tr>
+                                <tr><td>Встановлення Windows</td><td>ПЗ / Послуги</td><td>24</td><td>₴ 12 000</td></tr>
+                                <tr><td>Оновлення драйверів</td><td>ПЗ / Послуги</td><td>28</td><td>₴ 9 800</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // дата в апбарі
+        const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
+        const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
+
+        // вихід
+        const logout = document.getElementById('logout');
+        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
+    </script>
+</body>
+</html>
