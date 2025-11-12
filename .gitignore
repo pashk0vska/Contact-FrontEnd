@@ -1,0 +1,29 @@
+# ==========================
+# Visual Studio / .NET
+# ==========================
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# ==========================
+# Node / Electron
+# ==========================
+node_modules/
+dist/
+out/
+*.log
+*.tmp
+
+# ==========================
+# OS files
+# ==========================
+Thumbs.db
+.DS_Store
+
+# ==========================
+# Local configs / secrets
+# ==========================
+**/UserSecrets/
+Contact.API/appsettings.Development.json
