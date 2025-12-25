@@ -1,12 +1,10 @@
-﻿/* Заголовок як у макеті */
-.sales .page-title {
+﻿.sales .page-title {
     font-size: 48px;
     font-weight: 900;
     letter-spacing: .2px;
     margin: 0 0 16px 0;
 }
 
-/* Панель керування */
 .toolbar {
     display: flex;
     align-items: center;
@@ -26,10 +24,9 @@
         align-items: center;
     }
 
-/* Пошук */
 .search {
     position: relative;
-    width: min(720px, 48vw);
+    width: min(720px,48vw);
 }
 
 .search-ico {
@@ -54,9 +51,8 @@
         color: #7f8a93;
     }
 
-/* Кнопки */
 .btn {
-    background: linear-gradient(180deg, #00B712, #158a45);
+    background: linear-gradient(180deg,#00B712,#158a45);
     color: #fff;
     border: none;
     border-radius: 22px;
@@ -74,7 +70,6 @@
     cursor: pointer;
 }
 
-/* Дропдауни (details/summary) */
 .dropdown {
     position: relative;
 }
@@ -101,13 +96,13 @@
     padding: 12px;
     display: grid;
     gap: 10px;
-    min-width: 280px;
+    min-width: 300px;
     z-index: 20;
     box-shadow: 0 10px 28px rgba(0,0,0,.35);
 }
 
     .dropdown-menu.narrow {
-        min-width: 240px;
+        min-width: 260px;
     }
 
     .dropdown-menu label {
@@ -117,8 +112,7 @@
         color: #9aa4ad;
     }
 
-    .dropdown-menu input,
-    .dropdown-menu select {
+    .dropdown-menu input, .dropdown-menu select {
         background: var(--card);
         color: var(--fg);
         border: 1px solid var(--border);
@@ -132,26 +126,30 @@
     gap: 8px;
 }
 
-/* Таблиця як у макеті */
 .table-wrap {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 .table-sales {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
-    .table-sales th,
-    .table-sales td {
-        padding: 14px 16px;
+    .table-sales thead th, .table-sales tbody td {
+        padding: 12px 14px;
         border-bottom: 1px solid var(--border);
         text-align: left;
+        vertical-align: middle;
         height: 56px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .table-sales thead th {
-        color: #9adf9f; /* м’ятні заголовки */
+        color: #9adf9f;
         font-weight: 700;
     }
 
@@ -163,32 +161,57 @@
             background: #142029;
         }
 
-    .table-sales tbody td:last-child {
-        width: 56px;
+    /* ширини */
+    .table-sales thead th:nth-child(1), .table-sales tbody td:nth-child(1) {
+        width: 12%;
     }
 
-.more {
-    opacity: .7;
-}
+    .table-sales thead th:nth-child(2), .table-sales tbody td:nth-child(2) {
+        width: 18%;
+    }
 
-/* Статуси */
-.status {
+    .table-sales thead th:nth-child(3), .table-sales tbody td:nth-child(3) {
+        width: 22%;
+    }
+
+    .table-sales thead th:nth-child(4), .table-sales tbody td:nth-child(4) {
+        width: 8%;
+        text-align: center;
+    }
+
+    .table-sales thead th:nth-child(5), .table-sales tbody td:nth-child(5) {
+        width: 12%;
+        text-align: right;
+    }
+
+    .table-sales thead th:nth-child(6), .table-sales tbody td:nth-child(6) {
+        width: 10%;
+    }
+
+    .table-sales thead th:nth-child(7), .table-sales tbody td:nth-child(7) {
+        width: 10%;
+    }
+
+    .table-sales thead th:nth-child(8), .table-sales tbody td:nth-child(8) {
+        width: 8%;
+        text-align: right;
+    }
+
+.status-done {
+    color: #78e08f;
     font-weight: 700;
 }
 
-    .status.done {
-        color: #79e28f;
-    }
+.status-processing {
+    color: #f0c169;
+    font-weight: 700;
+}
 
-    .status.inprogress {
-        color: #cfb413;
-    }
+.status-cancelled {
+    color: #f08989;
+    font-weight: 700;
+}
 
-    .status.canceled {
-        color: #cb1212;
-    }
-
-/* Пагінація */
 .pager {
     display: flex;
     gap: 8px;
@@ -209,3 +232,166 @@
             background: #0f1b22;
             border-color: #214b2c;
         }
+
+        .pager button.nav {
+            font-weight: 700;
+        }
+
+/* Дії: кнопка ⋯ рівно під заголовком справа */
+.table-sales td.actions {
+    position: relative;
+    text-align: right;
+    padding-right: 0;
+}
+
+    .table-sales td.actions .row-actions {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+.menu-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #1a242b;
+    color: #e7ecef;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .menu-btn:hover {
+        background: #26333d;
+        border-color: #3c4b55;
+    }
+
+/* Портал меню (над усім) */
+.row-menu-portal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 4000;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 180px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    display: grid;
+    padding: 6px;
+}
+
+    .row-menu-portal[hidden] {
+        display: none;
+    }
+
+    .row-menu-portal button {
+        background: transparent;
+        color: var(--fg);
+        border: none;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        .row-menu-portal button:hover {
+            background: #0f1b22;
+        }
+
+/* ===== MODAL: форма продажу (як у клієнтів) ===== */
+.modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,.45);
+}
+
+    .modal-layer[hidden] {
+        display: none;
+    }
+
+.modal-card {
+    max-width: 92vw;
+    min-width: 520px;
+}
+
+.modal-layer .card {
+    background: var(--panel);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 18px 42px rgba(0,0,0,.45);
+}
+
+.card-title {
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+
+.modal-layer .row {
+    display: grid;
+    gap: 12px;
+}
+
+    .modal-layer .row.two {
+        grid-template-columns: 1fr 1fr;
+    }
+
+.modal-layer .field label {
+    display: block;
+    font-size: 12px;
+    opacity: .75;
+    margin-bottom: 6px;
+}
+
+.modal-layer .field input, .modal-layer .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+}
+
+.modal-layer .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.modal-layer .btn {
+    background: linear-gradient(180deg,#00B712,#158a45);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .modal-layer .btn:hover {
+        filter: brightness(1.1);
+    }
+
+.modal-layer .btn-ghost {
+    background: transparent;
+    color: #00b712;
+    border: 1px solid #00b712;
+}
+
+    .modal-layer .btn-ghost:hover {
+        background: rgba(0,183,18,0.08);
+    }

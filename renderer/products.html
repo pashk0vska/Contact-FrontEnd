@@ -1,8 +1,8 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="uk">
 <head>
     <meta charset="utf-8" />
-    <title>Продукти</title>
+    <title>Конфігуратор ПК</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./dashboard.css">
     <link rel="stylesheet" href="./products.css">
@@ -23,7 +23,7 @@
                 <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
                 <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
                 <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a class="active"><img class="ico" src="./icons/products.png" alt=""><span>Продукти</span></a>
+                <a class="active"><img class="ico" src="./icons/products.png" alt=""><span>Конфігуратор ПК</span></a>
                 <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
             </nav>
 
@@ -37,138 +37,13 @@
 
         <!-- MAIN -->
         <main class="main products">
-            <h1 class="page-title">Продукти</h1>
+            <h1 class="page-title">Конфігуратор ПК</h1>
 
-            <!-- toolbar -->
-            <div class="toolbar">
-                <div class="left">
-                    <div class="search">
-                        <svg class="search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        <input id="q" type="text" placeholder="Пошук: назва, артикул, категорія">
-                    </div>
-
-                    <details class="dropdown">
-                        <summary class="btn btn-ghost">Фільтри</summary>
-                        <div class="dropdown-menu wide">
-                            <label>
-                                Категорія
-                                <select>
-                                    <option value="">Всі</option>
-                                    <option>Периферія</option>
-                                    <option>Комплектуючі</option>
-                                    <option>ПЗ / Послуги</option>
-                                </select>
-                            </label>
-                            <label>
-                                Тип
-                                <select>
-                                    <option value="">Всі</option>
-                                    <option>Товар</option>
-                                    <option>Послуга</option>
-                                </select>
-                            </label>
-                            <label>
-                                Активність
-                                <select>
-                                    <option value="">Всі</option>
-                                    <option>Активні</option>
-                                    <option>Неактивні</option>
-                                </select>
-                            </label>
-                            <label>
-                                Мін. ціна
-                                <input type="number" inputmode="decimal" placeholder="0" />
-                            </label>
-                            <label>
-                                Макс. ціна
-                                <input type="number" inputmode="decimal" placeholder="0" />
-                            </label>
-                            <label>
-                                Дата додавання (з)
-                                <input type="date" />
-                            </label>
-                            <label>
-                                Дата додавання (до)
-                                <input type="date" />
-                            </label>
-
-                            <div class="dropdown-actions">
-                                <button class="btn btn-ghost" type="button">Скинути</button>
-                                <button class="btn" type="button">Застосувати</button>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="dropdown">
-                        <summary class="btn btn-ghost">Сортування</summary>
-                        <div class="dropdown-menu narrow">
-                            <label>
-                                Поле
-                                <select>
-                                    <option>Назва</option>
-                                    <option>Ціна</option>
-                                    <option>Кількість</option>
-                                    <option>Дата додавання</option>
-                                </select>
-                            </label>
-                            <label>
-                                Порядок
-                                <select>
-                                    <option>Спадання ↓</option>
-                                    <option>Зростання ↑</option>
-                                </select>
-                            </label>
-                            <div class="dropdown-actions">
-                                <button class="btn btn-ghost" type="button">Скинути</button>
-                                <button class="btn" type="button">Ок</button>
-                            </div>
-                        </div>
-                    </details>
-                </div>
-
-                <div class="right">
-                    <button class="btn" type="button">Додати продукт</button>
-                </div>
-            </div>
-
-            <!-- таблиця -->
-            <div class="table-wrap">
-                <table class="table-products">
-                    <thead>
-                        <tr>
-                            <th>Назва</th>
-                            <th>Категорія</th>
-                            <th>Артикул</th>
-                            <th>Тип</th>
-                            <th>Кількість</th>
-                            <th>Ціна</th>
-                            <th>Активний</th>
-                            <th>Дія</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- макетні рядки для повного вигляду -->
-                        <tr><td>Мишка Logitech M185</td><td>Периферія</td><td>LOG-M185</td><td>Товар</td><td>42</td><td>₴ 399</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Клавіатура Redragon K552</td><td>Периферія</td><td>RDK-552</td><td>Товар</td><td>15</td><td>₴ 1 899</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Антивірус ESET 1 рік</td><td>ПЗ / Послуги</td><td>ESET-1Y</td><td>Послуга</td><td>∞</td><td>₴ 799</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>SSD Kingston NV2 1TB</td><td>Комплектуючі</td><td>KS-NV2-1T</td><td>Товар</td><td>24</td><td>₴ 2 199</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Встановлення Windows</td><td>ПЗ / Послуги</td><td>SVC-WIN</td><td>Послуга</td><td>∞</td><td>₴ 500</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Навушники HyperX Cloud</td><td>Периферія</td><td>HX-CLD</td><td>Товар</td><td>9</td><td>₴ 2 999</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Кабель HDMI 2.1 2м</td><td>Периферія</td><td>HDMI-21-2M</td><td>Товар</td><td>58</td><td>₴ 299</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Чистка системного блоку</td><td>ПЗ / Послуги</td><td>SVC-CLEAN</td><td>Послуга</td><td>∞</td><td>₴ 400</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Відеокарта RTX 4060</td><td>Комплектуючі</td><td>RTX-4060</td><td>Товар</td><td>3</td><td>₴ 15 999</td><td>Ні</td><td class="more">…</td></tr>
-                        <tr><td>Оновлення драйверів</td><td>ПЗ / Послуги</td><td>SVC-DRVR</td><td>Послуга</td><td>∞</td><td>₴ 350</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>HDD Seagate 2TB</td><td>Комплектуючі</td><td>SG-2TB</td><td>Товар</td><td>12</td><td>₴ 2 399</td><td>Так</td><td class="more">…</td></tr>
-                        <tr><td>Паста термопровідна</td><td>Комплектуючі</td><td>TP-ARCTIC</td><td>Товар</td><td>77</td><td>₴ 199</td><td>Так</td><td class="more">…</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- пагінація -->
-            <div class="pager">
-                <button class="active">1</button><button>2</button><button>3</button>
+            <div class="panel" style="padding:18px">
+                <h3 style="margin:0 0 8px 0">Сторінка у розробці</h3>
+                <p style="margin:0; opacity:.8; line-height:1.5">
+                    Тут буде конфігуратор ПК: підбір комплектуючих, перевірка сумісності та формування збірки.
+                </p>
             </div>
         </main>
     </div>

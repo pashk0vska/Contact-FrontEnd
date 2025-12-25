@@ -1,23 +1,20 @@
-﻿const API = "http://localhost:5101";
+﻿// === базові речі ===
+const API = "http://localhost:5101";
 const token = localStorage.getItem("token");
+if (!token) { location.href = "index.html"; }
+const headers = { "Authorization": `Bearer ${token}` };
 
-/* Дата у правій частині appbar */
+// Дата в appbar
 const todayEl = document.getElementById("today");
-function renderDate(){
+function renderDate() {
   if (!todayEl) return;
   todayEl.textContent = new Date().toLocaleDateString("uk-UA", {
-    day:"2-digit", month:"long", year:"numeric"
+    day: "2-digit", month: "long", year: "numeric"
   });
 }
-
 renderDate();
-(function scheduleNextMidnight(){
-  const now = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0,0,2);
-  setTimeout(()=>{ renderDate(); scheduleNextMidnight(); }, next - now);
-})();
 
-/* Ім’я користувача з JWT для “Вітаємо, …” */
+// Ім'я користувача у "Вітаємо, ..."
 function usernameFromToken(jwt){
   try{
     const [, payload] = jwt.split(".");
@@ -26,24 +23,20 @@ function usernameFromToken(jwt){
   }catch{ return null; }
 }
 const whoEl = document.getElementById("who");
-if (whoEl) whoEl.textContent = usernameFromToken(token || "") || "користувачу";
+if (whoEl) whoEl.textContent = usernameFromToken(token) || "користувачу";
 
-/* Вихід */
-const logout = document.getElementById("logout");
-if (logout){
-  logout.addEventListener("click", ()=>{
-    localStorage.removeItem("token");
-    location.href = "index.html";
-  });
-}
+// Вихід
+document.getElementById("logout")?.addEventListener("click", ()=>{
+  localStorage.removeItem("token");
+  location.href = "index.html";
+});
 
-/* Хелпери */
-const headers = token ? { Authorization: `Bearer ${token}` } : {};
+// Хелпери
 const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-/* Рендер (реальні нулі за замовчуванням) */
-function render(d = {}){
+// Рендер KPI + останні продажі
+function render(d = {}) {
   set("salesToday",   d.salesToday ?? 0);
   set("profitSales",  num(d.profitSales ?? 0));
   set("incomeWeek",   num(d.incomeWeek ?? 0));
@@ -52,55 +45,38 @@ function render(d = {}){
   set("profitRepair", num(d.profitRepair ?? 0));
   set("clientsTotal", d.clientsTotal ?? 0);
 
-  const recent = (d.recent ?? []);
   const tbody = document.getElementById("recentSales");
-  if (tbody){
+  if (tbody) {
+    const recent = d.recent ?? [];
     tbody.innerHTML = recent.map(r => `
       <tr>
         <td>${r.name ?? ""}</td>
         <td>${r.item ?? ""}</td>
         <td>${num(r.price ?? 0)}</td>
-      </tr>`).join("");
+      </tr>
+    `).join("");
   }
 }
 
-/* Завантаження агрегату; якщо бек ще порожній — лишаються нулі */
-async function loadDashboard(){
-  try{
+// Завантаження агрегату з бекенду
+async function loadDashboard() {
+  try {
     const r = await fetch(`${API}/api/Dashboard/summary`, { headers });
-    if (r.ok){
-      const d = await r.json();
-      render({
-        salesToday:   d.salesToday,
-        profitSales:  d.profitSales,
-        incomeWeek:   d.incomeWeek,
-        newClients:   d.newClients,
-        repairsToday: d.repairsToday,
-        profitRepair: d.profitRepair,
-        clientsTotal: d.clientsTotal,
-        recent:       d.recent
-      });
-      return;
-    }
-  }catch{/* впаде на запасний шлях */ }
-
-  // запасний шлях — збираємо по частинах:
-  let sales={}, repairs={}, clients={}, week={}, recent=[];
-  try{ const r = await fetch(`${API}/api/Sales/summary?range=today`, { headers }); if (r.ok) sales   = await r.json(); }catch{}
-  try{ const r = await fetch(`${API}/api/Repairs/summary?range=today`, { headers }); if (r.ok) repairs = await r.json(); }catch{}
-  try{ const r = await fetch(`${API}/api/Clients/summary`,             { headers }); if (r.ok) clients = await r.json(); }catch{}
-  try{ const r = await fetch(`${API}/api/Revenue/summary?range=week`,  { headers }); if (r.ok) week    = await r.json(); }catch{}
-  try{ const r = await fetch(`${API}/api/Sales/recent?take=8`,         { headers }); if (r.ok) recent  = await r.json(); }catch{}
-
-  render({
-    salesToday:   sales.count ?? sales.salesToday ?? 0,
-    profitSales:  sales.profit ?? sales.profitSales ?? 0,
-    incomeWeek:   week.total ?? 0,
-    newClients:   clients.newToday ?? 0,
-    repairsToday: repairs.count ?? 0,
-    profitRepair: repairs.profit ?? 0,
-    clientsTotal: clients.total ?? 0,
-    recent:       (recent.items ?? recent) || []
-  });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    render(d);
+  } catch (e) {
+    console.error("Dashboard summary error:", e);
+    render({}); // показати нулі, щоб не ламати верстку
+  }
 }
-loadDashboard().catch(()=>render());
+loadDashboard();
+
+// === Кнопки швидкого доступу: одразу відкривати модалки на відповідних сторінках ===
+function goToWithModal(page, modalFlagKey){
+  localStorage.setItem(modalFlagKey, "1"); // сторінка прочитає і відкриє модалку
+  location.href = page;
+}
+document.getElementById("quickAddClient")?.addEventListener("click", ()=> goToWithModal("clients.html", "openAddClient"));
+document.getElementById("quickAddSale")?.addEventListener("click",   ()=> goToWithModal("sales.html",   "openAddSale"));
+document.getElementById("quickAddRepair")?.addEventListener("click", ()=> goToWithModal("repairs.html", "openAddRepair"));

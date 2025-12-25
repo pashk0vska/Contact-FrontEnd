@@ -23,7 +23,7 @@
                 <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
                 <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
                 <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a href="./products.html"><img class="ico" src="./icons/products.png" alt=""><span>Продукти</span></a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt=""><span>Конфігуратор ПК</span></a>
                 <a class="active"><img class="ico" src="./icons/analytics.png" alt=""><span>Аналітика</span></a>
             </nav>
 
@@ -45,11 +45,11 @@
                     <div class="range">
                         <label>
                             З
-                            <input type="date">
+                            <input id="fromDate" type="date">
                         </label>
                         <label>
                             По
-                            <input type="date">
+                            <input id="toDate" type="date">
                         </label>
                     </div>
 
@@ -74,8 +74,8 @@
                                 </select>
                             </label>
                             <div class="dropdown-actions">
-                                <button class="btn btn-ghost" type="button">Скинути</button>
-                                <button class="btn" type="button">Застосувати</button>
+                                <button id="resetBtn" class="btn btn-ghost" type="button">Скинути</button>
+                                <button id="applyBtn" class="btn" type="button">Застосувати</button>
                             </div>
                         </div>
                     </details>
@@ -91,27 +91,27 @@
             <section class="grid kpi">
                 <div class="card">
                     <div class="title">Дохід за період</div>
-                    <div class="value">₴ 0</div>
+                    <div class="value" id="kpiIncome">₴ 0</div>
                 </div>
                 <div class="card">
                     <div class="title">К-ть продажів</div>
-                    <div class="value">0</div>
+                    <div class="value" id="kpiSalesCount">0</div>
                 </div>
                 <div class="card">
                     <div class="title">К-ть ремонтів</div>
-                    <div class="value">0</div>
+                    <div class="value" id="kpiRepairsCount">0</div>
                 </div>
                 <div class="card">
                     <div class="title">Сер. чек</div>
-                    <div class="value">₴ 0</div>
+                    <div class="value" id="kpiAvgCheck">₴ 0</div>
                 </div>
                 <div class="card">
                     <div class="title">Прибуток (оцінка)</div>
-                    <div class="value">₴ 0</div>
+                    <div class="value" id="kpiProfit">₴ 0</div>
                 </div>
                 <div class="card">
                     <div class="title">Нових клієнтів</div>
-                    <div class="value">0</div>
+                    <div class="value" id="kpiNewClients">0</div>
                 </div>
             </section>
 
@@ -155,17 +155,8 @@
                             <thead>
                                 <tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr>
                             </thead>
-                            <tbody>
-                                <tr><td>Мишка Logitech M185</td><td>Периферія</td><td>32</td><td>₴ 12 768</td></tr>
-                                <tr><td>Клавіатура Redragon K552</td><td>Периферія</td><td>18</td><td>₴ 34 182</td></tr>
-                                <tr><td>SSD Kingston NV2 1TB</td><td>Комплектуючі</td><td>12</td><td>₴ 26 388</td></tr>
-                                <tr><td>Навушники HyperX Cloud</td><td>Периферія</td><td>9</td><td>₴ 26 991</td></tr>
-                                <tr><td>Антивірус ESET 1 рік</td><td>ПЗ / Послуги</td><td>41</td><td>₴ 32 759</td></tr>
-                                <tr><td>HDD Seagate 2TB</td><td>Комплектуючі</td><td>10</td><td>₴ 23 990</td></tr>
-                                <tr><td>Кабель HDMI 2.1 2м</td><td>Периферія</td><td>77</td><td>₴ 23 023</td></tr>
-                                <tr><td>Блок живлення 600W</td><td>Комплектуючі</td><td>7</td><td>₴ 14 490</td></tr>
-                                <tr><td>Встановлення Windows</td><td>ПЗ / Послуги</td><td>24</td><td>₴ 12 000</td></tr>
-                                <tr><td>Оновлення драйверів</td><td>ПЗ / Послуги</td><td>28</td><td>₴ 9 800</td></tr>
+                            <tbody id="topTbody">
+                                <tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -174,14 +165,6 @@
         </main>
     </div>
 
-    <script>
-        // дата в апбарі
-        const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
-        const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
-
-        // вихід
-        const logout = document.getElementById('logout');
-        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
-    </script>
+    <script src="./analytics.js"></script>
 </body>
 </html>

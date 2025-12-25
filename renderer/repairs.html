@@ -23,7 +23,7 @@
                 <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
                 <a class="active"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
                 <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Продукти</a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Конфігуратор ПК</a>
                 <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
             </nav>
 
@@ -55,18 +55,18 @@
                         <div class="dropdown-menu wide">
                             <label>
                                 Статус
-                                <select>
+                                <select id="fStatus">
                                     <option value="">Будь-який</option>
-                                    <option>Новий</option>
-                                    <option>В процесі</option>
-                                    <option>Готово</option>
-                                    <option>Видано</option>
-                                    <option>Скасовано</option>
+                                    <option value="new">Новий</option>
+                                    <option value="progress">В процесі</option>
+                                    <option value="done">Готово</option>
+                                    <option value="issued">Видано</option>
+                                    <option value="canceled">Скасовано</option>
                                 </select>
                             </label>
                             <label>
                                 Тип пристрою
-                                <select>
+                                <select id="fDeviceType">
                                     <option value="">Будь-який</option>
                                     <option>ПК</option>
                                     <option>Ноутбук</option>
@@ -74,12 +74,12 @@
                                     <option>Периферія</option>
                                 </select>
                             </label>
-                            <label>Дата від <input type="date"></label>
-                            <label>Дата до <input type="date"></label>
+                            <label>Дата від <input id="fFrom" type="date"></label>
+                            <label>Дата до <input id="fTo" type="date"></label>
 
                             <div class="dropdown-actions">
-                                <button class="btn btn-ghost" type="button">Скинути</button>
-                                <button class="btn" type="button">Застосувати</button>
+                                <button id="fReset" class="btn btn-ghost" type="button">Скинути</button>
+                                <button id="fApply" class="btn" type="button">Застосувати</button>
                             </div>
                         </div>
                     </details>
@@ -89,22 +89,25 @@
                         <div class="dropdown-menu narrow">
                             <label>
                                 Поле
-                                <select>
-                                    <option>Дата</option>
-                                    <option>Статус</option>
-                                    <option>Вартість</option>
+                                <select id="sortField">
+                                    <option value="Date">Дата</option>
+                                    <option value="Status">Статус</option>
+                                    <option value="Price">Вартість</option>
+                                    <option value="Id">№</option>
+                                    <option value="Client">Клієнт</option>
+                                    <option value="Device">Пристрій</option>
                                 </select>
                             </label>
                             <label>
                                 Порядок
-                                <select>
-                                    <option>Спадання ↓</option>
-                                    <option>Зростання ↑</option>
+                                <select id="sortDir">
+                                    <option value="desc">Спадання ↓</option>
+                                    <option value="asc">Зростання ↑</option>
                                 </select>
                             </label>
                             <div class="dropdown-actions">
-                                <button class="btn btn-ghost" type="button">Скинути</button>
-                                <button class="btn" type="button">Ок</button>
+                                <button id="sReset" class="btn btn-ghost" type="button">Скинути</button>
+                                <button id="sApply" class="btn" type="button">Ок</button>
                             </div>
                         </div>
                     </details>
@@ -118,57 +121,100 @@
             <!-- таблиця -->
             <div class="table-wrap">
                 <table class="table-repairs">
-                    <!-- контроль ширин колонок -->
                     <colgroup>
-                        <col style="width:72px">      <!-- № -->
-                        <col style="width:140px">     <!-- Дата -->
-                        <col style="width:200px">     <!-- Клієнт -->
-                        <col style="width:280px">     <!-- Пристрій (ширше) -->
-                        <col style="width:200px">      <!-- Проблема (найширша) -->
-                        <col style="width:140px">     <!-- Статус -->
-                        <col style="width:120px">     <!-- Вартість -->
-                        <col style="width:56px">      <!-- Дія -->
+                        <col style="width:72px">
+                        <col style="width:140px">
+                        <col style="width:200px">
+                        <col style="width:280px">
+                        <col style="width:200px">
+                        <col style="width:140px">
+                        <col style="width:120px">
+                        <col style="width:56px">
                     </colgroup>
-
                     <thead>
                         <tr>
-                            <th>№</th>
-                            <th>Дата</th>
-                            <th>Клієнт</th>
-                            <th>Пристрій</th>
+                            <th data-sort="Id">№</th>
+                            <th data-sort="Date">Дата</th>
+                            <th data-sort="Client">Клієнт</th>
+                            <th data-sort="Device">Пристрій</th>
                             <th>Проблема</th>
-                            <th>Статус</th>
-                            <th>Вартість</th>
+                            <th data-sort="Status">Статус</th>
+                            <th data-sort="Price">Вартість</th>
                             <th>Дія</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>1</td><td>22.10.2025</td><td>Анна П.</td><td>Ноутбук Lenovo</td><td>Не вмикається</td><td><span class="badge done">Готово</span></td><td>₴ 2 300</td><td class="more">…</td></tr>
-                        <tr><td>2</td><td>21.10.2025</td><td>Микола С.</td><td>ПК</td><td>Не бачить диск</td><td><span class="badge progress">В процесі</span></td><td>₴ 1 200</td><td class="more">…</td></tr>
-                        <tr><td>3</td><td>21.10.2025</td><td>Сергій Т.</td><td>Ноутбук Acer</td><td>Розбитий екран</td><td><span class="badge new">Новий</span></td><td>₴ 3 800</td><td class="more">…</td></tr>
-                        <tr><td>4</td><td>18.10.2025</td><td>Наталія К.</td><td>Принтер</td><td>Зажовтує папір</td><td><span class="badge issued">Видано</span></td><td>₴ 650</td><td class="more">…</td></tr>
-                        <tr><td>5</td><td>18.10.2025</td><td>Олександр Б.</td><td>Ноутбук HP</td><td>Перегрів</td><td><span class="badge canceled">Скасовано</span></td><td>₴ 0</td><td class="more">…</td></tr>
-                        <tr><td>6</td><td>17.10.2025</td><td>Оксана П.</td><td>ПК</td><td>Апгрейд/чистка</td><td><span class="badge progress">В процесі</span></td><td>₴ 1 900</td><td class="more">…</td></tr>
-                        <tr><td>7</td><td>17.10.2025</td><td>Іван Г.</td><td>Ноутбук Acer</td><td>Заміна SSD</td><td><span class="badge done">Готово</span></td><td>₴ 1 600</td><td class="more">…</td></tr>
-                        <tr><td>8</td><td>16.10.2025</td><td>Андрій З.</td><td>ПК</td><td>Батарея тримає 20%</td><td><span class="badge progress">В процесі</span></td><td>₴ 2 000</td><td class="more">…</td></tr>
-                        <tr><td>9</td><td>16.10.2025</td><td>Віктор Д.</td><td>Ноутбук Huawei</td><td>Не визначається в ОС</td><td><span class="badge new">Новий</span></td><td>₴ 700</td><td class="more">…</td></tr>
-                        <tr><td>10</td><td>15.10.2025</td><td>Ірина Х.</td><td>ПК</td><td>Шумить кулер</td><td><span class="badge done">Готово</span></td><td>₴ 450</td><td class="more">…</td></tr>
-                    </tbody>
+                    <tbody id="repairsTbody"></tbody>
                 </table>
             </div>
 
-            <div class="pager">
-                <button class="active">1</button><button>2</button><button>3</button><button>4</button>
-            </div>
+            <div id="pager" class="pager"></div>
         </main>
     </div>
 
-    <script>
-        const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
-        const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
+    <!-- Портал-меню для рядка -->
+    <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
 
-        const logout = document.getElementById('logout');
-        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
-    </script>
+    <!-- Модалка створення ордера -->
+    <div id="repairModal" class="modal-layer" hidden>
+        <div class="modal-card card" role="dialog" aria-modal="true">
+            <h3 class="card-title">Створити ордер</h3>
+            <form id="repairForm" class="body">
+                <div class="row two">
+                    <div class="field">
+                        <label>Дата</label>
+                        <input id="rfDate" type="date" required>
+                    </div>
+                    <div class="field">
+                        <label>Статус</label>
+                        <select id="rfStatus">
+                            <option value="new">Новий</option>
+                            <option value="progress">В процесі</option>
+                            <option value="done">Готово</option>
+                            <option value="issued">Видано</option>
+                            <option value="canceled">Скасовано</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row two">
+                    <div class="field">
+                        <label>Клієнт</label>
+                        <input id="rfClient" list="clientList" placeholder="Почніть вводити ім’я…" autocomplete="off">
+                        <datalist id="clientList"></datalist>
+                        <input id="rfClientId" type="hidden">
+                    </div>
+                    <div class="field">
+                        <label>Пристрій</label>
+                        <input id="rfDevice" type="text" placeholder="Ноутбук Lenovo / Телефон / ПК" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Проблема</label>
+                        <input id="rfProblem" type="text" placeholder="Не вмикається / Замінити SSD / ..." required>
+                    </div>
+                </div>
+
+                <div class="row two">
+                    <div class="field">
+                        <label>Вартість (₴)</label>
+                        <input id="rfPrice" type="number" min="0" step="1" value="0">
+                    </div>
+                    <div class="field">
+                        <label>Нотатка (необов’язково)</label>
+                        <input id="rfNote" type="text" placeholder="">
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="rfCancel" class="btn-ghost" type="button">Скасувати</button>
+                    <button class="btn" type="submit">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./repairs.js"></script>
 </body>
 </html>

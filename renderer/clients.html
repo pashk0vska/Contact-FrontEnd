@@ -4,20 +4,16 @@
     <meta charset="utf-8" />
     <title>Клієнти</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- базові змінні/шапка/сайдбар із дашборда -->
     <link rel="stylesheet" href="./dashboard.css">
-    <!-- стилі сторінки клієнтів (тонкі відмінності від sales) -->
     <link rel="stylesheet" href="./clients.css">
 </head>
 <body>
     <div class="layout">
-        <!-- APPBAR -->
         <header class="appbar">
             <img src="./logo.jpg" alt="Контакт" class="brand-logo" />
             <div class="today" id="today"></div>
         </header>
 
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="menu-title">МЕНЮ</div>
             <nav class="menu">
@@ -25,7 +21,7 @@
                 <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
                 <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt="">Ремонти</a>
                 <a class="active"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Продукти</a>
+                <a href="./products.html"><img class="ico" src="./icons/products.png" alt="">Конфігуратор ПК</a>
                 <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
             </nav>
 
@@ -37,17 +33,15 @@
             </nav>
         </aside>
 
-        <!-- MAIN -->
         <main class="main clients">
             <h1 class="page-title">Клієнти</h1>
 
-            <!-- панель керування -->
+            <!-- Toolbar -->
             <div class="toolbar">
                 <div class="left">
                     <div class="search">
                         <svg class="search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
-                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M21 21l-4.2-4.2M11 19a 8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                         </svg>
                         <input id="q" type="text" placeholder="Пошук: ім’я, телефон або email">
                     </div>
@@ -107,51 +101,65 @@
                 </div>
 
                 <div class="right">
-                    <button id="btnAddClient" class="btn" type="button">Додати клієнта</button>
+                    <button id="btnAdd" class="btn" type="button">Додати клієнта</button>
                 </div>
             </div>
 
-            <!-- таблиця: макетні дані, щоб вигляд був повний -->
+            <!-- Модал (власний шар, не <dialog>) -->
+            <div id="clientModal" class="modal-layer" hidden>
+                <div class="modal-card">
+                    <form id="clientForm" class="card" autocomplete="off">
+                        <h2 class="card-title">Новий клієнт</h2>
+
+                        <div class="row">
+                            <div class="field">
+                                <label for="cfFullName">Ім’я *</label>
+                                <input id="cfFullName" type="text" placeholder="Напр.: Іван Петренко" required>
+                            </div>
+                        </div>
+
+                        <div class="row two">
+                            <div class="field">
+                                <label for="cfPhone">Телефон *</label>
+                                <input id="cfPhone" type="tel" placeholder="+380..." required>
+                            </div>
+                            <div class="field">
+                                <label for="cfEmail">Email</label>
+                                <input id="cfEmail" type="email" placeholder="name@example.com">
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn btn-ghost" id="cfCancel">Скасувати</button>
+                            <button type="submit" class="btn">Зберегти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Таблиця -->
             <div class="table-wrap">
                 <table class="table-clients">
                     <thead>
                         <tr>
-                            <th>Ім’я</th>
-                            <th>Телефон</th>
-                            <th>Email</th>
-                            <th>Остання покупка</th>
-                            <th>Замовлень</th>
-                            <th>Нотатки</th>
-                            <th>Дія</th>
+                            <th data-sort="FullName">Ім’я</th>
+                            <th data-sort="Phone">Телефон</th>
+                            <th data-sort="Email">Email</th>
+                            <th>Дії</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>Анна П.</td><td>+380 67 123 45 67</td><td>anna@example.com</td><td>22.10.2025</td><td>5</td><td>VIP</td><td class="more">…</td></tr>
-                        <tr><td>Микола С.</td><td>+380 93 234 56 78</td><td>mykola@mail.com</td><td>21.10.2025</td><td>3</td><td></td><td class="more">…</td></tr>
-                        <tr><td>Сергій Т.</td><td>+380 50 345 67 89</td><td>serg@site.ua</td><td>21.10.2025</td><td>7</td><td>Любить знижки</td><td class="more">…</td></tr>
-                        <tr><td>Наталія К.</td><td>+380 68 111 22 33</td><td>natalia@uapp.io</td><td>18.10.2025</td><td>2</td><td></td><td class="more">…</td></tr>
-                        <tr><td>Олександр Б.</td><td>+380 66 987 65 43</td><td>-</td><td>18.10.2025</td><td>1</td><td>Без email</td><td class="more">…</td></tr>
-                        <tr><td>Оксана П.</td><td>+380 63 555 44 22</td><td>oksana@host.com</td><td>18.10.2025</td><td>4</td><td></td><td class="more">…</td></tr>
-                        <tr><td>Іван Г.</td><td>+380 97 765 43 21</td><td>ivan@gmail.com</td><td>17.10.2025</td><td>1</td><td>Повернення 2024</td><td class="more">…</td></tr>
-                        <tr><td>Андрій З.</td><td>+380 95 222 33 11</td><td>-</td><td>16.10.2025</td><td>2</td><td>Немає email</td><td class="more">…</td></tr>
-                        <tr><td>Віктор Д.</td><td>+380 99 123 00 99</td><td>victor@me.com</td><td>15.10.2025</td><td>6</td><td>Постійний</td><td class="more">…</td></tr>
-                    </tbody>
+                    <tbody id="clientsTbody"></tbody>
                 </table>
             </div>
 
-            <!-- пагінація -->
-            <div class="pager">
-                <button class="active">1</button><button>2</button><button>3</button><button>4</button>
-            </div>
+            <!-- Пагінація -->
+            <div id="pager" class="pager"></div>
         </main>
     </div>
 
-    <script>
-        const t = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
-        const el = document.getElementById('today'); if (el) el.textContent = `Сьогодні: ${t}`;
+    <!-- Портал для меню рядка (поверх усього UI) -->
+    <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
 
-        const logout = document.getElementById('logout');
-        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
-    </script>
+    <script defer src="./clients.js"></script>
 </body>
 </html>

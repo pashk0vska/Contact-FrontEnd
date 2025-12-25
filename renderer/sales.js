@@ -1,226 +1,332 @@
-﻿const API = "http://localhost:5101";
-const token = localStorage.getItem("token");
-const headers = token ? { Authorization: `Bearer ${token}`, "Content-Type":"application/json" } : { "Content-Type":"application/json" };
+﻿// === Today ===
+const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
+const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 
-/* ====== APPBAR DATE ====== */
-const todayEl = document.getElementById("today");
-function renderDate(){
-  if (!todayEl) return;
-  todayEl.textContent = new Date().toLocaleDateString("uk-UA",{ day:"2-digit", month:"long", year:"numeric" });
-}
-renderDate();
-
-/* ====== LOGOUT ====== */
+// === Logout ===
 const logout = document.getElementById('logout');
-        if (logout) logout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.href='index.html'; });
+if (logout) logout.addEventListener('click', () => { localStorage.removeItem('token'); location.href = 'index.html'; });
 
-/* ====== STATE ====== */
-let page = 1, pageSize = 10, lastSelectedId = null;
+// === API base (fallback 5101 -> 7286) ===
+const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
+let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
+const token = localStorage.getItem("token");
+if (!token) location.href = "index.html";
 
-/* ====== HELPERS ====== */
-const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
-function el(id){ return document.getElementById(id); }
-function qs(sel,root=document){ return root.querySelector(sel); }
-function qsa(sel,root=document){ return Array.from(root.querySelectorAll(sel)); }
+async function apiFetch(path, init = {}) {
+  const tryOnce = async (base) => {
+    const url = path.startsWith("http") ? path : `${base}${path}`;
+    const res = await fetch(url, init);
+    return { res, base };
+  };
+  try { return await tryOnce(API); }
+  catch {
+    for (const c of API_CANDIDATES) {
+      if (c === API) continue;
+      try { const out = await tryOnce(c); localStorage.setItem("apiBase", c); API = c; return out; } catch {}
+    }
+    throw new Error("API is not reachable");
+  }
+}
 
-/* ====== LOAD LIST ====== */
-async function loadSales(){
-  const q      = el("q").value.trim();
-  const dateFrom = el("dateFrom").value || "";
-  const dateTo   = el("dateTo").value || "";
-  const pay    = el("pay").value;
-  const status = el("status").value;
-  const sort   = el("sort").value;
+// ===== State =====
+let page = 1, pageSize = 10, sort = "Date", dir = "desc";
+let filters = { from: "", to: "", status: "" };
 
-  const url = new URL(`${API}/api/Sales`);
+// ===== Helpers =====
+const $ = (s, r=document)=>r.querySelector(s);
+const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+const debounce = (fn, ms=300)=>{let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms);} };
+const fmtMoney = v => `₴ ${Number(v||0).toLocaleString("uk-UA")}`;
+const fmtDate = s => { if (!s) return ""; const d = new Date(s); return Number.isNaN(d.getTime()) ? s : d.toLocaleDateString("uk-UA"); };
+
+// ===== Load list =====
+async function loadSales() {
+  closeRowMenu();
+  const q = ($("#q")?.value || "").trim();
+  const url = new URL(`/api/Sales`, API);
   url.searchParams.set("page", page);
   url.searchParams.set("pageSize", pageSize);
   if (q) url.searchParams.set("q", q);
-  if (dateFrom) url.searchParams.set("dateFrom", dateFrom);
-  if (dateTo) url.searchParams.set("dateTo", dateTo);
-  if (pay) url.searchParams.set("pay", pay);
-  if (status) url.searchParams.set("status", status);
   if (sort) url.searchParams.set("sort", sort);
+  if (dir)  url.searchParams.set("dir", dir);
+  if (filters.from)   url.searchParams.set("from", filters.from);
+  if (filters.to)     url.searchParams.set("to",   filters.to);
+  if (filters.status) url.searchParams.set("status", filters.status);
 
-  try{
-    const r = await fetch(url, { headers });
-    if (!r.ok) throw new Error("load failed");
-    const data = await r.json();
-    renderTable(data.items || data.data || [], data.total || data.count || 0);
-  }catch{
-    // fallback демо-дані якщо API ще не готовий
-    const demo = [
-      { id:1, date:"2025-10-22", client:"Анна П.", item:"Ноутбук", qty:1, price:24000, pay:"Готівка", status:"Завершено" },
-      { id:2, date:"2025-10-21", client:"Микола С.", item:"Монітор", qty:2, price:32000, pay:"Картка", status:"Завершено" },
-    ];
-    renderTable(demo, demo.length);
+  let out;
+  try { out = await apiFetch(url.href, { headers: { "Authorization": `Bearer ${token}` } }); }
+  catch (e) { console.error(e); $("#salesTbody").innerHTML = `<tr><td colspan="8" class="err">Немає з'єднання з API</td></tr>`; return; }
+
+  const { res } = out;
+  if (res.status === 401) { alert("Сесія завершилась. Увійдіть знову."); localStorage.removeItem('token'); location.href="index.html"; return; }
+  if (!res.ok) { const txt = await res.text().catch(()=> ""); $("#salesTbody").innerHTML = `<tr><td colspan="8" class="err">Помилка API: ${res.status}${txt?` — ${txt}`:""}</td></tr>`; return; }
+
+  const { items, total } = await res.json();
+  renderTable(items);
+  renderPager(total);
+}
+
+function renderTable(items) {
+  const tbody = $("#salesTbody");
+  tbody.innerHTML = "";
+  if (!items || !items.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;opacity:.7">Нічого не знайдено</td></tr>`;
+    return;
+  }
+
+  for (const s of items) {
+    const id          = s.id ?? s.saleId ?? s.SaleId;
+    const date        = s.date ?? s.Date ?? s.createdAt;
+    const clientName  = s.clientName ?? s.clientFullName ?? s.ClientName ?? s.Client ?? "";
+    const productName = s.productName ?? s.ProductName ?? s.Product ?? "";
+    const quantity    = s.quantity ?? s.Qty ?? s.Quantity ?? 1;
+    const totalPrice  = s.totalPrice ?? s.total ?? s.amount ?? s.Price ?? 0;
+    const payment     = s.payment ?? s.Payment ?? s.paymentMethod ?? "";
+    const status      = s.status ?? s.Status ?? "";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fmtDate(date)}</td>
+      <td>${clientName}</td>
+      <td>${productName}</td>
+      <td style="text-align:center">${quantity}</td>
+      <td style="text-align:right">${fmtMoney(totalPrice)}</td>
+      <td>${payment}</td>
+      <td class="${statusClass(status)}">${statusText(status)}</td>
+      <td class="actions">
+        <div class="row-actions">
+          <button class="menu-btn" data-id="${id}" title="Дії" aria-haspopup="menu">⋯</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
   }
 }
 
-function renderTable(rows, total){
-  const body = el("salesBody");
-  body.innerHTML = rows.map(r=>`
-    <tr data-id="${r.id}">
-      <td>${new Date(r.date || r.createdAt || Date.now()).toLocaleDateString("uk-UA")}</td>
-      <td>${r.client ?? r.customer ?? ""}</td>
-      <td>${r.item ?? r.product ?? ""}</td>
-      <td>${r.qty ?? r.quantity ?? 1}</td>
-      <td>${num(r.price)}</td>
-      <td>${r.pay ?? r.payment ?? ""}</td>
-      <td class="${(r.status||"").includes("Заверш")?"ok":(r.status||"").includes("оброб")?"warn":""}">${r.status ?? ""}</td>
-      <td>...</td>
-    </tr>
-  `).join("");
+function statusClass(v){
+  switch((v||"").toLowerCase()){
+    case "done": case "завершено": return "status-done";
+    case "processing": case "в обробці": return "status-processing";
+    case "cancelled": case "скасовано": return "status-cancelled";
+    default: return "";
+  }
+}
+function statusText(v){
+  const s = (v||"").toLowerCase();
+  if (s==="done") return "Завершено";
+  if (s==="processing") return "В обробці";
+  if (s==="cancelled") return "Скасовано";
+  return v || "";
+}
 
-  // вибір рядка
-  qsa("tr", body).forEach(tr=>{
-    tr.addEventListener("click", ()=>{
-      qsa("tr.selected", body).forEach(x=>x.classList.remove("selected"));
-      tr.classList.add("selected");
-      lastSelectedId = tr.dataset.id;
-      el("btnReceipt").disabled = !lastSelectedId;
-    })
-  });
-
-  // пагінація
+function renderPager(total){
+  const root = $("#pager");
   const pages = Math.max(1, Math.ceil(total / pageSize));
-  const pager = el("pager"); pager.innerHTML = "";
-  for(let p=1;p<=pages;p++){
-    const b = document.createElement("button");
-    b.textContent = p;
-    if (p===page) b.classList.add("active");
-    b.addEventListener("click", ()=>{ page=p; loadSales(); });
-    pager.appendChild(b);
+  page = Math.min(page, pages);
+  let html = `<button class="nav" ${page<=1?"disabled":""} data-page="${page-1}">‹</button>`;
+  for (let p = Math.max(1, page-2); p <= Math.min(pages, page+2); p++){
+    html += `<button class="${p===page?"active":""}" data-page="${p}">${p}</button>`;
   }
+  html += `<button class="nav" ${page>=pages?"disabled":""} data-page="${page+1}">›</button>`;
+  root.innerHTML = html;
 }
 
-/* ====== FILTERS ====== */
-el("btnApply").addEventListener("click", ()=>{ page=1; loadSales(); });
-el("btnReset").addEventListener("click", ()=>{
-  ["q","dateFrom","dateTo","pay","status","sort"].forEach(id=>{ const x=el(id); if(x.tagName==="SELECT") x.selectedIndex=0; else x.value=""; });
+// ===== Row menu (portal) =====
+const portal = document.getElementById("rowMenuPortal");
+let currentMenuAnchor = null;
+
+function openRowMenu(anchorBtn, saleId){
+  if (currentMenuAnchor === anchorBtn && !portal.hidden){ closeRowMenu(); return; }
+  currentMenuAnchor = anchorBtn;
+  portal.innerHTML = `<button role="menuitem" data-act="del" data-id="${saleId}">Видалити продаж</button>`;
+  portal.hidden = false;
+  requestAnimationFrame(()=> {
+    const r = anchorBtn.getBoundingClientRect();
+    const pw = portal.offsetWidth, ph = portal.offsetHeight;
+    let left = Math.min(window.innerWidth - pw - 12, r.right - pw + 2);
+    let top  = Math.min(window.innerHeight - ph - 12, r.bottom + 8);
+    portal.style.left = `${Math.max(12,left)}px`;
+    portal.style.top  = `${Math.max(12,top)}px`;
+  });
+}
+function closeRowMenu(){ portal.hidden = true; currentMenuAnchor = null; }
+
+// ===== CRUD: create + delete =====
+async function createSale(model){
+  const { res } = await apiFetch(`${API}/api/Sales`, {
+    method: "POST",
+    headers: { "Content-Type":"application/json", "Authorization": `Bearer ${token}` },
+    body: JSON.stringify(model)
+  });
+  if (!res.ok){
+    const txt = await res.text().catch(()=> "");
+    throw new Error(`Помилка збереження: ${res.status}${txt?` — ${txt}`:""}`);
+  }
+  return await res.json();
+}
+
+async function deleteSale(id){
+  const { res } = await apiFetch(`${API}/api/Sales/${id}`, {
+    method:"DELETE",
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  if (res.ok) { await loadSales(); } else { alert("Помилка видалення: " + res.status); }
+}
+
+// ===== Events (table) =====
+document.addEventListener("click", (e)=>{
+  const th = e.target.closest("th[data-sort]");
+  if (th){
+    const s = th.dataset.sort;
+    if (sort === s) dir = (dir === "asc" ? "desc" : "asc");
+    else { sort = s; dir = (s==="Date" ? "desc" : "asc"); }
+    page = 1; loadSales(); return;
+  }
+
+  if (e.target.matches("#pager button[data-page]")){
+    const p = +e.target.dataset.page; if (p>0){ page = p; loadSales(); }
+    return;
+  }
+
+  const btnMenu = e.target.closest(".menu-btn");
+  if (btnMenu){
+    const id = +btnMenu.dataset.id;
+    openRowMenu(btnMenu, id);
+    return;
+  }
+
+  const act = e.target.closest("#rowMenuPortal [data-act]");
+  if (act && act.dataset.act === "del"){
+    const id = +act.dataset.id;
+    if (confirm("Видалити продаж?")) deleteSale(id);
+    closeRowMenu(); return;
+  }
+
+  if (!e.target.closest("#rowMenuPortal")) closeRowMenu();
+});
+
+// пошук/фільтри
+$("#q")?.addEventListener("input", debounce(()=>{ page=1; loadSales(); }, 300));
+$("#fApply")?.addEventListener("click", ()=>{
+  filters.from = $("#fFrom")?.value || "";
+  filters.to   = $("#fTo")?.value   || "";
+  filters.status = $("#fStatus")?.value || "";
+  page = 1; loadSales();
+});
+$("#fReset")?.addEventListener("click", ()=>{
+  $("#fFrom").value = $("#fTo").value = ""; $("#fStatus").value = "";
+  filters = {from:"", to:"", status:""}; page=1; loadSales();
+});
+$("#sApply")?.addEventListener("click", ()=>{
+  sort = $("#sortField").value || "Date";
+  dir  = $("#sortDir").value || "desc";
   page=1; loadSales();
 });
-el("q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ page=1; loadSales(); } });
-
-/* ====== RECEIPT (плейсхолдер) ====== */
-el("btnReceipt").addEventListener("click", ()=>{
-  if (!lastSelectedId) return;
-  alert(`Чек буде згенеровано для продажу #${lastSelectedId}. (Реалізуємо пізніше)`);
+$("#sReset")?.addEventListener("click", ()=>{
+  $("#sortField").value="Date"; $("#sortDir").value="desc";
+  sort="Date"; dir="desc"; page=1; loadSales();
 });
 
-/* ====== MODAL + CREATE ====== */
-const modal = el("saleModal");
-function openModal(){ modal.setAttribute("aria-hidden","false"); }
-function closeModal(){ modal.setAttribute("aria-hidden","true"); }
-qsa("[data-close]", modal).forEach(btn=>btn.addEventListener("click", closeModal));
-el("btnCreate").addEventListener("click", ()=>{
-  resetForm();
-  openModal();
-});
-modal.addEventListener("click", e=>{ if (e.target.classList.contains("modal-backdrop")) closeModal(); });
+// ===== MODAL: Зареєструвати продаж =====
+const saleModal = $("#saleModal");
+const saleForm  = $("#saleForm");
+const btnAddSale= $("#btnAddSale");
+const sfCancel  = $("#sfCancel");
+const sfClient  = $("#sfClient");
+const sfClientId= $("#sfClientId");
 
-/* Додавання рядка товару */
-function addItemRow(preset={}){
-  const wrap = el("itemsWrap");
-  const row = document.createElement("div");
-  row.className = "item-row";
-  row.innerHTML = `
-    <input class="p-name" placeholder="Назва товару" list="productsList">
-    <datalist id="productsList"></datalist>
-    <input class="p-qty" type="number" min="1" value="${preset.qty||1}">
-    <input class="p-price" type="number" min="0" step="0.01" value="${preset.price||0}">
-    <div class="sum">${num( (preset.qty||1) * (preset.price||0) )}</div>
-    <button type="button" class="rm">×</button>
-  `;
-  wrap.appendChild(row);
-
-  const qty = qs(".p-qty", row), price = qs(".p-price", row), sum = qs(".sum", row);
-  function recalc(){ sum.textContent = num((+qty.value||0) * (+price.value||0)); }
-  qty.addEventListener("input", recalc); price.addEventListener("input", recalc);
-
-  qs(".rm", row).addEventListener("click", ()=> row.remove());
-  // автопідказка продуктів
-  qs(".p-name", row).addEventListener("input", e=> searchProducts(e.target.value));
+function openSaleModal(){
+  saleForm.reset();
+  const d = new Date();
+  const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+  $("#sfDate").value = `${yyyy}-${mm}-${dd}`;
+  sfClientId.value = "";
+  $("#clientList").innerHTML = "";
+  saleModal.hidden = false;
 }
-el("addItem").addEventListener("click", ()=> addItemRow());
+function closeSaleModal(){ saleModal.hidden = true; }
 
-function resetForm(){
-  el("clientSearch").value = "";
-  el("newClientName").value = "";
-  el("newClientEmail").value = "";
-  el("payType").selectedIndex = 0;
-  el("saleStatus").selectedIndex = 1;
-  el("note").value = "";
-  el("itemsWrap").innerHTML = "";
-  addItemRow();
-}
+btnAddSale?.addEventListener("click", openSaleModal);
+sfCancel?.addEventListener("click", closeSaleModal);
+saleModal?.addEventListener("click", (e)=>{ if (e.target === saleModal) closeSaleModal(); });
 
-/* Пошук клієнтів/продуктів для datalist */
-let clientSuggestTimer = null;
-el("clientSearch").addEventListener("input", e=>{
-  clearTimeout(clientSuggestTimer);
-  clientSuggestTimer = setTimeout(()=> searchClients(e.target.value), 250);
+// автопідказка клієнтів
+sfClient?.addEventListener("input", debounce(async ()=>{
+  const q = sfClient.value.trim();
+  sfClientId.value = "";
+  if (!q || q.length < 2){ $("#clientList").innerHTML = ""; return; }
+  const url = new URL(`/api/Clients`, API);
+  url.searchParams.set("q", q);
+  url.searchParams.set("page", 1);
+  url.searchParams.set("pageSize", 20);
+  const { res } = await apiFetch(url.href, { headers: { "Authorization": `Bearer ${token}` } });
+  if (!res.ok) return;
+  const data = await res.json();
+  const opts = (data.items || []).map(c => `<option value="${c.fullName}" data-id="${c.id}"></option>`).join("");
+  $("#clientList").innerHTML = opts;
+}, 300));
+
+sfClient?.addEventListener("change", ()=>{
+  const val = sfClient.value;
+  const opt = Array.from($("#clientList").options).find(o => o.value === val);
+  sfClientId.value = opt ? opt.dataset.id : "";
 });
 
-async function searchClients(query){
-  if (!query) { el("clientsList").innerHTML=""; return; }
-  try{
-    const r = await fetch(`${API}/api/Clients?search=${encodeURIComponent(query)}&take=8`, { headers });
-    if (!r.ok) throw 0;
-    const data = await r.json();
-    el("clientsList").innerHTML = (data.items||data).map(c=>`<option value="${c.name||c.fullName||c.email||""}"></option>`).join("");
-  }catch{ /* без підказок */ }
-}
-async function searchProducts(query){
-  if (!query) return;
-  try{
-    const r = await fetch(`${API}/api/Products?search=${encodeURIComponent(query)}&take=8`, { headers });
-    if (!r.ok) throw 0;
-    const data = await r.json();
-    qsa("#productsList").forEach(dl=>{
-      dl.innerHTML = (data.items||data).map(p=>`<option value="${p.name||""}"></option>`).join("");
-    });
-  }catch{}
-}
-
-/* Сабміт форми створення продажу */
-el("saleForm").addEventListener("submit", async (e)=>{
+// сабміт (дозволяємо нового клієнта)
+saleForm?.addEventListener("submit", async (e)=>{
   e.preventDefault();
-
-  // хто клієнт?
-  const existingName = el("clientSearch").value.trim();
-  const newName = el("newClientName").value.trim();
-  const newEmail = el("newClientEmail").value.trim();
-
-  const items = qsa(".item-row", el("itemsWrap")).map(r=>{
-    return {
-      name: qs(".p-name", r).value.trim(),
-      qty:  Number(qs(".p-qty", r).value || 0),
-      price:Number(qs(".p-price", r).value || 0)
-    };
-  }).filter(x=>x.name && x.qty>0);
-
-  if (!items.length){ alert("Додайте хоча б один товар"); return; }
-
-  const payload = {
-    client: existingName || newName || "Клієнт",
-    clientEmail: newEmail || null,
-    items,
-    payment: el("payType").value,
-    status: el("saleStatus").value,
-    note: el("note").value || null
-  };
+  const submitBtn = saleForm.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
 
   try{
-    const r = await fetch(`${API}/api/Sales`, { method:"POST", headers, body:JSON.stringify(payload) });
-    if (!r.ok) throw new Error(await r.text());
-    closeModal();
+    const dateRaw = $("#sfDate").value;
+    // IMPORTANT: for date-only inputs (YYYY-MM-DD) DO NOT use toISOString().
+    // toISOString() converts local time to UTC and can shift the calendar day.
+    // We send a "local" date-time string without a timezone (treated as local on the backend).
+    const dateValue = dateRaw ? `${dateRaw}T00:00:00` : new Date().toISOString();
+    const payment = $("#sfPayment").value;
+    const status  = $("#sfStatus").value;
+    const note    = $("#sfNote").value.trim();
+
+    const clientId   = +($("#sfClientId").value || 0);
+    const clientName = $("#sfClient").value.trim();
+    if (!clientId && !clientName){ alert("Вкажи клієнта: або обери зі списку, або введи ім’я нового."); return; }
+
+    const name  = $("#sfProduct").value.trim();
+    const qty   = Math.max(1, +$("#sfQty").value || 1);
+    const price = Math.max(0, +$("#sfPrice").value || 0);
+
+    const model = {
+      clientId: clientId || null,
+      clientName: clientId ? null : clientName, // якщо немає id — передаємо ім’я для створення
+      date: dateValue,
+      payment,
+      status,
+      note,
+      item: { name, qty, price },
+      upsertService: true // підказка бекенду додати сервіс
+    };
+
+    await createSale(model);
+    // success: закриваємо модалку, оновлюємо список
+    closeSaleModal();
     page = 1;
-    loadSales();
+    await loadSales();
   }catch(err){
-    alert("Помилка збереження продажу.\n" + (err?.message || ""));
+    alert(err.message || "Помилка збереження");
+  }finally{
+    submitBtn.disabled = false; // важливо: розблокувати кнопку
   }
 });
 
-/* ====== INIT ====== */
+// авто-відкриття модалки за запитом з дашборда
+(() => {
+  const key = localStorage.getItem("openModal");
+  if (!key) return;
+  localStorage.removeItem("openModal");
+  if (key === "sale")   document.getElementById("btnAddSale")?.click();
+  if (key === "repair") document.getElementById("btnAddRepair")?.click();
+  if (key === "client") document.getElementById("btnAddClient")?.click();
+})();
+
+// ===== init =====
 loadSales();
