@@ -3,8 +3,8 @@ name: FTP deploy on push
 on:
   push:
     branches:
-      - dev
       - main
+      - dev
 
 jobs:
   web-deploy:
@@ -21,3 +21,4 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftp
