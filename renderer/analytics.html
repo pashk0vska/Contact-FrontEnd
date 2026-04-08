@@ -1,21 +1,14 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="uk">
 <head>
-    <meta charset="utf-8" />
-    <title>Аналітика</title>
+    <meta charset="utf-8" /><title>Аналітика</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./dashboard.css">
-    <link rel="stylesheet" href="./analytics.css">
+    <link rel="stylesheet" href="./dashboard.css"><link rel="stylesheet" href="./analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="layout">
-        <!-- APPBAR -->
-        <header class="appbar">
-            <img src="./logo.jpg" alt="Контакт" class="brand-logo" />
-            <div class="today" id="today"></div>
-        </header>
-
-        <!-- SIDEBAR -->
+        <header class="appbar"><img src="./logo.jpg" alt="Контакт" class="brand-logo" /><div class="today" id="today"></div></header>
         <aside class="sidebar">
             <div class="menu-title">МЕНЮ</div>
             <nav class="menu">
@@ -26,145 +19,46 @@
                 <a href="./products.html"><img class="ico" src="./icons/products.png" alt=""><span>Конфігуратор ПК</span></a>
                 <a class="active"><img class="ico" src="./icons/analytics.png" alt=""><span>Аналітика</span></a>
             </nav>
-
             <div class="menu-title small">ІНШЕ</div>
             <nav class="menu">
                 <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
-                <a><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a href="./settings.html"><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
                 <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
             </nav>
         </aside>
-
-        <!-- MAIN -->
         <main class="main analytics">
             <h1 class="page-title">Аналітика</h1>
-
-            <!-- Toolbar -->
             <div class="toolbar">
                 <div class="left">
-                    <div class="range">
-                        <label>
-                            З
-                            <input id="fromDate" type="date">
-                        </label>
-                        <label>
-                            По
-                            <input id="toDate" type="date">
-                        </label>
-                    </div>
-
-                    <details class="dropdown">
-                        <summary class="btn btn-ghost">Тип даних</summary>
+                    <div class="range"><label>З <input id="fromDate" type="date"></label><label>По <input id="toDate" type="date"></label></div>
+                    <details class="dropdown"><summary class="btn btn-ghost">Тип даних</summary>
                         <div class="dropdown-menu narrow">
-                            <label>
-                                Показати
-                                <select>
-                                    <option>Продачі + Ремонти</option>
-                                    <option>Лише продажі</option>
-                                    <option>Лише ремонти</option>
-                                </select>
-                            </label>
-                            <label>
-                                Агрегація
-                                <select>
-                                    <option>День</option>
-                                    <option>Тиждень</option>
-                                    <option>Місяць</option>
-                                    <option>Рік</option>
-                                </select>
-                            </label>
-                            <div class="dropdown-actions">
-                                <button id="resetBtn" class="btn btn-ghost" type="button">Скинути</button>
-                                <button id="applyBtn" class="btn" type="button">Застосувати</button>
-                            </div>
-                        </div>
-                    </details>
+                            <label>Показати<select><option>Продажі + Ремонти</option><option>Лише продажі</option><option>Лише ремонти</option></select></label>
+                            <div class="dropdown-actions"><button id="resetBtn" class="btn btn-ghost">Скинути</button><button id="applyBtn" class="btn">Застосувати</button></div></div></details>
                 </div>
-
                 <div class="right">
-                    <button class="btn btn-ghost" type="button">Експорт CSV</button>
-                    <button class="btn" type="button">Звіт (PDF)</button>
+                    <button id="btnExportCSV" class="btn btn-ghost" type="button">Експорт CSV</button>
+                    <button id="btnExportPDF" class="btn" type="button">Звіт (PDF)</button>
                 </div>
             </div>
-
-            <!-- KPI -->
             <section class="grid kpi">
-                <div class="card">
-                    <div class="title">Дохід за період</div>
-                    <div class="value" id="kpiIncome">₴ 0</div>
-                </div>
-                <div class="card">
-                    <div class="title">К-ть продажів</div>
-                    <div class="value" id="kpiSalesCount">0</div>
-                </div>
-                <div class="card">
-                    <div class="title">К-ть ремонтів</div>
-                    <div class="value" id="kpiRepairsCount">0</div>
-                </div>
-                <div class="card">
-                    <div class="title">Сер. чек</div>
-                    <div class="value" id="kpiAvgCheck">₴ 0</div>
-                </div>
-                <div class="card">
-                    <div class="title">Прибуток (оцінка)</div>
-                    <div class="value" id="kpiProfit">₴ 0</div>
-                </div>
-                <div class="card">
-                    <div class="title">Нових клієнтів</div>
-                    <div class="value" id="kpiNewClients">0</div>
-                </div>
+                <div class="card"><div class="title">Дохід за період</div><div class="value" id="kpiIncome">₴ 0</div></div>
+                <div class="card"><div class="title">К-ть продажів</div><div class="value" id="kpiSalesCount">0</div></div>
+                <div class="card"><div class="title">К-ть ремонтів</div><div class="value" id="kpiRepairsCount">0</div></div>
+                <div class="card"><div class="title">Сер. чек</div><div class="value" id="kpiAvgCheck">₴ 0</div></div>
+                <div class="card"><div class="title">Прибуток (оцінка)</div><div class="value" id="kpiProfit">₴ 0</div></div>
+                <div class="card"><div class="title">Нових клієнтів</div><div class="value" id="kpiNewClients">0</div></div>
             </section>
-
-            <!-- Charts + Table -->
             <section class="split">
-                <div class="panel">
-                    <h3>Продажі за 30 днів</h3>
-                    <div class="chart-box">
-                        <!-- плейсхолдер під майбутній графік -->
-                        <svg viewBox="0 0 100 32" preserveAspectRatio="none" class="spark">
-                            <polyline fill="none" stroke="#1fe26a" stroke-width="2"
-                                      points="0,20 8,22 16,18 24,24 32,16 40,18 48,12 56,14 64,10 72,12 80,8 88,9 96,6" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <h3>Прибуток за 12 місяців</h3>
-                    <div class="chart-box">
-                        <div class="bars">
-                            <span style="height:35%"></span>
-                            <span style="height:55%"></span>
-                            <span style="height:40%"></span>
-                            <span style="height:65%"></span>
-                            <span style="height:48%"></span>
-                            <span style="height:75%"></span>
-                            <span style="height:58%"></span>
-                            <span style="height:82%"></span>
-                            <span style="height:50%"></span>
-                            <span style="height:70%"></span>
-                            <span style="height:60%"></span>
-                            <span style="height:90%"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel wide">
-                    <h3>ТОП-10 продуктів</h3>
-                    <div class="table-wrap">
-                        <table class="table">
-                            <thead>
-                                <tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr>
-                            </thead>
-                            <tbody id="topTbody">
-                                <tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="panel"><h3>Продажі за період (ТОП товарів)</h3><div class="chart-box"><canvas id="salesChartCanvas"></canvas></div></div>
+                <div class="panel"><h3>Кількість (ТОП товарів)</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
+                <div class="panel wide"><h3>ТОП-10 продуктів</h3>
+                    <div class="table-wrap"><table class="table"><thead><tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr></thead><tbody id="topTbody"><tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr></tbody></table></div>
                 </div>
             </section>
         </main>
     </div>
-
+    <script src="./common.js"></script>
     <script src="./analytics.js"></script>
 </body>
 </html>
