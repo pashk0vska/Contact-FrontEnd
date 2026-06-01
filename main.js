@@ -7,7 +7,7 @@ function createWindow(){
     show: false,
     autoHideMenuBar: true
   });
-  win.loadFile('renderer/index.html');
+  win.loadFile('renderer/dashboard.html');
   win.once('ready-to-show', () => {
     win.maximize();   // розгортаємо
     win.show();       // показуємо без “мигання” розміру
