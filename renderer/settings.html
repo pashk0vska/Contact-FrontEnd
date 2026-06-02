@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Налаштування</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./dashboard.css"><link rel="stylesheet" href="./analytics.css">
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="./logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
+                <a class="active"><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+            </nav>
+                    <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main analytics" style="padding-top:16px;">
+            <h1 class="page-title">Налаштування</h1>
+            <section class="split" style="margin-top:0;align-content:start">
+                <div class="panel">
+                    <h3>Резервне копіювання БД</h3>
+                    <p style="margin:0 0 16px;opacity:.8;line-height:1.5">Створіть резервну копію бази даних у форматі JSON. Ви зможете відновити її пізніше.</p>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap">
+                        <button id="btnBackup" class="btn" type="button">Зробити бекап</button>
+                        <label class="btn btn-ghost" style="cursor:pointer">Відновити з файлу
+                            <input id="fileRestore" type="file" accept=".json" style="display:none">
+                        </label>
+                    </div>
+                    <div id="backupStatus" style="margin-top:12px"></div>
+                </div>
+                <div class="panel">
+                    <h3>Інформація про систему</h3>
+                    <p style="margin:0;opacity:.8;line-height:1.8">
+                        <strong>Версія:</strong> 1.0.0 (Фінальний реліз)<br>
+                        <strong>Бекенд:</strong> .NET 8 Web API<br>
+                        <strong>Фронтенд:</strong> Electron + Vanilla JS<br>
+                        <strong>БД:</strong> MariaDB / MySQL<br>
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="./common.js"></script>
+    <script src="./settings.js"></script>
+</body>
+</html>
