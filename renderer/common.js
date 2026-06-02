@@ -268,3 +268,29 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 });
+<<<<<<< HEAD
+
+
+/* ===== Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ===== */
+const CONFIGURATOR_URL = "https://configurator.example.com"; // TODO: замінити на реальний URL конфігуратора
+function _roleLabel(r){const m={superadmin:'Власник',admin:'Адміністратор',master:'Майстер',user:'Користувач'};return m[(r||'').toLowerCase()]||'Користувач';}
+function _initials(n){return (n||'').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase()||'?';}
+document.addEventListener('DOMContentLoaded', function(){
+  const cfg = document.getElementById('btnConfigurator');
+  if (cfg) cfg.addEventListener('click', function(e){ e.preventDefault(); window.open(CONFIGURATOR_URL, '_blank'); });
+  const token = localStorage.getItem('token');
+  if (token){
+    try{
+      const [,p] = token.split('.');
+      const bin = atob(p.replace(/-/g,'+').replace(/_/g,'/'));
+      const j = JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(bin, c=>c.charCodeAt(0))));
+      const name = j.username||j.name||j.unique_name||j.sub||'Користувач';
+      const role = j.role||j.Role||'';
+      const nm=document.getElementById('sideProfileName'); if(nm) nm.textContent=name;
+      const rl=document.getElementById('sideProfileRole'); if(rl) rl.textContent=_roleLabel(role);
+      const av=document.getElementById('sideProfileAvatar'); if(av) av.textContent=_initials(name);
+    }catch(e){}
+  }
+});
+=======
+>>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8

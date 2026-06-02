@@ -1,4 +1,23 @@
+<<<<<<< HEAD
+const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
+let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
+async function apiFetch(path, init = {}) {
+  const tryOnce = async (base) => {
+    const url = path.startsWith("http") ? path : `${base}${path}`;
+    return { res: await fetch(url, init), base };
+  };
+  try { return await tryOnce(API); }
+  catch {
+    for (const c of API_CANDIDATES) {
+      if (c === API) continue;
+      try { const out = await tryOnce(c); localStorage.setItem("apiBase", c); API = c; return out; } catch {}
+    }
+    throw new Error("API is not reachable");
+  }
+}
+=======
 const API  = "http://localhost:5101";
+>>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
 const form = document.getElementById("fpForm");
 const msg  = document.getElementById("msg");
 const btn  = form.querySelector('button[type="submit"]');
@@ -15,7 +34,11 @@ form.addEventListener("submit", async (e)=>{
 
   try{
     btn.disabled = true;
+<<<<<<< HEAD
+    const { res } = await apiFetch(`/api/Users/reset-password`, {
+=======
     const res = await fetch(`${API}/api/Users/reset-password`, {
+>>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ username: u, recoveryKey: key, newPassword: p })

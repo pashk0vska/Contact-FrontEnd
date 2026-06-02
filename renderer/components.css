@@ -140,3 +140,22 @@ button[data-loading="true"],button:disabled{opacity:.6;cursor:not-allowed;pointe
 /* ===== SETTINGS/PRODUCTS PANELS CLOSER TO TITLE ===== */
 .main.analytics .split { margin-top: 0 !important; }
 .main.analytics .page-title { margin-bottom: 12px !important; }
+<<<<<<< HEAD
+
+
+/* ===== APPBAR RIGHT + CONFIGURATOR BUTTON (header) ===== */
+.appbar-right{display:flex;align-items:center;gap:16px;}
+.btn-config{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#1fe26a;border:1px solid #1fe26a;border-radius:22px;font-weight:700;padding:9px 16px;cursor:pointer;font-size:14px;white-space:nowrap;}
+.btn-config:hover{background:rgba(31,226,106,.10);}
+.btn-config::before{content:'\2699';font-size:15px;line-height:1;}
+
+/* ===== SIDEBAR PROFILE (bottom) ===== */
+.sidebar{display:flex;flex-direction:column;}
+.side-profile{margin-top:auto;display:flex;align-items:center;gap:12px;padding:12px;border-top:1px solid var(--border,#22303b);}
+.sp-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;}
+.sp-meta{min-width:0;}
+.sp-name{font-weight:700;font-size:14px;color:#e6e6e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-role{font-size:12px;color:#9aa4ad;}
+@media (max-width:1200px){.side-profile{justify-content:center}.sp-meta{display:none}}
+=======
+>>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8

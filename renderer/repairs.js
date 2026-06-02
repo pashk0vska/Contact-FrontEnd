@@ -66,7 +66,11 @@ function renderKanban(items){
     for(const r of cols[key]){
       const card=document.createElement("div");card.className="kanban-card";card.draggable=true;card.dataset.id=r.id;
       const isDone=(r.status||"").toLowerCase()==="done";
+<<<<<<< HEAD
+      card.innerHTML=`<div class="kc-header"><strong>#${r.id}</strong><span>${fmtDate(r.date)}</span></div><div class="kc-client">${r.clientName||""}</div><div class="kc-device">${r.device||""}</div><div class="kc-problem">${r.problem||""}</div><div class="kc-price">${fmtMoney(r.price)}</div><div class="kc-actions"><button class="btn-sm" data-act="edit" data-id="${r.id}">Редагувати</button>${isDone?`<button class="btn-sm" data-act="createSale" data-id="${r.id}">Продаж</button>`:""}<button class="btn-sm" data-act="receipt" data-id="${r.id}">Чек</button></div>`;
+=======
       card.innerHTML=`<div class="kc-header"><strong>#${r.id}</strong><span>${fmtDate(r.date)}</span></div><div class="kc-client">${r.clientName||""}</div><div class="kc-device">${r.device||""}</div><div class="kc-problem">${r.problem||""}</div><div class="kc-price">${fmtMoney(r.price)}</div><div class="kc-actions"><button class="btn-sm" data-act="edit" data-id="${r.id}">Редагувати</button>${isDone?`<button class="btn-sm" data-act="createSale" data-id="${r.id}">Чек</button>`:""}<button class="btn-sm" data-act="receipt" data-id="${r.id}">Чек</button></div>`;
+>>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
       card.addEventListener("dragstart",(ev)=>{ev.dataTransfer.setData("text/plain",r.id);card.classList.add("dragging");});
       card.addEventListener("dragend",()=>{card.classList.remove("dragging");});
       cardsEl.appendChild(card);
