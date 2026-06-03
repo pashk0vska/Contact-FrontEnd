@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Користувачі</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./dashboard.css"><link rel="stylesheet" href="./users.css">
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="./logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
+                <a class="active" data-page="users"><svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Користувачі</span></a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
+                <a href="./settings.html"><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main users">
+            <h1 class="page-title">Користувачі</h1>
+            <p class="muted-hint" id="roleHint"></p>
+            <div class="toolbar">
+                <div class="left"></div>
+                <div class="right"><button id="btnAddUser" class="btn" type="button">Додати користувача</button></div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="table-users">
+                    <thead><tr><th>ID</th><th>Логін</th><th>Email</th><th>Роль</th><th>Дії</th></tr></thead>
+                    <tbody id="usersTbody"><tr><td colspan="5" style="opacity:.7">Завантаження…</td></tr></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create user modal -->
+    <div id="userModal" class="modal-layer" hidden>
+        <div class="modal-card">
+            <form id="userForm" class="card" autocomplete="off">
+                <h2 class="card-title">Новий користувач</h2>
+                <div class="row two">
+                    <div class="field"><label for="ufUsername">Логін *</label><input id="ufUsername" type="text" required></div>
+                    <div class="field"><label for="ufRole">Роль *</label><select id="ufRole" required></select></div>
+                </div>
+                <div class="row"><div class="field"><label for="ufEmail">Email *</label><input id="ufEmail" type="email" required></div></div>
+                <div class="row"><div class="field"><label for="ufPassword">Пароль *</label><input id="ufPassword" type="password" required minlength="6"></div></div>
+                <div class="actions"><button type="button" class="btn-ghost" id="ufCancel">Скасувати</button><button type="submit" class="btn">Створити</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change role modal (superadmin only) -->
+    <div id="roleModal" class="modal-layer" hidden>
+        <div class="modal-card">
+            <form id="roleForm" class="card" autocomplete="off">
+                <h2 class="card-title">Змінити роль</h2>
+                <input id="rfUserId" type="hidden">
+                <div class="row"><div class="field"><label id="rfUserLabel">Користувач</label><select id="rfRole"><option value="admin">Адміністратор</option><option value="master">Майстер</option></select></div></div>
+                <div class="actions"><button type="button" class="btn-ghost" id="rfCancel">Скасувати</button><button type="submit" class="btn">Зберегти</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./common.js"></script>
+    <script src="./users.js"></script>
+</body>
+</html>

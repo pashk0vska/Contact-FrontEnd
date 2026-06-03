@@ -1,0 +1,146 @@
+/* ===== USERS PAGE ===== */
+.users .page-title {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: .2px;
+    margin: 0 0 16px 0;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+    .toolbar .left { display: flex; align-items: center; gap: 10px; }
+    .toolbar .right { display: flex; align-items: center; }
+
+.btn-ghost {
+    background: transparent;
+    color: #e7ecef;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.muted-hint { color: #9aa4ad; font-size: 13px; margin: 0 0 14px; }
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; overflow-y: visible; }
+
+.table-users {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    .table-users thead th, .table-users tbody td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+        height: 56px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .table-users thead th { color: #9adf9f; font-weight: 700; }
+    .table-users tbody tr { background: rgba(255,255,255,0.02); }
+    .table-users tbody tr:hover { background: #142029; }
+
+    .table-users th:nth-child(1), .table-users td:nth-child(1) { width: 8%; }
+    .table-users th:nth-child(2), .table-users td:nth-child(2) { width: 24%; }
+    .table-users th:nth-child(3), .table-users td:nth-child(3) { width: 30%; }
+    .table-users th:nth-child(4), .table-users td:nth-child(4) { width: 18%; }
+    .table-users th:nth-child(5), .table-users td:nth-child(5) { width: 20%; text-align: right; }
+
+.row-actions { display: inline-flex; gap: 8px; justify-content: flex-end; }
+
+.btn-mini {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #e6e6e6;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+    .btn-mini:hover { border-color: #1fe26a; color: #1fe26a; }
+    .btn-mini.danger { border-color: rgba(226,64,64,.5); color: #e87a7a; }
+    .btn-mini.danger:hover { border-color: #e24040; color: #ff6b6b; background: rgba(226,64,64,.10); }
+
+/* ===== ROLE BADGES ===== */
+.role-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    border: 1px solid transparent;
+}
+    .role-badge.superadmin { color: #2a1145; background: #cdb4ff; border-color: #9a6cf0; }
+    .role-badge.admin      { color: #0d2717; background: #81f29a; border-color: #3aa95a; }
+    .role-badge.master     { color: #fff;    background: #184054; border-color: #255a73; }
+
+/* ===== MODAL ===== */
+.modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,.45);
+}
+    .modal-layer[hidden] { display: none; }
+
+.modal-card { max-width: 92vw; min-width: 460px; }
+
+.modal-layer .card {
+    background: var(--panel);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 18px 42px rgba(0,0,0,.45);
+}
+
+.card-title { font-size: 18px; margin: 0 0 12px; }
+
+.modal-layer .row { display: grid; gap: 12px; }
+    .modal-layer .row.two { grid-template-columns: 1fr 1fr; }
+
+.modal-layer .field label { display: block; font-size: 12px; opacity: .75; margin-bottom: 6px; }
+.modal-layer .field input, .modal-layer .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+}
+
+.modal-layer .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
+
+.modal-layer .btn {
+    background: linear-gradient(180deg,#00B712,#158a45);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+    .modal-layer .btn:hover { filter: brightness(1.1); }
+
+.modal-layer .btn-ghost {
+    background: transparent;
+    color: #00b712;
+    border: 1px solid #00b712;
+    border-radius: 10px;
+}
+    .modal-layer .btn-ghost:hover { background: rgba(0,183,18,0.08); }

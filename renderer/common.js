@@ -307,15 +307,36 @@ function applyRoleGating(){
   if (document.body) document.body.dataset.role = role || 'guest';
 }
 
-/** master не має доступу до Аналітики/Налаштувань — якщо зайшов напряму, повертаємо на дашборд. */
+/** master не має доступу до Аналітики/Налаштувань/Користувачів — якщо зайшов напряму, повертаємо на дашборд. */
 function guardPageByRole(){
   const role = getUserRole();
   if (role === 'master') {
     const path = (location.pathname || '').toLowerCase();
-    if (path.endsWith('analytics.html') || path.endsWith('settings.html')) {
+    if (path.endsWith('analytics.html') || path.endsWith('settings.html') || path.endsWith('users.html')) {
       location.replace('dashboard.html');
     }
   }
+}
+
+/**
+ * Динамічно додає пункт «Користувачі» у сайдбар (тільки для superadmin/admin).
+ * Так не треба правити кожну HTML-сторінку. На самій users.html лінк уже статичний —
+ * тоді ін'єкція не дублює його (перевірка наявності).
+ */
+function injectUsersLink(){
+  const role = getUserRole();
+  if (role !== 'superadmin' && role !== 'admin') return;
+  const menu = document.querySelector('.sidebar .menu');
+  if (!menu) return;
+  if (document.querySelector('.sidebar a[href$="users.html"]') || menu.querySelector('a.active[data-page="users"]')) return;
+
+  const a = document.createElement('a');
+  a.href = './users.html';
+  a.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Користувачі</span>';
+
+  const analytics = menu.querySelector('a[href$="analytics.html"]');
+  if (analytics) analytics.insertAdjacentElement('afterend', a);
+  else menu.appendChild(a);
 }
 
 // ─── 11. Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ─────────────
@@ -323,6 +344,7 @@ const CONFIGURATOR_URL = "https://configurator.example.com"; // TODO: замін
 document.addEventListener('DOMContentLoaded', function(){
   applyRoleGating();
   guardPageByRole();
+  injectUsersLink();
 
   const cfg = document.getElementById('btnConfigurator');
   if (cfg) cfg.addEventListener('click', function(e){ e.preventDefault(); window.open(CONFIGURATOR_URL, '_blank'); });
