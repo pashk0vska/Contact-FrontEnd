@@ -1,4 +1,4 @@
-﻿/**
+/**
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
@@ -9,6 +9,7 @@
  *  checkSessionTimeout()
  *  initHotkeys()
  *  checkAutoOpen()   — для ?action=add
+ *  getUserRole()     — роль користувача (superadmin/admin/master)
  */
 
 // ─── 0. Підключаємо компоненти.css якщо не підключено ──────────────────────
@@ -157,6 +158,7 @@ function checkSessionTimeout() {
       showToast('error', 'Сесія завершена. Виконується вихід…', 3000);
       setTimeout(() => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         location.href = './index.html';
       }, 2000);
       return;
@@ -263,21 +265,68 @@ document.addEventListener('DOMContentLoaded', function(){
     newBtn.addEventListener('click', function(e){
       e.preventDefault();
       confirmAction('Ви впевнені, що хочете вийти?', function(ok){
-        if(ok){ localStorage.removeItem('token'); location.href = 'index.html'; }
+        if(ok){ localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = 'index.html'; }
       });
     });
   }
 });
-<<<<<<< HEAD
 
+// ─── 10. РОЛІ (superadmin / admin / master) ────────────────────────────────
+/**
+ * Повертає роль користувача у нижньому регістрі.
+ * Спершу зі збереженого localStorage('role') (кладеться при логіні),
+ * у запасному варіанті — з JWT (claim role).
+ */
+function getUserRole() {
+  const stored = (localStorage.getItem('role') || '').toLowerCase();
+  if (stored) return stored;
+  const token = localStorage.getItem('token');
+  if (!token) return '';
+  try {
+    const [, p] = token.split('.');
+    const bin = atob(p.replace(/-/g, '+').replace(/_/g, '/'));
+    const j = JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(bin, c => c.charCodeAt(0))));
+    const role = j.role || j.Role
+      || j['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || '';
+    return String(role).toLowerCase();
+  } catch { return ''; }
+}
+window.getUserRole = getUserRole;
 
-/* ===== Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ===== */
+function _roleLabel(r){
+  const m = { superadmin:'Власник', admin:'Адміністратор', master:'Майстер', user:'Користувач' };
+  return m[(r||'').toLowerCase()] || 'Користувач';
+}
+function _initials(n){
+  return (n||'').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase() || '?';
+}
+
+/** Гейтинг UI за роллю: ставить body[data-role], решту робить CSS (components.css). */
+function applyRoleGating(){
+  const role = getUserRole();
+  if (document.body) document.body.dataset.role = role || 'guest';
+}
+
+/** master не має доступу до Аналітики/Налаштувань — якщо зайшов напряму, повертаємо на дашборд. */
+function guardPageByRole(){
+  const role = getUserRole();
+  if (role === 'master') {
+    const path = (location.pathname || '').toLowerCase();
+    if (path.endsWith('analytics.html') || path.endsWith('settings.html')) {
+      location.replace('dashboard.html');
+    }
+  }
+}
+
+// ─── 11. Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ─────────────
 const CONFIGURATOR_URL = "https://configurator.example.com"; // TODO: замінити на реальний URL конфігуратора
-function _roleLabel(r){const m={superadmin:'Власник',admin:'Адміністратор',master:'Майстер',user:'Користувач'};return m[(r||'').toLowerCase()]||'Користувач';}
-function _initials(n){return (n||'').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase()||'?';}
 document.addEventListener('DOMContentLoaded', function(){
+  applyRoleGating();
+  guardPageByRole();
+
   const cfg = document.getElementById('btnConfigurator');
   if (cfg) cfg.addEventListener('click', function(e){ e.preventDefault(); window.open(CONFIGURATOR_URL, '_blank'); });
+
   const token = localStorage.getItem('token');
   if (token){
     try{
@@ -285,12 +334,10 @@ document.addEventListener('DOMContentLoaded', function(){
       const bin = atob(p.replace(/-/g,'+').replace(/_/g,'/'));
       const j = JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(bin, c=>c.charCodeAt(0))));
       const name = j.username||j.name||j.unique_name||j.sub||'Користувач';
-      const role = j.role||j.Role||'';
+      const role = getUserRole();
       const nm=document.getElementById('sideProfileName'); if(nm) nm.textContent=name;
       const rl=document.getElementById('sideProfileRole'); if(rl) rl.textContent=_roleLabel(role);
       const av=document.getElementById('sideProfileAvatar'); if(av) av.textContent=_initials(name);
     }catch(e){}
   }
 });
-=======
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8

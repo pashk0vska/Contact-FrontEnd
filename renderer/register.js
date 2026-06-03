@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
 async function apiFetch(path, init = {}) {
@@ -15,9 +14,6 @@ async function apiFetch(path, init = {}) {
     throw new Error("API is not reachable");
   }
 }
-=======
-const API = "http://localhost:5101";
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
 const form = document.getElementById("regForm");
 const msg  = document.getElementById("msg");
 const btn  = form.querySelector('button[type="submit"]');
@@ -37,11 +33,7 @@ form.addEventListener("submit", async (e) => {
 
   try{
     btn.disabled = true;
-<<<<<<< HEAD
     const { res } = await apiFetch(`/api/Users/register`, {
-=======
-    const res = await fetch(`${API}/api/Users/register`, {
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ username: u, email: em, password: p })

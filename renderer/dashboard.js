@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
 async function apiFetch(path, init = {}) {
@@ -15,9 +14,6 @@ async function apiFetch(path, init = {}) {
     throw new Error("API is not reachable");
   }
 }
-=======
-const API = "http://localhost:5101";
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
 const token = localStorage.getItem("token");
 if (!token) { location.href = "index.html"; }
 const headers = { "Authorization": `Bearer ${token}` };
@@ -31,16 +27,12 @@ if (todayEl) {
 
 // Username
 function usernameFromToken(jwt){
-<<<<<<< HEAD
   try{ const [,payload]=jwt.split(".");const bin=atob(payload.replace(/-/g,"+").replace(/_/g,"/"));const json=JSON.parse(new TextDecoder("utf-8").decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));return json.username||json.name||json.unique_name||json.sub||null;}catch{return null;}
-=======
-  try{ const [,payload]=jwt.split(".");const json=JSON.parse(atob(payload.replace(/-/g,"+").replace(/_/g,"/")));return json.username||json.name||json.unique_name||json.sub||null;}catch{return null;}
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
 }
 const whoEl = document.getElementById("who");
 if (whoEl) whoEl.textContent = usernameFromToken(token) || "користувачу";
 
-document.getElementById("logout")?.addEventListener("click",()=>{localStorage.removeItem("token");location.href="index.html";});
+document.getElementById("logout")?.addEventListener("click",()=>{localStorage.removeItem("token");localStorage.removeItem("role");location.href="index.html";});
 
 const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
@@ -53,11 +45,7 @@ function render(d = {}) {
 }
 
 async function loadDashboard() {
-<<<<<<< HEAD
   try { const { res: r } = await apiFetch(`/api/Dashboard/summary`,{headers});if(!r.ok)throw new Error(`HTTP ${r.status}`);render(await r.json()); }
-=======
-  try { const r=await fetch(`${API}/api/Dashboard/summary`,{headers});if(!r.ok)throw new Error(`HTTP ${r.status}`);render(await r.json()); }
->>>>>>> 32b556b46fa6ebd6d481b68147b0781037af91e8
   catch(e){ console.error("Dashboard error:",e);render({}); }
 }
 loadDashboard();
@@ -66,4 +54,3 @@ loadDashboard();
 document.getElementById("quickSale")?.addEventListener("click",()=>{window.location.href="sales.html?action=add";});
 document.getElementById("quickRepair")?.addEventListener("click",()=>{window.location.href="repairs.html?action=add";});
 document.getElementById("quickClient")?.addEventListener("click",()=>{window.location.href="clients.html?action=add";});
-

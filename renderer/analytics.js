@@ -1,7 +1,7 @@
 const todayText = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${todayText}`;
 const token = localStorage.getItem('token'); if (!token) location.href = 'index.html';
-const logoutEl = document.getElementById('logout'); if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); location.href = 'index.html'; });
+const logoutEl = document.getElementById('logout'); if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = 'index.html'; });
 
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
