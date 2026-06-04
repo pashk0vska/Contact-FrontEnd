@@ -319,13 +319,13 @@ function guardPageByRole(){
 }
 
 /**
- * Динамічно додає пункт «Користувачі» у сайдбар (тільки для superadmin/admin).
- * Так не треба правити кожну HTML-сторінку. На самій users.html лінк уже статичний —
- * тоді ін'єкція не дублює його (перевірка наявності).
+ * Динамічно додає пункт «Користувачі» у сайдбар.
+ * superadmin/admin — звичайне посилання; master — теж бачить (його заблокує applyMasterLocks).
+ * На самій users.html лінк уже статичний — тоді ін'єкція не дублює його (перевірка наявності).
  */
 function injectUsersLink(){
   const role = getUserRole();
-  if (role !== 'superadmin' && role !== 'admin') return;
+  if (role !== 'superadmin' && role !== 'admin' && role !== 'master') return;
   const menu = document.querySelector('.sidebar .menu');
   if (!menu) return;
   if (document.querySelector('.sidebar a[href$="users.html"]') || menu.querySelector('a.active[data-page="users"]')) return;
@@ -339,12 +339,38 @@ function injectUsersLink(){
   else menu.appendChild(a);
 }
 
+/**
+ * Для ролі master: показати заблоковані пункти (Аналітика/Налаштування/Користувачі)
+ * напівпрозорими з замком і заборонити перехід. Викликати ПІСЛЯ injectUsersLink.
+ */
+function applyMasterLocks(){
+  if (getUserRole() !== 'master') return;
+  const links = document.querySelectorAll(
+    '.sidebar .menu a[href$="analytics.html"], .sidebar .menu a[href$="settings.html"], .sidebar .menu a[href$="users.html"]'
+  );
+  links.forEach(a => {
+    a.classList.add('locked');
+    if (!a.querySelector('.lock')) {
+      const lock = document.createElement('span');
+      lock.className = 'lock';
+      lock.textContent = '🔒';
+      a.appendChild(lock);
+    }
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.showToast) showToast('warning', 'Розділ доступний лише адміністратору');
+    });
+  });
+}
+
 // ─── 11. Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ─────────────
 const CONFIGURATOR_URL = "https://configurator.example.com"; // TODO: замінити на реальний URL конфігуратора
 document.addEventListener('DOMContentLoaded', function(){
   applyRoleGating();
   guardPageByRole();
   injectUsersLink();
+  applyMasterLocks();
 
   const cfg = document.getElementById('btnConfigurator');
   if (cfg) cfg.addEventListener('click', function(e){ e.preventDefault(); window.open(CONFIGURATOR_URL, '_blank'); });

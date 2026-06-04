@@ -157,10 +157,11 @@ button[data-loading="true"],button:disabled{opacity:.6;cursor:not-allowed;pointe
 @media (max-width:1200px){.side-profile{justify-content:center}.sp-meta{display:none}}
 
 /* ===== ROLE GATING (master) =====
-   master не бачить Аналітику/Налаштування, дії видалення та масовий вибір.
-   Бекенд також блокує ці дії (403), це лише прибирає їх з UI. */
-body[data-role="master"] .sidebar .menu a[href$="analytics.html"],
-body[data-role="master"] .sidebar .menu a[href$="settings.html"]{display:none !important;}
+   master бачить Аналітику/Налаштування/Користувачі, але вони "заблоковані":
+   напівпрозорі, з замком 🔒 і без переходу (клік перехоплює common.js).
+   Бекенд також блокує ці ендпоінти (403) — це лише UI. */
+.menu a.locked { opacity: .45; cursor: not-allowed; }
+.menu a.locked .lock { margin-left: auto; font-size: 12px; }
 body[data-role="master"] #btnBulkDelete,
 body[data-role="master"] #btnBulkDeleteSales{display:none !important;}
 body[data-role="master"] .row-menu-portal [data-act="del"]{display:none !important;}

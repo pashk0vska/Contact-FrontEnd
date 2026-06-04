@@ -60,6 +60,51 @@
 
 .row-actions { display: inline-flex; gap: 8px; justify-content: flex-end; }
 
+/* кнопка "Дії" (відкриває портал-меню) */
+.btn-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #1a242b;
+    border: 1px solid var(--border);
+    color: #e7ecef;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+    .btn-actions:hover { background: #26333d; border-color: #3c4b55; }
+    .btn-actions .caret { font-size: 10px; opacity: .8; }
+
+/* портал-меню рядка (як у клієнтів/продажів) */
+.row-menu-portal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 4000;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 180px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    display: grid;
+    padding: 6px;
+}
+    .row-menu-portal[hidden] { display: none; }
+    .row-menu-portal button {
+        background: transparent;
+        color: var(--fg);
+        border: none;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .row-menu-portal button:hover { background: #0f1b22; }
+    .row-menu-portal button[data-act="del"] { color: #e87a7a; }
+    .row-menu-portal button[data-act="del"]:hover { background: rgba(226,64,64,.10); }
+
 .btn-mini {
     background: transparent;
     border: 1px solid var(--border);

@@ -74,6 +74,25 @@
         </div>
     </div>
 
+    <!-- Edit user modal (uses future PUT /api/Users/{id}) -->
+    <div id="editUserModal" class="modal-layer" hidden>
+        <div class="modal-card">
+            <form id="editUserForm" class="card" autocomplete="off">
+                <h2 class="card-title">Редагувати користувача</h2>
+                <input id="euId" type="hidden">
+                <div class="row two">
+                    <div class="field"><label for="euUsername">Логін *</label><input id="euUsername" type="text" required></div>
+                    <div class="field" id="euRoleWrap"><label for="euRole">Роль</label><select id="euRole"></select></div>
+                </div>
+                <div class="row"><div class="field"><label for="euEmail">Email *</label><input id="euEmail" type="email" required></div></div>
+                <div class="row"><div class="field"><label for="euPassword">Новий пароль</label><input id="euPassword" type="password" placeholder="Лишіть порожнім, щоб не змінювати" minlength="6"></div></div>
+                <div class="actions"><button type="button" class="btn-ghost" id="euCancel">Скасувати</button><button type="submit" class="btn">Зберегти</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
+
     <script src="./common.js"></script>
     <script src="./users.js"></script>
 </body>
