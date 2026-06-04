@@ -2,12 +2,12 @@
 const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 const logoutBtn = document.getElementById('logout');
-if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = 'index.html'; });
+if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
 const token = localStorage.getItem("token");
-if (!token) { location.href = "index.html"; }
+if (!token) { location.href = "../auth/index.html"; }
 
 async function apiFetch(path, init = {}) {
   const tryOnce = async (base) => { const url = path.startsWith("http") ? path : `${base}${path}`; return { res: await fetch(url, init), base }; };
@@ -41,7 +41,7 @@ async function loadClients() {
   try { out = await apiFetch(url.href, { headers: { "Authorization": `Bearer ${token}` } }); }
   catch (e) { $("#clientsTbody").innerHTML = `<tr><td colspan="5" class="err">Немає з'єднання з API</td></tr>`; return; }
   const { res } = out;
-  if (res.status === 401) { showToast('error',"Сесія завершилась"); localStorage.removeItem("token"); location.href="index.html"; return; }
+  if (res.status === 401) { showToast('error',"Сесія завершилась"); localStorage.removeItem("token"); location.href="../auth/index.html"; return; }
   if (!res.ok) { $("#clientsTbody").innerHTML = `<tr><td colspan="5" class="err">Помилка API: ${res.status}</td></tr>`; return; }
   const { items, total } = await res.json();
   renderTable(items); renderPager(total); updateSortIndicators(); updateBulkBtn();

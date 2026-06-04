@@ -2,13 +2,13 @@
 const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 const logoutEl = document.getElementById('logout');
-if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = 'index.html'; });
+if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
 // ===== API =====
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
 const token = localStorage.getItem("token");
-if (!token) location.href = "index.html";
+if (!token) location.href = "../auth/index.html";
 
 async function apiFetch(path, init = {}) {
   const tryOnce = async (base) => { const url = path.startsWith("http") ? path : `${base}${path}`; return { res: await fetch(url, init), base }; };
@@ -26,7 +26,7 @@ const authHeaders = { "Authorization": `Bearer ${token}` };
 const myRole = (window.getUserRole && window.getUserRole()) || '';
 if (myRole && myRole !== 'superadmin' && myRole !== 'admin') {
   // master сюди не має доступу (бекенд також поверне 403)
-  location.replace('dashboard.html');
+  location.replace("../dashboard/dashboard.html");
 }
 function myUsername() {
   try {
@@ -38,13 +38,13 @@ function myUsername() {
 }
 const ME = myUsername();
 
-const ROLE_LABEL = { superadmin: 'СуперАдмін', admin: 'Власник', master: 'Майстер' };
+const ROLE_LABEL = { superadmin: 'СуперАдмін', admin: 'Адміністратор', master: 'Майстер' };
 function roleBadge(r) { const k = (r || '').toLowerCase(); return `<span class="role-badge ${k}">${ROLE_LABEL[k] || escapeHtml(r)}</span>`; }
 
 // Які ролі може створювати поточний користувач (відповідає бекенду)
 function creatableRoles() {
   return myRole === 'superadmin'
-    ? [['admin', 'Власник'], ['master', 'Майстер']]
+    ? [['admin', 'Адміністратор'], ['master', 'Майстер']]
     : [['master', 'Майстер']];
 }
 
@@ -72,7 +72,6 @@ function canEdit(u) {
 
 let usersCache = [];
 
-
 // ===== Load & render =====
 async function loadUsers() {
   const tbody = $("#usersTbody");
@@ -81,8 +80,8 @@ async function loadUsers() {
   try { out = await apiFetch(`/api/Users`, { headers: authHeaders }); }
   catch { tbody.innerHTML = `<tr><td colspan="5" class="err">Немає з'єднання з API</td></tr>`; return; }
   const { res } = out;
-  if (res.status === 401) { showToast('error', "Сесія завершилась"); localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "index.html"; return; }
-  if (res.status === 403) { showToast('error', "Немає доступу"); location.replace('dashboard.html'); return; }
+  if (res.status === 401) { showToast('error', "Сесія завершилась"); localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; return; }
+  if (res.status === 403) { showToast('error', "Немає доступу"); location.replace("../dashboard/dashboard.html"); return; }
   if (!res.ok) { tbody.innerHTML = `<tr><td colspan="5" class="err">Помилка API: ${res.status}</td></tr>`; return; }
   const users = await res.json();
   usersCache = Array.isArray(users) ? users : [];
@@ -97,7 +96,7 @@ function renderUsers(users) {
     const tr = document.createElement("tr");
     const hasActions = canEdit(u) || canChangeRole(u) || canDelete(u);
     const cell = hasActions
-      ? `<div class="row-actions"><button class="btn-actions" data-id="${u.id}">Дії <span class="caret">▾</span></button></div>`
+      ? `<div class="row-actions"><button class="menu-btn" data-id="${u.id}" title="Дії">⋯</button></div>`
       : `<span style="opacity:.4">—</span>`;
     tr.innerHTML = `<td>${u.id}</td><td>${escapeHtml(u.username)}${u.username === ME ? ' <span style="opacity:.6">(ви)</span>' : ''}</td><td>${escapeHtml(u.email || "")}</td><td>${roleBadge(u.role)}</td><td style="text-align:right">${cell}</td>`;
     tbody.appendChild(tr);
@@ -114,7 +113,6 @@ function openRowMenu(btn, id) {
   if (!u) return;
   const items = [];
   if (canEdit(u)) items.push(`<button data-act="edit" data-id="${u.id}">Редагувати</button>`);
-  if (canChangeRole(u)) items.push(`<button data-act="role" data-id="${u.id}">Змінити роль</button>`);
   if (canDelete(u)) items.push(`<button data-act="del" data-id="${u.id}">Видалити</button>`);
   if (!items.length) return;
   portal.innerHTML = items.join("");
@@ -164,36 +162,6 @@ userForm?.addEventListener("submit", async (e) => {
     if (!res.ok) { showToast('error', "Помилка: " + ((await res.text().catch(() => "")) || res.status)); return; }
     showToast('success', "Користувача створено");
     closeUserModal();
-    await loadUsers();
-  } catch (err) { showToast('error', err.message); }
-  finally { btn.disabled = false; }
-});
-
-// ===== Change role modal (superadmin only) =====
-const roleModal = $("#roleModal"), roleForm = $("#roleForm");
-function openRoleModal(id, username, currentRole) {
-  $("#rfUserId").value = id;
-  $("#rfUserLabel").textContent = `Користувач: ${username}`;
-  $("#rfRole").value = (currentRole || 'master').toLowerCase() === 'admin' ? 'admin' : 'master';
-  roleModal.hidden = false;
-}
-function closeRoleModal() { roleModal.hidden = true; }
-$("#rfCancel")?.addEventListener("click", closeRoleModal);
-
-roleForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = $("#rfUserId").value;
-  const role = $("#rfRole").value;
-  const btn = roleForm.querySelector('button[type="submit"]'); btn.disabled = true;
-  try {
-    const { res } = await apiFetch(`/api/Users/${id}/role`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...authHeaders },
-      body: JSON.stringify({ role })
-    });
-    if (!res.ok) { showToast('error', "Помилка: " + ((await res.text().catch(() => "")) || res.status)); return; }
-    showToast('success', "Роль оновлено");
-    closeRoleModal();
     await loadUsers();
   } catch (err) { showToast('error', err.message); }
   finally { btn.disabled = false; }
@@ -266,7 +234,7 @@ editForm?.addEventListener("submit", async (e) => {
 
 // ===== Click delegation: Дії button + portal items =====
 document.addEventListener("click", (e) => {
-  const trigger = e.target.closest(".btn-actions");
+  const trigger = e.target.closest(".menu-btn");
   if (trigger) { openRowMenu(trigger, trigger.dataset.id); return; }
   const act = e.target.closest("#rowMenuPortal [data-act]");
   if (act) {
@@ -274,7 +242,6 @@ document.addEventListener("click", (e) => {
     closeRowMenu();
     if (!u) return;
     if (act.dataset.act === "edit") openEditModal(u);
-    else if (act.dataset.act === "role") openRoleModal(u.id, u.username, u.role);
     else if (act.dataset.act === "del") deleteUser(u.id, u.username);
     return;
   }

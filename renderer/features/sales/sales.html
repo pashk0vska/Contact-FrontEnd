@@ -3,25 +3,25 @@
 <head>
     <meta charset="utf-8" /><title>Продажі</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./dashboard.css"><link rel="stylesheet" href="./sales.css">
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="./sales.css">
 </head>
 <body>
     <div class="layout">
-        <header class="appbar"><img src="./logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
         <aside class="sidebar">
             <div class="menu-title">МЕНЮ</div>
             <nav class="menu">
-                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
-                <a class="active"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
-                <a href="./repairs.html"><img class="ico" src="./icons/repairs.png" alt="">Ремонти</a>
-                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt="">Клієнти</a>
-                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt="">Аналітика</a>
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a class="active"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt="">Ремонти</a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt="">Клієнти</a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt="">Аналітика</a>
             </nav>
             <div class="menu-title small">ІНШЕ</div>
             <nav class="menu">
-                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
-                <a href="./settings.html"><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
-                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
             </nav>
             <div class="side-profile">
                 <div class="sp-avatar" id="sideProfileAvatar">?</div>
@@ -60,7 +60,7 @@
         <h2 class="card-title" id="saleModalTitle">Зареєструвати продаж</h2>
         <div class="row two"><div class="field"><label for="sfDate">Дата *</label><input id="sfDate" type="date" required></div><div class="field"><label for="sfPayment">Оплата *</label><select id="sfPayment" required><option value="Готівка">Готівка</option><option value="Картка">Картка</option></select></div></div>
         <div class="row"><div class="field"><label for="sfClient">Клієнт *</label><input id="sfClient" type="text" placeholder="Почни вводити ім'я…" list="clientList" required><datalist id="clientList"></datalist><input id="sfClientId" type="hidden"></div></div>
-        <div class="row"><div class="field"><input id="sfNewClientPhone" type="tel" placeholder="Телефон нового клієнта *" style="display:none"></div></div>
+        <div class="row" id="sfNewClientPhoneRow" style="display:none"><div class="field"><label for="sfNewClientPhone">Телефон нового клієнта *</label><input id="sfNewClientPhone" type="tel" placeholder="Напр. 0971112233"></div></div>
         <div class="row two"><div class="field"><label for="sfProduct">Товар/послуга *</label><input id="sfProduct" type="text" required></div><div class="field"><label for="sfQty">К-ть *</label><input id="sfQty" type="number" min="1" value="1" required></div></div>
         <div class="row two"><div class="field"><label for="sfPrice">Ціна за од., ₴ *</label><input id="sfPrice" type="number" min="0" value="0" required></div><div class="field"><label for="sfStatus2">Статус *</label><select id="sfStatus2" required><option value="done">Завершено</option><option value="processing">В обробці</option><option value="cancelled">Скасовано</option><option value="returned">Повернення</option></select></div></div>
         <div class="row"><div class="field"><label for="sfNote">Примітка</label><input id="sfNote" type="text"></div></div>
@@ -68,7 +68,7 @@
     </form></div></div>
 
     <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
-    <script src="./common.js"></script>
+    <script src="../../core/common.js"></script>
     <script src="./sales.js"></script>
 </body>
 </html>

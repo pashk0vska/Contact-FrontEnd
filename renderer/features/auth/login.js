@@ -63,7 +63,7 @@ form.addEventListener("submit", async (e) => {
     else localStorage.removeItem("role");
 
     showMsg("Успішний вхід.", "ok");
-    setTimeout(()=> location.href = "dashboard.html", 800);
+    setTimeout(()=> location.href = "../dashboard/dashboard.html", 800);
   }catch{
     showMsg("Немає з'єднання з сервером.");
   }finally{
