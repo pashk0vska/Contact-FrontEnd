@@ -55,8 +55,8 @@
             <!-- Table view -->
             <div class="table-wrap">
                 <table class="table-repairs">
-                    <colgroup><col style="width:72px"><col style="width:140px"><col style="width:200px"><col style="width:280px"><col style="width:200px"><col style="width:140px"><col style="width:120px"><col style="width:56px"></colgroup>
-                    <thead><tr><th data-sort="Id">№</th><th data-sort="Date">Дата</th><th data-sort="Client">Клієнт</th><th data-sort="Device">Пристрій</th><th>Проблема</th><th data-sort="Status">Статус</th><th data-sort="Price">Вартість</th><th>Дія</th></tr></thead>
+                    <colgroup><col style="width:72px"><col style="width:140px"><col style="width:200px"><col style="width:280px"><col style="width:200px"><col style="width:140px"><col style="width:120px"><col style="width:140px"><col style="width:56px"></colgroup>
+                    <thead><tr><th data-sort="Id">№</th><th data-sort="Date">Дата</th><th data-sort="Client">Клієнт</th><th data-sort="Device">Пристрій</th><th>Проблема</th><th data-sort="Status">Статус</th><th data-sort="Price">Вартість</th><th>Майстер</th><th>Дія</th></tr></thead>
                     <tbody id="repairsTbody"></tbody>
                 </table>
             </div>
@@ -78,7 +78,8 @@
                 <div class="row two"><div class="field"><label>Клієнт</label><input id="rfClient" list="clientList" placeholder="Ім'я або телефон…" autocomplete="off"><datalist id="clientList"></datalist><input id="rfClientId" type="hidden"></div><div class="field"><label>Пристрій</label><input id="rfDevice" type="text" required></div></div>
                 <div class="row" id="rfNewClientPhoneRow" style="display:none"><div class="field"><label for="rfNewClientPhone">Телефон нового клієнта *</label><input id="rfNewClientPhone" type="tel" placeholder="Напр. 0971112233"></div></div>
                 <div class="row"><div class="field"><label>Проблема</label><input id="rfProblem" type="text" required></div></div>
-                <div class="row two"><div class="field"><label>Вартість (₴)</label><input id="rfPrice" type="number" min="0" value="0"></div><div class="field"><label>Нотатка</label><input id="rfNote" type="text"></div></div>
+                <div class="row two"><div class="field"><label for="rfMaster">Майстер</label><select id="rfMaster"></select></div><div class="field"><label>Вартість (₴)</label><input id="rfPrice" type="number" min="0" value="0"></div></div>
+                <div class="row"><div class="field"><label>Нотатка</label><input id="rfNote" type="text"></div></div>
                 <div class="actions"><button id="rfCancel" class="btn-ghost" type="button">Скасувати</button><button id="rfSubmitBtn" class="btn" type="submit">Зберегти</button></div>
             </form>
         </div>

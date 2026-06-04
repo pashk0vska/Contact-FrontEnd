@@ -394,3 +394,16 @@
     .modal-layer .btn-ghost:hover {
         background: rgba(0,183,18,.08);
     }
+
+
+/* майстер на kanban-картці */
+.kc-master{font-size:12px;color:#9adf9f;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+
+/* ===== Сторінка деталей ремонту ===== */
+.rd-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+.rd-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);}
+.rd-row:last-child{border-bottom:none;}
+.rd-row .k{color:#9aa4ad;font-size:13px;}
+.rd-row .v{font-weight:600;text-align:right;word-break:break-word;}
+.rd-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+@media(max-width:1100px){.rd-grid{grid-template-columns:1fr;}}

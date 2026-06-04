@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Деталі ремонту</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="./repairs.css">
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="../sales/sales.html"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a class="active" href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt=""> Аналітика</a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main repairs">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+                <button id="btnBack" class="btn-ghost" type="button">← Назад</button>
+                <h1 class="page-title" style="margin:0">Ремонт <span id="rdId"></span></h1>
+            </div>
+            <div id="rdContent"><p style="opacity:.7">Завантаження…</p></div>
+        </main>
+    </div>
+    <script src="../../core/common.js"></script>
+    <script src="./repair-details.js"></script>
+</body>
+</html>
