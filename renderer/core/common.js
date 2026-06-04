@@ -1,6 +1,6 @@
-/**
+﻿/**
  * common.js — глобальні утиліти для проекту "Контакт"
-
+ 
  * Надає:
  *  showToast(type, message, duration?)
  *  confirmAction(message, callback)
@@ -11,17 +11,17 @@
  *  checkAutoOpen()   — для ?action=add
  *  getUserRole()     — роль користувача (superadmin/admin/master)
  */
-
+ 
 // ─── 0. Підключаємо компоненти.css якщо не підключено ──────────────────────
 (function ensureComponentsCss() {
   if (!document.querySelector('link[href*="components.css"]')) {
     const link = document.createElement('link');
     link.rel  = 'stylesheet';
-    link.href = './components.css';
+    link.href = '../../core/components.css';
     document.head.appendChild(link);
   }
 })();
-
+ 
 // ─── 1. TOAST ───────────────────────────────────────────────────────────────
 (function initToastContainer() {
   if (!document.getElementById('toast-container')) {
@@ -30,7 +30,7 @@
     document.body.appendChild(el);
   }
 })();
-
+ 
 /**
  * showToast('success'|'error'|'warning'|'info', 'Текст', 4000)
  */
@@ -40,20 +40,20 @@ function showToast(type, message, duration = 4000) {
   toast.className = `toast ${type}`;
   toast.textContent = message;
   container.appendChild(toast);
-
+ 
   const remove = () => {
     toast.classList.add('out');
     toast.addEventListener('animationend', () => toast.remove(), { once: true });
   };
-
+ 
   setTimeout(remove, duration);
   toast.addEventListener('click', remove);
   return toast;
 }
-
+ 
 // Зберігаємо у window для доступу з інших скриптів
 window.showToast = showToast;
-
+ 
 // ─── 2. CUSTOM CONFIRM ──────────────────────────────────────────────────────
 (function initConfirmDialog() {
   if (document.getElementById('confirm-overlay')) return;
@@ -70,7 +70,7 @@ window.showToast = showToast;
     </div>`;
   document.body.appendChild(overlay);
 })();
-
+ 
 /**
  * confirmAction('Видалити запис?', () => doDelete())
  * Замінює нативний confirm().
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function(){
 // ─── 10. РОЛІ (superadmin / admin / master) ────────────────────────────────
 /**
  * Повертає роль користувача у нижньому регістрі.
- * Спершу зі збереженого localStorage('role') (кладеться при логіні),
+ * Спершу зі збереженого localStorage('role') (кладеться при логіні),                                                                                                                                                                                                   
  * у запасному варіанті — з JWT (claim role).
  */
 function getUserRole() {
@@ -307,7 +307,7 @@ function applyRoleGating(){
   if (document.body) document.body.dataset.role = role || 'guest';
 }
 
-/** master не має доступу до Аналітики/Налаштувань/Користувачів — якщо зайшов напряму, повертаємо на дашборд. */
+/** master не має доступу до Аналітики/Налаштування/Користувачів — якщо зайшов напряму, повертаємо на дашборд. */
 function guardPageByRole(){
   const role = getUserRole();
   if (role === 'master') {
@@ -331,8 +331,8 @@ function injectUsersLink(){
   if (document.querySelector('.sidebar a[href$="users.html"]') || menu.querySelector('a.active[data-page="users"]')) return;
 
   const a = document.createElement('a');
-  a.href = './users.html';
-  a.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Користувачі</span>';
+  a.href = '../users/users.html';
+  a.innerHTML = '<img src="../../assets/icons/users.png" class="ico" alt="Користувачі" width="22" height="22"><span>Користувачі</span>';
 
   const analytics = menu.querySelector('a[href$="analytics.html"]');
   if (analytics) analytics.insertAdjacentElement('afterend', a);
