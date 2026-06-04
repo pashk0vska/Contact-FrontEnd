@@ -3,25 +3,25 @@
 <head>
     <meta charset="utf-8" /><title>Ремонти</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./dashboard.css"><link rel="stylesheet" href="./repairs.css">
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="./repairs.css">
 </head>
 <body>
     <div class="layout">
-        <header class="appbar"><img src="./logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
         <aside class="sidebar">
             <div class="menu-title">МЕНЮ</div>
             <nav class="menu">
-                <a href="./dashboard.html"><img class="ico" src="./icons/dashboard.png" alt=""><span>Дашборд</span></a>
-                <a href="./sales.html"><img class="ico" src="./icons/sales.png" alt=""><span>Продажі</span></a>
-                <a class="active"><img class="ico" src="./icons/repairs.png" alt=""><span>Ремонти</span></a>
-                <a href="./clients.html"><img class="ico" src="./icons/clients.png" alt=""><span>Клієнти</span></a>
-                <a href="./analytics.html"><img class="ico" src="./icons/analytics.png" alt=""> Аналітика</a>
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="../sales/sales.html"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a class="active"><img class="ico" src="../../assets/icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt=""> Аналітика</a>
             </nav>
             <div class="menu-title small">ІНШЕ</div>
             <nav class="menu">
-                <a><img class="ico" src="./icons/help.png" alt="">Допомога</a>
-                <a href="./settings.html"><img class="ico" src="./icons/settings.png" alt="">Налаштування</a>
-                <a id="logout"><img class="ico" src="./icons/logout.png" alt="">Вихід</a>
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
             </nav>
             <div class="side-profile">
                 <div class="sp-avatar" id="sideProfileAvatar">?</div>
@@ -76,7 +76,7 @@
             <form id="repairForm" class="body">
                 <div class="row two"><div class="field"><label>Дата</label><input id="rfDate" type="date" required></div><div class="field"><label>Статус</label><select id="rfStatus"><option value="new">Новий</option><option value="progress">В процесі</option><option value="done">Готово</option><option value="issued">Видано</option><option value="canceled">Скасовано</option></select></div></div>
                 <div class="row two"><div class="field"><label>Клієнт</label><input id="rfClient" list="clientList" placeholder="Ім'я або телефон…" autocomplete="off"><datalist id="clientList"></datalist><input id="rfClientId" type="hidden"></div><div class="field"><label>Пристрій</label><input id="rfDevice" type="text" required></div></div>
-                <div class="row"><div class="field"><input id="rfNewClientPhone" type="tel" placeholder="Телефон нового клієнта *" style="display:none"></div></div>
+                <div class="row" id="rfNewClientPhoneRow" style="display:none"><div class="field"><label for="rfNewClientPhone">Телефон нового клієнта *</label><input id="rfNewClientPhone" type="tel" placeholder="Напр. 0971112233"></div></div>
                 <div class="row"><div class="field"><label>Проблема</label><input id="rfProblem" type="text" required></div></div>
                 <div class="row two"><div class="field"><label>Вартість (₴)</label><input id="rfPrice" type="number" min="0" value="0"></div><div class="field"><label>Нотатка</label><input id="rfNote" type="text"></div></div>
                 <div class="actions"><button id="rfCancel" class="btn-ghost" type="button">Скасувати</button><button id="rfSubmitBtn" class="btn" type="submit">Зберегти</button></div>
@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <script src="./common.js"></script>
+    <script src="../../core/common.js"></script>
     <script src="./repairs.js"></script>
 </body>
 </html>

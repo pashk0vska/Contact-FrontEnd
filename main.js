@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require('electron');
+﻿const { app, BrowserWindow, shell } = require('electron');
 
 function createWindow(){
   const win = new BrowserWindow({
@@ -7,7 +7,7 @@ function createWindow(){
     show: false,
     autoHideMenuBar: true
   });
-  win.loadFile('renderer/index.html');
+  win.loadFile('renderer/features/auth/index.html');
   // зовнішні посилання (Конфігуратор ПК) відкривати у системному браузері
   win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: 'deny' }; });
   win.once('ready-to-show', () => {

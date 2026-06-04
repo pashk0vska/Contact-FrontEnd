@@ -15,7 +15,7 @@ async function apiFetch(path, init = {}) {
   }
 }
 const token = localStorage.getItem("token");
-if (!token) { location.href = "index.html"; }
+if (!token) { location.href = "../auth/index.html"; }
 const headers = { "Authorization": `Bearer ${token}` };
 
 // Date in appbar — same format as other pages
@@ -32,7 +32,7 @@ function usernameFromToken(jwt){
 const whoEl = document.getElementById("who");
 if (whoEl) whoEl.textContent = usernameFromToken(token) || "користувачу";
 
-document.getElementById("logout")?.addEventListener("click",()=>{localStorage.removeItem("token");localStorage.removeItem("role");location.href="index.html";});
+document.getElementById("logout")?.addEventListener("click",()=>{localStorage.removeItem("token");localStorage.removeItem("role");location.href="../auth/index.html";});
 
 const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
@@ -51,6 +51,6 @@ async function loadDashboard() {
 loadDashboard();
 
 // Quick access buttons — redirect with ?action=add
-document.getElementById("quickSale")?.addEventListener("click",()=>{window.location.href="sales.html?action=add";});
-document.getElementById("quickRepair")?.addEventListener("click",()=>{window.location.href="repairs.html?action=add";});
-document.getElementById("quickClient")?.addEventListener("click",()=>{window.location.href="clients.html?action=add";});
+document.getElementById("quickSale")?.addEventListener("click",()=>{window.location.href="../sales/sales.html?action=add";});
+document.getElementById("quickRepair")?.addEventListener("click",()=>{window.location.href="../repairs/repairs.html?action=add";});
+document.getElementById("quickClient")?.addEventListener("click",()=>{window.location.href="../clients/clients.html?action=add";});

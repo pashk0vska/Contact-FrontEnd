@@ -1,12 +1,12 @@
 const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 const logoutEl = document.getElementById('logout');
-if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = 'index.html'; });
+if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
 const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
 let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
 const token = localStorage.getItem("token");
-if (!token) location.href = "index.html";
+if (!token) location.href = "../auth/index.html";
 
 async function apiFetch(path, init = {}) {
   const tryOnce = async (base) => { const url = path.startsWith("http") ? path : `${base}${path}`; return { res: await fetch(url, init), base }; };
@@ -48,7 +48,7 @@ async function loadSales() {
   try { out = await apiFetch(url.href, { headers: { "Authorization": `Bearer ${token}` } }); }
   catch (e) { $("#salesTbody").innerHTML = `<tr><td colspan="9" class="err">Немає з'єднання з API</td></tr>`; return; }
   const { res } = out;
-  if (res.status === 401) { showToast('error',"Сесія завершилась"); localStorage.removeItem('token'); location.href="index.html"; return; }
+  if (res.status === 401) { showToast('error',"Сесія завершилась"); localStorage.removeItem('token'); location.href="../auth/index.html"; return; }
   if (!res.ok) { $("#salesTbody").innerHTML = `<tr><td colspan="9" class="err">Помилка API: ${res.status}</td></tr>`; return; }
   const { items, total } = await res.json();
   renderTable(items); renderPager(total); updateSortIndicators(); updateBulkBtn();
@@ -142,41 +142,52 @@ $("#fReset")?.addEventListener("click",()=>{$("#fFrom").value=$("#fTo").value=""
 $("#sApply")?.addEventListener("click",()=>{sort=$("#sortField").value||"Date";dir=$("#sortDir").value||"desc";page=1;loadSales();});
 $("#sReset")?.addEventListener("click",()=>{$("#sortField").value="Date";$("#sortDir").value="desc";sort="Date";dir="desc";page=1;loadSales();});
 
-// === New client phone toggle ===
-function setupNewClientPhone(clientInput, clientIdInput, phoneInput){
-  if(!clientInput||!phoneInput) return;
-  clientInput.addEventListener("input",()=>{
-    if(!clientIdInput.value && clientInput.value.trim().length>0){phoneInput.style.display="";phoneInput.required=true;}
-    else{phoneInput.style.display="none";phoneInput.required=false;}
-  });
-  clientInput.addEventListener("change",()=>{
-    if(clientIdInput.value){phoneInput.style.display="none";phoneInput.required=false;}
-  });
-}
+// === New client phone toggle (через clientMap нижче) ===
 
 // === Create Sale Modal ===
 const saleModal=$("#saleModal"),saleForm=$("#saleForm"),sfClient=$("#sfClient"),sfClientId=$("#sfClientId");
 function openSaleModal(){saleForm.reset();saleForm.dataset.editId="";$("#saleModalTitle").textContent="Зареєструвати продаж";$("#sfSubmitBtn").textContent="Зберегти";
   const d=new Date();$("#sfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  sfClientId.value="";$("#clientList").innerHTML="";$("#sfNewClientPhone").style.display="none";saleModal.hidden=false;}
+  sfClientId.value="";$("#clientList").innerHTML="";clientMap={};setPhoneVisible(false);saleModal.hidden=false;}
 function closeSaleModal(){saleModal.hidden=true;}
 $("#btnAddSale")?.addEventListener("click",openSaleModal);
 $("#sfCancel")?.addEventListener("click",closeSaleModal);
 // modal only closes via Cancel button
 
-setupNewClientPhone(sfClient, sfClientId, $("#sfNewClientPhone"));
+// мапа знайдених клієнтів: lower(ПІБ) -> id, для надійного розпізнавання наявного клієнта
+let clientMap = {};
+function setPhoneVisible(show){
+  const row=document.getElementById('sfNewClientPhoneRow');
+  if(row) row.style.display = show ? '' : 'none';
+  const ph=$("#sfNewClientPhone");
+  if(ph){ ph.required = !!show; if(!show) ph.value=''; }
+}
+function resolveClient(){
+  const name=(sfClient.value||'').trim().toLowerCase();
+  const id=clientMap[name];
+  if(id){ sfClientId.value=id; setPhoneVisible(false); return true; }
+  sfClientId.value="";
+  setPhoneVisible((sfClient.value||'').trim().length>0);
+  return false;
+}
 
 sfClient?.addEventListener("input", debounce(async()=>{
-  const q=sfClient.value.trim();sfClientId.value="";if(!q||q.length<2){$("#clientList").innerHTML="";return;}
+  const q=sfClient.value.trim();
+  if(!q||q.length<2){$("#clientList").innerHTML="";clientMap={};resolveClient();return;}
   const url=new URL(`/api/Clients`,API);url.searchParams.set("q",q);url.searchParams.set("page",1);url.searchParams.set("pageSize",20);
   const{res}=await apiFetch(url.href,{headers:{"Authorization":`Bearer ${token}`}});if(!res.ok)return;
-  const data=await res.json();$("#clientList").innerHTML=(data.items||[]).map(c=>`<option value="${c.fullName}" data-id="${c.id}"></option>`).join("");
+  const data=await res.json();
+  clientMap={};
+  $("#clientList").innerHTML=(data.items||[]).map(c=>{clientMap[(c.fullName||'').toLowerCase()]=c.id;return `<option value="${c.fullName}" data-id="${c.id}">${c.phone||''}</option>`;}).join("");
+  resolveClient();
 },300));
-sfClient?.addEventListener("change",()=>{const val=sfClient.value;const opt=Array.from($("#clientList").options).find(o=>o.value===val);sfClientId.value=opt?opt.dataset.id:"";if(opt){$("#sfNewClientPhone").style.display="none";$("#sfNewClientPhone").required=false;}});
+sfClient?.addEventListener("change",resolveClient);
+sfClient?.addEventListener("blur",resolveClient);
 
 saleForm?.addEventListener("submit",async(e)=>{
   e.preventDefault();const btn=saleForm.querySelector('button[type="submit"]');btn.disabled=true;
   try{const dateRaw=$("#sfDate").value;const dateValue=dateRaw?`${dateRaw}T00:00:00`:new Date().toISOString();
+    if(!saleForm.dataset.editId) resolveClient();
     const clientId=+($("#sfClientId").value||0),clientName=$("#sfClient").value.trim();
     const newPhone=$("#sfNewClientPhone")?.value?.trim()||"";
     if(!clientId&&!clientName){showToast('warning',"Вкажи клієнта");return;}
@@ -205,7 +216,7 @@ async function openEditSaleModal(id){
     if(items.length){$("#sfProduct").value=items[0].name||"";$("#sfQty").value=items[0].qty||1;$("#sfPrice").value=items[0].price||0;}
     $("#sfStatus2").value=sale.status||"done";
     $("#sfNote").value=sale.note||"";
-    $("#sfNewClientPhone").style.display="none";
+    clientMap={};setPhoneVisible(false);
     saleModal.hidden=false;
   }catch(e){showToast('error',e.message);}
 }

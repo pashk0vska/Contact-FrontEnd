@@ -60,22 +60,23 @@
 
 .row-actions { display: inline-flex; gap: 8px; justify-content: flex-end; }
 
-/* кнопка "Дії" (відкриває портал-меню) */
-.btn-actions {
+/* кнопка дій ⋯ (як у Ремонтах/Продажах) */
+.menu-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #1a242b;
+    color: #e7ecef;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 0;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: #1a242b;
-    border: 1px solid var(--border);
-    color: #e7ecef;
-    border-radius: 10px;
-    padding: 7px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    justify-content: center;
 }
-    .btn-actions:hover { background: #26333d; border-color: #3c4b55; }
-    .btn-actions .caret { font-size: 10px; opacity: .8; }
+    .menu-btn:hover { background: #26333d; border-color: #3c4b55; }
 
 /* портал-меню рядка (як у клієнтів/продажів) */
 .row-menu-portal {
