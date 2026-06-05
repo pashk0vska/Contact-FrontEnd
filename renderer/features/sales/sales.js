@@ -158,9 +158,53 @@ $("#sReset")?.addEventListener("click",()=>{$("#sortField").value="Date";$("#sor
 
 // === Create Sale Modal ===
 const saleModal=$("#saleModal"),saleForm=$("#saleForm"),sfClient=$("#sfClient"),sfClientId=$("#sfClientId");
+// ===== POS: позиції продажу (T6) =====
+function addItemRow(item){
+  const wrap=document.getElementById('sfItems'); if(!wrap) return;
+  const div=document.createElement('div'); div.className='pos-row';
+  div.innerHTML='<select class="pi-type"><option value="product">Товар</option><option value="service">Послуга</option></select>'
+    +'<input class="pi-name" type="text" placeholder="Назва позиції">'
+    +'<input class="pi-qty" type="number" min="1" value="1">'
+    +'<input class="pi-price" type="number" min="0" value="0">'
+    +'<span class="pi-sum">₴ 0</span>'
+    +'<button type="button" class="pi-del" title="Прибрати">✕</button>';
+  wrap.appendChild(div);
+  if(item){
+    div.querySelector('.pi-type').value=(item.type||'product');
+    div.querySelector('.pi-name').value=item.name||'';
+    div.querySelector('.pi-qty').value=item.qty||1;
+    div.querySelector('.pi-price').value=item.price||0;
+  }
+  recalcTotal();
+}
+function resetItems(){const w=document.getElementById('sfItems'); if(w) w.innerHTML=''; addItemRow();}
+function rowSum(r){return Math.max(1,+r.querySelector('.pi-qty').value||1)*Math.max(0,+r.querySelector('.pi-price').value||0);}
+function recalcTotal(){
+  let t=0;
+  document.querySelectorAll('#sfItems .pos-row').forEach(r=>{const s=rowSum(r);t+=s;const sp=r.querySelector('.pi-sum');if(sp)sp.textContent=fmtMoney(s);});
+  const el=document.getElementById('sfTotal'); if(el) el.textContent=fmtMoney(t);
+}
+function collectItems(){
+  const out=[];
+  document.querySelectorAll('#sfItems .pos-row').forEach(r=>{
+    const name=r.querySelector('.pi-name').value.trim(); if(!name) return;
+    out.push({name,qty:Math.max(1,+r.querySelector('.pi-qty').value||1),price:Math.max(0,+r.querySelector('.pi-price').value||0),type:r.querySelector('.pi-type').value||'product'});
+  });
+  return out;
+}
+document.getElementById('sfAddItem')?.addEventListener('click',()=>addItemRow());
+document.getElementById('sfItems')?.addEventListener('input',recalcTotal);
+document.getElementById('sfItems')?.addEventListener('click',(e)=>{
+  const del=e.target.closest('.pi-del'); if(!del) return;
+  const rows=document.querySelectorAll('#sfItems .pos-row');
+  if(rows.length<=1){const r=del.closest('.pos-row');r.querySelector('.pi-name').value='';r.querySelector('.pi-qty').value=1;r.querySelector('.pi-price').value=0;}
+  else del.closest('.pos-row').remove();
+  recalcTotal();
+});
+
 function openSaleModal(){saleForm.reset();saleForm.dataset.editId="";$("#saleModalTitle").textContent="Зареєструвати продаж";$("#sfSubmitBtn").textContent="Зберегти";
   const d=new Date();$("#sfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  sfClientId.value="";$("#clientList").innerHTML="";clientMap={};setPhoneVisible(false);loadMasters("sfMaster",null);saleModal.hidden=false;}
+  sfClientId.value="";$("#clientList").innerHTML="";clientMap={};setPhoneVisible(false);loadMasters("sfMaster",null);resetItems();saleModal.hidden=false;}
 function closeSaleModal(){saleModal.hidden=true;}
 $("#btnAddSale")?.addEventListener("click",openSaleModal);
 $("#sfCancel")?.addEventListener("click",closeSaleModal);
@@ -204,8 +248,9 @@ saleForm?.addEventListener("submit",async(e)=>{
     const newPhone=$("#sfNewClientPhone")?.value?.trim()||"";
     if(!clientId&&!clientName){showToast('warning',"Вкажи клієнта");return;}
     const isEditMode=!!saleForm.dataset.editId;if(!isEditMode&&!clientId&&!newPhone){showToast('warning','Вкажи телефон нового клієнта');return;}
+    const saleItems=collectItems(); if(!saleItems.length){showToast('warning','Додай хоча б одну позицію');return;}
     const model={clientId:clientId||null,clientName:clientId?null:clientName,clientPhone:clientId?null:newPhone,date:dateValue,payment:$("#sfPayment").value,status:$("#sfStatus2").value,note:$("#sfNote").value.trim(),
-      item:{name:$("#sfProduct").value.trim(),qty:Math.max(1,+$("#sfQty").value||1),price:Math.max(0,+$("#sfPrice").value||0)},upsertService:true,masterId:$("#sfMaster").value?+$("#sfMaster").value:null};
+      items:saleItems,upsertService:true,masterId:$("#sfMaster").value?+$("#sfMaster").value:null};
     const editId=saleForm.dataset.editId;
     if(editId){
       const{res}=await apiFetch(`${API}/api/Sales/${editId}`,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(model)});
@@ -225,7 +270,8 @@ async function openEditSaleModal(id){
     $("#sfPayment").value=sale.payment||"Готівка";
     $("#sfClient").value=sale.clientName||"";sfClientId.value="";
     const items=sale.items||[];
-    if(items.length){$("#sfProduct").value=items[0].name||"";$("#sfQty").value=items[0].qty||1;$("#sfPrice").value=items[0].price||0;}
+    const wrap=document.getElementById('sfItems'); if(wrap) wrap.innerHTML='';
+    if(items.length){for(const it of items) addItemRow(it);} else { addItemRow(); }
     $("#sfStatus2").value=sale.status||"done";
     $("#sfNote").value=sale.note||"";
     clientMap={};setPhoneVisible(false);loadMasters("sfMaster", sale.masterId);

@@ -395,3 +395,16 @@
     .modal-layer .btn-ghost:hover {
         background: rgba(0,183,18,0.08);
     }
+
+
+/* ===== POS: позиції продажу (T6) ===== */
+.pos-items{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+.pos-row{display:grid;grid-template-columns:108px 1fr 64px 96px 84px 32px;gap:8px;align-items:center;}
+.pos-row .pi-type,.pos-row input{background:#0e151b;border:1px solid var(--border);border-radius:8px;color:#e6e6e6;padding:8px;font-size:13px;width:100%;}
+.pos-row .pi-sum{font-size:13px;color:#9adf9f;text-align:right;white-space:nowrap;}
+.pos-row .pi-del{background:transparent;border:1px solid var(--border);color:#e2706a;border-radius:8px;cursor:pointer;height:34px;line-height:1;}
+.pos-row .pi-del:hover{background:rgba(226,112,106,.12);}
+.pos-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.pos-total{font-weight:700;}
+.pos-total #sfTotal{color:#1fe26a;}
+@media(max-width:680px){.pos-row{grid-template-columns:84px 1fr 52px 76px;}.pos-row .pi-sum,.pos-row .pi-del{grid-column:span 2;}}
