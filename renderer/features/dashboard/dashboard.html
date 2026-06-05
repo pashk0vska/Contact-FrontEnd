@@ -49,6 +49,7 @@
                     <div class="title">Всього клієнтів</div>
                     <div class="value" id="clientsTotal">0</div>
                 </div>
+                <div class="card"><div class="title">Активні ремонти</div><div class="value" id="activeRepairs">0</div></div>
             </section>
             <section class="split">
                 <div class="panel"><h3>Дохід за 14 днів</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
@@ -64,11 +65,11 @@
                     </div>
                 </div>
                 <div class="panel">
-                    <h3>Останні продажі</h3>
+                    <h3>Останні ремонти</h3>
                     <div class="table-wrap">
                         <table class="table">
-                            <thead><tr><th>Ім'я</th><th>Товар</th><th>Ціна</th></tr></thead>
-                            <tbody id="recentSales"></tbody>
+                            <thead><tr><th>Клієнт</th><th>Пристрій</th><th>Статус</th><th>Вартість</th><th>Майстер</th></tr></thead>
+                            <tbody id="recentRepairs"></tbody>
                         </table>
                     </div>
                 </div>

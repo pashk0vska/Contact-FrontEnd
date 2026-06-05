@@ -37,11 +37,15 @@ document.getElementById("logout")?.addEventListener("click",()=>{localStorage.re
 const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
+function _ini(n){return (n||"").trim().split(/\s+/).slice(0,2).map(s=>s[0]||"").join("").toUpperCase();}
+function statusPill(v){const s=(v||"").toLowerCase();const label=(typeof STATUS_UA!=="undefined"&&STATUS_UA[s])||v||"\u2014";const col=(typeof STATUS_COLOR!=="undefined"&&STATUS_COLOR[s])||"#5b6b76";return `<span class="st-pill" style="background:${col}22;color:${col};border:1px solid ${col}55">${label}</span>`;}
+function masterCell(name){if(!name)return '<span style="opacity:.4">\u2014</span>';return `<div class="mini-master"><span class="mini-ava">${_ini(name)}</span>${name}</div>`;}
+
 function render(d = {}) {
   set("salesToday",d.salesToday??0);set("profitSales",num(d.profitSales??0));set("incomeWeek",num(d.incomeWeek??0));set("newClients",d.newClients??0);
-  set("repairsToday",d.repairsToday??0);set("profitRepair",num(d.profitRepair??0));set("clientsTotal",d.clientsTotal??0);
-  const tbody = document.getElementById("recentSales");
-  if (tbody) { const recent=d.recent??[];tbody.innerHTML=recent.map(r=>`<tr><td>${r.name??""}</td><td>${r.item??""}</td><td>${num(r.price??0)}</td></tr>`).join(""); }
+  set("repairsToday",d.repairsToday??0);set("profitRepair",num(d.profitRepair??0));set("clientsTotal",d.clientsTotal??0);set("activeRepairs",d.activeRepairs??0);
+  const tb = document.getElementById("recentRepairs");
+  if (tb) { const rr=d.recentRepairs??[];tb.innerHTML=rr.map(r=>`<tr><td>${r.clientName??""}</td><td>${r.device??""}</td><td>${statusPill(r.status)}</td><td style="text-align:right">${num(r.totalCost??0)}</td><td>${masterCell(r.masterName)}</td></tr>`).join(""); }
   renderCharts(d);
 }
 
