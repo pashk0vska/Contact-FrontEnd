@@ -51,21 +51,53 @@ const STATUS_UA={new:"Новий",progress:"В процесі",done:"Готов�
 const STATUS_COLOR={new:"#1f8ee2",progress:"#e2b81f",done:"#1fe26a",issued:"#58d27a",canceled:"#e2706a"};
 function renderCharts(d){
   if(typeof Chart==="undefined")return;
+  Chart.defaults.font.family="Inter,system-ui,Segoe UI,Roboto,sans-serif";
+  Chart.defaults.color="#7d8b96";
   const series=d.profitSeries||[];
   const pc=document.getElementById("profitChartCanvas");
   if(pc){
     if(profitChart)profitChart.destroy();
-    profitChart=new Chart(pc,{type:"bar",data:{labels:series.map(x=>x.label),datasets:[{label:"Дохід (₴)",data:series.map(x=>x.value),backgroundColor:"rgba(31,226,106,0.35)",borderColor:"#1fe26a",borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#9aa4ad",maxRotation:0,autoSkip:true}},y:{beginAtZero:true,ticks:{color:"#9aa4ad"}}}}});
+    const ctx=pc.getContext("2d");
+    const g=ctx.createLinearGradient(0,0,0,280);
+    g.addColorStop(0,"rgba(31,226,106,0.55)");
+    g.addColorStop(1,"rgba(31,226,106,0.04)");
+    profitChart=new Chart(pc,{
+      type:"bar",
+      data:{labels:series.map(x=>x.label),datasets:[{label:"Дохід",data:series.map(x=>x.value),backgroundColor:g,hoverBackgroundColor:"rgba(31,226,106,0.8)",borderRadius:6,borderSkipped:false,maxBarThickness:30}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        layout:{padding:{top:8}},
+        plugins:{
+          legend:{display:false},
+          tooltip:{backgroundColor:"#0b1116",borderColor:"#243039",borderWidth:1,titleColor:"#cdd4da",bodyColor:"#9adf9f",padding:10,displayColors:false,callbacks:{label:c=>" \u20b4 "+Number(c.parsed.y||0).toLocaleString("uk-UA")}}
+        },
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:11}}},
+          y:{beginAtZero:true,border:{display:false},grid:{color:"rgba(255,255,255,0.06)"},ticks:{maxTicksLimit:5,font:{size:11},callback:v=>v>=1000?(v/1000)+"k":v}}
+        }
+      }
+    });
   }
-  const rs=d.repairsByStatus||[];
+  const rs=(d.repairsByStatus||[]).filter(x=>(x.count||0)>0);
   const sc=document.getElementById("statusChartCanvas");
   if(sc){
     if(statusChart)statusChart.destroy();
-    const labels=rs.map(x=>STATUS_UA[(x.status||"").toLowerCase()]||x.status||"—");
-    const data=rs.map(x=>x.count||0);
-    const colors=rs.map(x=>STATUS_COLOR[(x.status||"").toLowerCase()]||"#5b6b76");
-    if(data.some(v=>v>0)){
-      statusChart=new Chart(sc,{type:"doughnut",data:{labels,datasets:[{data,backgroundColor:colors,borderColor:"#11181f",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#e6e6e6",boxWidth:14}}}}});
+    if(rs.length){
+      const labels=rs.map(x=>STATUS_UA[(x.status||"").toLowerCase()]||x.status||"\u2014");
+      const data=rs.map(x=>x.count||0);
+      const colors=rs.map(x=>STATUS_COLOR[(x.status||"").toLowerCase()]||"#5b6b76");
+      statusChart=new Chart(sc,{
+        type:"doughnut",
+        data:{labels,datasets:[{data,backgroundColor:colors,borderColor:"#0f161c",borderWidth:3,hoverOffset:8,spacing:2}]},
+        options:{
+          responsive:true,maintainAspectRatio:false,cutout:"66%",
+          layout:{padding:8},
+          plugins:{
+            legend:{position:"bottom",labels:{color:"#cdd4da",usePointStyle:true,pointStyle:"circle",padding:16,boxWidth:8,font:{size:12}}},
+            tooltip:{backgroundColor:"#0b1116",borderColor:"#243039",borderWidth:1,titleColor:"#cdd4da",bodyColor:"#e6e6e6",padding:10,callbacks:{label:c=>" "+c.label+": "+c.parsed}}
+          }
+        }
+      });
     }
   }
 }

@@ -303,4 +303,4 @@ html, body {
 
 
 /* контейнери графіків дашборду (T4) */
-.chart-box{height:260px;background:#11181f;border:1px solid var(--border);border-radius:12px;padding:8px;display:grid;place-items:center;overflow:hidden;}
+.chart-box{position:relative;height:300px;background:linear-gradient(180deg,#0f161c,#0c1217);border:1px solid var(--border);border-radius:14px;padding:14px;overflow:hidden;}
