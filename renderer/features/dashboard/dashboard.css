@@ -300,3 +300,7 @@ html, body {
         grid-template-columns: 1fr
     }
 }
+
+
+/* контейнери графіків дашборду (T4) */
+.chart-box{height:260px;background:#11181f;border:1px solid var(--border);border-radius:12px;padding:8px;display:grid;place-items:center;overflow:hidden;}

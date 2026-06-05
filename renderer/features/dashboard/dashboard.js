@@ -42,6 +42,32 @@ function render(d = {}) {
   set("repairsToday",d.repairsToday??0);set("profitRepair",num(d.profitRepair??0));set("clientsTotal",d.clientsTotal??0);
   const tbody = document.getElementById("recentSales");
   if (tbody) { const recent=d.recent??[];tbody.innerHTML=recent.map(r=>`<tr><td>${r.name??""}</td><td>${r.item??""}</td><td>${num(r.price??0)}</td></tr>`).join(""); }
+  renderCharts(d);
+}
+
+// ===== Графіки дашборду (Chart.js) — T4 =====
+let profitChart=null, statusChart=null;
+const STATUS_UA={new:"Новий",progress:"В процесі",done:"Готово",issued:"Видано",canceled:"Скасовано"};
+const STATUS_COLOR={new:"#1f8ee2",progress:"#e2b81f",done:"#1fe26a",issued:"#58d27a",canceled:"#e2706a"};
+function renderCharts(d){
+  if(typeof Chart==="undefined")return;
+  const series=d.profitSeries||[];
+  const pc=document.getElementById("profitChartCanvas");
+  if(pc){
+    if(profitChart)profitChart.destroy();
+    profitChart=new Chart(pc,{type:"bar",data:{labels:series.map(x=>x.label),datasets:[{label:"Дохід (₴)",data:series.map(x=>x.value),backgroundColor:"rgba(31,226,106,0.35)",borderColor:"#1fe26a",borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#9aa4ad",maxRotation:0,autoSkip:true}},y:{beginAtZero:true,ticks:{color:"#9aa4ad"}}}}});
+  }
+  const rs=d.repairsByStatus||[];
+  const sc=document.getElementById("statusChartCanvas");
+  if(sc){
+    if(statusChart)statusChart.destroy();
+    const labels=rs.map(x=>STATUS_UA[(x.status||"").toLowerCase()]||x.status||"—");
+    const data=rs.map(x=>x.count||0);
+    const colors=rs.map(x=>STATUS_COLOR[(x.status||"").toLowerCase()]||"#5b6b76");
+    if(data.some(v=>v>0)){
+      statusChart=new Chart(sc,{type:"doughnut",data:{labels,datasets:[{data,backgroundColor:colors,borderColor:"#11181f",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#e6e6e6",boxWidth:14}}}}});
+    }
+  }
 }
 
 async function loadDashboard() {
