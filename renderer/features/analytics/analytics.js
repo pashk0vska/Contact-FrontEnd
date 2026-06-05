@@ -28,44 +28,71 @@ function renderTopTable(items){
 function renderKpi(kpi){setText('kpiIncome',fmtMoney(kpi?.income));setText('kpiSalesCount',String(kpi?.salesCount??0));setText('kpiRepairsCount',String(kpi?.repairsCount??0));setText('kpiAvgCheck',fmtMoney(kpi?.avgCheck));setText('kpiProfit',fmtMoney(kpi?.profitEstimate));setText('kpiNewClients',String(kpi?.newClients??0));}
 
 // ===== Графіки (стиль дашборду) — Блок B =====
-let catChart=null, svcChart=null;
+let catChart=null, svcChart=null, salesChart=null, profitChart=null;
 const CAT_COLORS={'Ремонти':'#30D73C','Товари':'#1f8ee2','Збірки':'#9b6cf0','Послуги':'#e2b81f'};
+const TIP={backgroundColor:'#0b1116',borderColor:'#243039',borderWidth:1,padding:10,titleColor:'#cdd4da',bodyColor:'#9adf9f',displayColors:false};
 function renderCharts(data){
   if(typeof Chart==='undefined')return;
   Chart.defaults.font.family="Inter,system-ui,Segoe UI,Roboto,sans-serif";
   Chart.defaults.color="#7d8b96";
+  const top=(data.topProducts||[]);
 
   // Дохід за категоріями
   const cats=(data.byCategory||[]);
   const cc=document.getElementById('catChartCanvas');
   if(cc){
     if(catChart)catChart.destroy();
-    catChart=new Chart(cc,{
-      type:'bar',
+    catChart=new Chart(cc,{type:'bar',
       data:{labels:cats.map(x=>x.name),datasets:[{label:'Дохід',data:cats.map(x=>x.value),backgroundColor:cats.map(x=>CAT_COLORS[x.name]||'#30D73C'),borderRadius:6,borderSkipped:false,maxBarThickness:64}]},
       options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b1116',borderColor:'#243039',borderWidth:1,displayColors:false,callbacks:{label:c=>' ₴ '+Number(c.parsed.y||0).toLocaleString('uk-UA')}}},
+        plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' ₴ '+Number(c.parsed.y||0).toLocaleString('uk-UA')}}},
         scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:12}}},y:{beginAtZero:true,border:{display:false},grid:{color:'rgba(255,255,255,0.06)'},ticks:{maxTicksLimit:5,callback:v=>v>=1000?(v/1000)+'k':v}}}}
     });
   }
 
   // Топ послуг (горизонтальні бари)
   const svc=(data.topServices||[]);
-  const sc=document.getElementById('svcChartCanvas');
-  if(sc){
+  const svcEl=document.getElementById('svcChartCanvas');
+  if(svcEl){
     if(svcChart)svcChart.destroy();
     if(svc.length){
-      const ctx=sc.getContext('2d');
-      const g=ctx.createLinearGradient(0,0,sc.width||500,0);
-      g.addColorStop(0,'rgba(31,226,106,0.25)'); g.addColorStop(1,'rgba(31,226,106,0.65)');
-      svcChart=new Chart(sc,{
-        type:'bar',
+      const ctx=svcEl.getContext('2d');const g=ctx.createLinearGradient(0,0,svcEl.width||500,0);
+      g.addColorStop(0,'rgba(31,226,106,0.25)');g.addColorStop(1,'rgba(31,226,106,0.65)');
+      svcChart=new Chart(svcEl,{type:'bar',
         data:{labels:svc.map(x=>x.name),datasets:[{label:'К-ть',data:svc.map(x=>x.count),backgroundColor:g,hoverBackgroundColor:'rgba(31,226,106,0.85)',borderRadius:6,borderSkipped:false,maxBarThickness:22}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b1116',borderColor:'#243039',borderWidth:1,displayColors:false}},
+          plugins:{legend:{display:false},tooltip:{...TIP,bodyColor:'#e6e6e6'}},
           scales:{x:{beginAtZero:true,border:{display:false},grid:{color:'rgba(255,255,255,0.06)'},ticks:{precision:0,font:{size:11}}},y:{grid:{display:false},border:{display:false},ticks:{font:{size:12}}}}}
       });
     }
+  }
+
+  // Продажі за період (ТОП товарів) — сума, бар (повернено + осучаснено)
+  const sEl=document.getElementById('salesChartCanvas');
+  if(sEl){
+    if(salesChart)salesChart.destroy();
+    const ctx=sEl.getContext('2d');const g=ctx.createLinearGradient(0,0,0,280);
+    g.addColorStop(0,'rgba(31,226,106,0.55)');g.addColorStop(1,'rgba(31,226,106,0.04)');
+    salesChart=new Chart(sEl,{type:'bar',
+      data:{labels:top.map(x=>x.product||'—'),datasets:[{label:'Сума',data:top.map(x=>x.sum||0),backgroundColor:g,hoverBackgroundColor:'rgba(31,226,106,0.8)',borderRadius:6,borderSkipped:false,maxBarThickness:34}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' ₴ '+Number(c.parsed.y||0).toLocaleString('uk-UA')}}},
+        scales:{x:{grid:{display:false},border:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:10}}},y:{beginAtZero:true,border:{display:false},grid:{color:'rgba(255,255,255,0.06)'},ticks:{maxTicksLimit:5,callback:v=>v>=1000?(v/1000)+'k':v}}}}
+    });
+  }
+
+  // Кількість (ТОП товарів) — лінія (повернено + осучаснено)
+  const pEl=document.getElementById('profitChartCanvas');
+  if(pEl){
+    if(profitChart)profitChart.destroy();
+    const ctx=pEl.getContext('2d');const g=ctx.createLinearGradient(0,0,0,280);
+    g.addColorStop(0,'rgba(31,142,226,0.45)');g.addColorStop(1,'rgba(31,142,226,0.02)');
+    profitChart=new Chart(pEl,{type:'line',
+      data:{labels:top.map(x=>x.product||'—'),datasets:[{label:'Кількість',data:top.map(x=>x.qty||0),borderColor:'#1f8ee2',backgroundColor:g,fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#1f8ee2'}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TIP,bodyColor:'#cfe6ff'}},
+        scales:{x:{grid:{display:false},border:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:10}}},y:{beginAtZero:true,border:{display:false},grid:{color:'rgba(255,255,255,0.06)'},ticks:{precision:0,maxTicksLimit:5}}}}
+    });
   }
 }
 
@@ -122,7 +149,7 @@ document.getElementById('periodSeg')?.addEventListener('click',(e)=>{
 });
 
 setDefaultRange();
-document.getElementById('applyBtn')?.addEventListener('click',loadAnalytics);
+document.getElementById('applyBtn')?.addEventListener('click',()=>{document.querySelectorAll('#periodSeg button').forEach(x=>x.classList.remove('active'));loadAnalytics();});
 document.getElementById('resetBtn')?.addEventListener('click',()=>{document.getElementById('fromDate').value='';document.getElementById('toDate').value='';const sel=document.querySelector('.dropdown-menu select');if(sel)sel.selectedIndex=0;setDefaultRange();loadAnalytics();});
 document.getElementById('fromDate')?.addEventListener('change',loadAnalytics);
 document.getElementById('toDate')?.addEventListener('change',loadAnalytics);

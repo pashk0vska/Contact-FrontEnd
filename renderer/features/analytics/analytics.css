@@ -276,3 +276,10 @@ main.analytics {
         grid-template-columns: 1fr;
     }
 }
+
+/* однаковий стиль/висота контролів тулбару (вирівнювання в один ряд) */
+.toolbar .left { flex-wrap: wrap; }
+.seg { height: 40px; align-items: center; }
+.seg button { height: 34px; display: inline-flex; align-items: center; }
+.toolbar .dropdown > summary.btn-ghost { height: 40px; display: inline-flex; align-items: center; border-radius: 12px; }
+.toolbar .right .btn, .toolbar .right .btn-ghost { height: 40px; display: inline-flex; align-items: center; }
