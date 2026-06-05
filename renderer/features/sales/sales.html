@@ -61,12 +61,16 @@
         <div class="row two"><div class="field"><label for="sfDate">Дата *</label><input id="sfDate" type="date" required></div><div class="field"><label for="sfPayment">Оплата *</label><select id="sfPayment" required><option value="Готівка">Готівка</option><option value="Картка">Картка</option></select></div></div>
         <div class="row"><div class="field"><label for="sfClient">Клієнт *</label><input id="sfClient" type="text" placeholder="Почни вводити ім'я…" list="clientList" required><datalist id="clientList"></datalist><input id="sfClientId" type="hidden"></div></div>
         <div class="row" id="sfNewClientPhoneRow" style="display:none"><div class="field"><label for="sfNewClientPhone">Телефон нового клієнта *</label><input id="sfNewClientPhone" type="tel" placeholder="Напр. 0971112233"></div></div>
-        <div class="row"><div class="field"><label>Позиції *</label><div id="sfItems" class="pos-items"></div><div class="pos-bar"><button type="button" class="btn-ghost btn-sm" id="sfAddItem">+ Додати позицію</button><div class="pos-total">Разом: <span id="sfTotal">₴ 0</span></div></div></div></div>
+        <div class="row"><div class="field"><label>Позиції *</label><div id="sfItems" class="pos-items"></div><div class="pos-bar"><button type="button" class="btn-ghost btn-sm" id="sfAddItem">+ Додати позицію</button></div></div></div>
         <div class="row two"><div class="field"><label for="sfStatus2">Статус *</label><select id="sfStatus2" required><option value="done">Завершено</option><option value="processing">В обробці</option><option value="cancelled">Скасовано</option><option value="returned">Повернення</option></select></div><div class="field"><label for="sfMaster">Майстер</label><select id="sfMaster"></select></div></div>
         <div class="row"><div class="field"><label for="sfNote">Примітка</label><input id="sfNote" type="text"></div></div>
-        <div class="actions"><button type="button" class="btn-ghost" id="sfCancel">Скасувати</button><button id="sfSubmitBtn" type="submit" class="btn">Зберегти</button></div>
+        <div class="actions pos-actions"><div class="pos-pay">До сплати <span id="sfTotal">₴ 0</span></div><span class="pos-spacer"></span><button type="button" class="btn-ghost" id="sfCancel">Скасувати</button><button type="button" class="btn-ghost" id="sfReceipt">Відкрити чек</button><button id="sfSubmitBtn" type="submit" class="btn">Прийняти оплату</button></div>
     </form></div></div>
 
+    <div id="saleDetailsModal" class="modal-layer" hidden><div class="modal-card modal-wide"><div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h2 class="card-title" id="sdTitle">Деталі продажу</h2><button id="sdClose" class="btn-ghost" type="button">✕</button></div>
+        <div id="sdContent"></div>
+    </div></div></div>
     <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
     <script src="../../core/common.js"></script>
     <script src="./sales.js"></script>

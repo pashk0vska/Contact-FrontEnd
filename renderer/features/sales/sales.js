@@ -94,8 +94,11 @@ const portal = document.getElementById("rowMenuPortal");
 let currentMenuAnchor = null;
 function openRowMenu(btn, saleId){
   if(currentMenuAnchor===btn&&!portal.hidden){closeRowMenu();return;}currentMenuAnchor=btn;
-  portal.innerHTML = `<button data-act="edit" data-id="${saleId}">Редагувати</button>
+  portal.innerHTML = `<button data-act="details" data-id="${saleId}">Деталі</button>
+    <button data-act="edit" data-id="${saleId}">Редагувати</button>
+    <button data-act="duplicate" data-id="${saleId}">Дублювати</button>
     <button data-act="receipt" data-id="${saleId}">Чек (PDF)</button>
+    <button data-act="invoice" data-id="${saleId}">Накладна</button>
     <button data-act="del" data-id="${saleId}">Видалити</button>`;
   portal.hidden=false;
   requestAnimationFrame(()=>{const r=btn.getBoundingClientRect();let left=Math.min(window.innerWidth-portal.offsetWidth-12,r.right-portal.offsetWidth+2);let top=Math.min(window.innerHeight-portal.offsetHeight-12,r.bottom+8);portal.style.left=`${Math.max(12,left)}px`;portal.style.top=`${Math.max(12,top)}px`;});
@@ -143,7 +146,10 @@ document.addEventListener("click",(e)=>{
   if(act){const id=+act.dataset.id;
     if(act.dataset.act==="del") confirmAction("Видалити продаж?",(ok)=>{if(ok)deleteSale(id);});
     else if(act.dataset.act==="edit") openEditSaleModal(id);
+    else if(act.dataset.act==="details") openSaleDetails(id);
+    else if(act.dataset.act==="duplicate") confirmAction("Дублювати цей продаж?",(ok)=>{if(ok)duplicateSale(id);});
     else if(act.dataset.act==="receipt") openReceiptPdf(id);
+    else if(act.dataset.act==="invoice") openReceiptPdf(id);
     closeRowMenu();return;}
   if(!e.target.closest("#rowMenuPortal"))closeRowMenu();
 });
@@ -162,7 +168,7 @@ const saleModal=$("#saleModal"),saleForm=$("#saleForm"),sfClient=$("#sfClient"),
 function addItemRow(item){
   const wrap=document.getElementById('sfItems'); if(!wrap) return;
   const div=document.createElement('div'); div.className='pos-row';
-  div.innerHTML='<select class="pi-type"><option value="product">Товар</option><option value="service">Послуга</option></select>'
+  div.innerHTML='<select class="pi-type"><option value="product">Товар</option><option value="service">Послуга</option><option value="build">Збірка</option></select>'
     +'<input class="pi-name" type="text" placeholder="Назва позиції">'
     +'<input class="pi-qty" type="number" min="1" value="1">'
     +'<input class="pi-price" type="number" min="0" value="0">'
@@ -240,8 +246,9 @@ sfClient?.addEventListener("input", debounce(async()=>{
 sfClient?.addEventListener("change",resolveClient);
 sfClient?.addEventListener("blur",resolveClient);
 
-saleForm?.addEventListener("submit",async(e)=>{
-  e.preventDefault();const btn=saleForm.querySelector('button[type="submit"]');btn.disabled=true;
+async function submitSale(openReceipt){
+  const btn=document.getElementById('sfSubmitBtn');const rbtn=document.getElementById('sfReceipt');
+  btn.disabled=true; if(rbtn) rbtn.disabled=true;
   try{const dateRaw=$("#sfDate").value;const dateValue=dateRaw?`${dateRaw}T00:00:00`:new Date().toISOString();
     if(!saleForm.dataset.editId) resolveClient();
     const clientId=+($("#sfClientId").value||0),clientName=$("#sfClient").value.trim();
@@ -252,13 +259,18 @@ saleForm?.addEventListener("submit",async(e)=>{
     const model={clientId:clientId||null,clientName:clientId?null:clientName,clientPhone:clientId?null:newPhone,date:dateValue,payment:$("#sfPayment").value,status:$("#sfStatus2").value,note:$("#sfNote").value.trim(),
       items:saleItems,upsertService:true,masterId:$("#sfMaster").value?+$("#sfMaster").value:null};
     const editId=saleForm.dataset.editId;
+    let saleId=editId?+editId:null;
     if(editId){
       const{res}=await apiFetch(`${API}/api/Sales/${editId}`,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(model)});
-      if(res.ok||res.status===204)showToast('success','Продаж оновлено');else showToast('error','Помилка: '+res.status);
-    }else{await createSale(model);showToast('success','Продаж створено');}
+      if(res.ok||res.status===204)showToast('success','Продаж оновлено');else{showToast('error','Помилка: '+res.status);return;}
+    }else{const d=await createSale(model);saleId=d&&d.id?d.id:null;showToast('success','Продаж створено');}
     closeSaleModal();page=1;await loadSales();
-  }catch(err){showToast('error',err.message);}finally{btn.disabled=false;}
-});
+    if(openReceipt&&saleId) openReceiptPdf(saleId);
+  }catch(err){showToast('error',err.message);}
+  finally{btn.disabled=false; if(rbtn) rbtn.disabled=false;}
+}
+saleForm?.addEventListener("submit",(e)=>{e.preventDefault();submitSale(false);});
+document.getElementById('sfReceipt')?.addEventListener('click',()=>submitSale(true));
 
 // === Full Edit Sale Modal (reuses create modal) ===
 async function openEditSaleModal(id){
@@ -277,6 +289,43 @@ async function openEditSaleModal(id){
     clientMap={};setPhoneVisible(false);loadMasters("sfMaster", sale.masterId);
     saleModal.hidden=false;
   }catch(e){showToast('error',e.message);}
+}
+
+async function duplicateSale(id){
+  try{const{res}=await apiFetch(`${API}/api/Sales/${id}/duplicate`,{method:"POST",headers:{"Authorization":`Bearer ${token}`}});
+    if(res.ok){const d=await res.json().catch(()=>({}));showToast('success','Продаж дубльовано'+(d&&d.id?` (#${d.id})`:''));page=1;await loadSales();}
+    else showToast('error','Помилка: '+((await res.text().catch(()=>""))||res.status));
+  }catch(e){showToast('error',e.message);}
+}
+
+const saleDetailsModal=document.getElementById('saleDetailsModal');
+document.getElementById('sdClose')?.addEventListener('click',()=>{saleDetailsModal.hidden=true;});
+const SALE_TYPE={product:'Товар',service:'Послуга',build:'Збірка',repair:'Ремонт'};
+async function openSaleDetails(id){
+  document.getElementById('sdContent').innerHTML='<p style="opacity:.7">Завантаження…</p>';
+  saleDetailsModal.hidden=false;
+  try{
+    const{res}=await apiFetch(`${API}/api/Sales/${id}`,{headers:{"Authorization":`Bearer ${token}`}});
+    if(!res.ok){document.getElementById('sdContent').innerHTML='<p class="err">Помилка: '+res.status+'</p>';return;}
+    const sale=await res.json();
+    document.getElementById('sdTitle').textContent=`Продаж #${sale.id}`;
+    const items=sale.items||[];
+    let rows=items.map(it=>`<tr><td>${it.name||''}</td><td>${SALE_TYPE[(it.type||'product').toLowerCase()]||it.type||''}</td><td style="text-align:center">${it.qty||1}</td><td style="text-align:right">${fmtMoney(it.price)}</td><td style="text-align:right">${fmtMoney((it.price||0)*(it.qty||1))}</td></tr>`).join('');
+    if(!rows) rows='<tr><td colspan="5" style="opacity:.6;text-align:center">Без позицій</td></tr>';
+    document.getElementById('sdContent').innerHTML=`
+      <div class="sd-grid">
+        <div><span class="sd-k">Клієнт</span><div class="sd-v">${sale.clientName||'—'}</div></div>
+        <div><span class="sd-k">Дата</span><div class="sd-v">${fmtDate(sale.date)}</div></div>
+        <div><span class="sd-k">Оплата</span><div class="sd-v">${sale.payment||'—'}</div></div>
+        <div><span class="sd-k">Статус</span><div class="sd-v">${statusText(sale.status)}</div></div>
+        <div><span class="sd-k">Майстер</span><div class="sd-v">${sale.masterName||'—'}</div></div>
+        <div><span class="sd-k">Примітка</span><div class="sd-v">${sale.note||'—'}</div></div>
+      </div>
+      <table class="table-mini" style="margin-top:14px"><thead><tr><th>Назва</th><th>Тип</th><th>К-ть</th><th>Ціна</th><th>Сума</th></tr></thead><tbody>${rows}</tbody></table>
+      <div style="text-align:right;margin-top:12px;font-weight:800;font-size:16px">Разом: <span style="color:#1fe26a">${fmtMoney(sale.total)}</span></div>
+      <div class="actions" style="margin-top:14px"><button class="btn-ghost" id="sdReceiptBtn" type="button">Чек (PDF)</button></div>`;
+    document.getElementById('sdReceiptBtn')?.addEventListener('click',()=>openReceiptPdf(sale.id));
+  }catch(e){document.getElementById('sdContent').innerHTML='<p class="err">'+e.message+'</p>';}
 }
 
 (()=>{const key=localStorage.getItem("openModal");if(!key)return;localStorage.removeItem("openModal");if(key==="sale")document.getElementById("btnAddSale")?.click();})();

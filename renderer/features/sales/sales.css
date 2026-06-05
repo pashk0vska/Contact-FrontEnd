@@ -408,3 +408,14 @@
 .pos-total{font-weight:700;}
 .pos-total #sfTotal{color:#1fe26a;}
 @media(max-width:680px){.pos-row{grid-template-columns:84px 1fr 52px 76px;}.pos-row .pi-sum,.pos-row .pi-del{grid-column:span 2;}}
+
+/* POS-полиш: футер "До сплати" + кнопки (Блок D) */
+.pos-actions{align-items:center;}
+.pos-spacer{flex:1;}
+.pos-pay{font-weight:700;font-size:15px;color:#e6e6e6;}
+.pos-pay #sfTotal{color:#1fe26a;font-size:20px;font-weight:800;margin-left:6px;}
+
+/* Деталі продажу (Блок D) */
+.sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;}
+.sd-grid .sd-k{color:#9aa4ad;font-size:12px;}
+.sd-grid .sd-v{font-weight:600;margin-top:2px;word-break:break-word;}
