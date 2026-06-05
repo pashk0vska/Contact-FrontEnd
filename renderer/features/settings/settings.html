@@ -5,13 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="../analytics/analytics.css">
     <style>
+        .set-wrap{max-width:760px;}
+        .set-acc{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+        .set-acc>summary{list-style:none;cursor:pointer;padding:16px 18px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;}
+        .set-acc>summary::-webkit-details-marker{display:none;}
+        .set-acc>summary::after{content:'▾';color:#9aa4ad;font-size:14px;transition:transform .15s ease;}
+        .set-acc[open]>summary::after{transform:rotate(180deg);}
+        .set-acc>summary:hover{background:#0f1b22;}
+        .set-acc-body{padding:0 18px 18px;}
         .set-profile{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
         .set-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;}
         .set-name{font-weight:700;font-size:16px;}
         .set-sub{color:#9aa4ad;font-size:13px;}
         .set-form{display:grid;gap:12px;max-width:420px;}
         .set-form .field label{display:block;font-size:12px;color:#9aa4ad;margin-bottom:6px;}
-        .set-form .field input{width:100%;padding:10px 12px;border-radius:10px;background:var(--card);color:var(--fg);border:1px solid var(--border);}
+        .set-form .field input{width:100%;padding:10px 12px;border-radius:10px;background:var(--bg);color:var(--fg);border:1px solid var(--border);}
         .set-form .btn{justify-self:start;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;}
         .db-status{display:flex;align-items:center;gap:10px;font-size:15px;}
         .db-dot{width:10px;height:10px;border-radius:50%;background:#e2706a;box-shadow:0 0 0 3px rgba(226,112,106,.18);flex-shrink:0;}
@@ -44,45 +52,44 @@
         </aside>
         <main class="main analytics" style="padding-top:16px;">
             <h1 class="page-title">Налаштування</h1>
-            <section class="split" style="margin-top:0;align-content:start">
-                <div class="panel" style="grid-column:1 / -1">
-                    <h3>Профіль оператора</h3>
-                    <div class="set-profile">
-                        <div class="set-avatar" id="profAvatar">?</div>
-                        <div><div class="set-name" id="profName">Користувач</div><div class="set-sub" id="profSub">—</div></div>
+            <div class="set-wrap">
+                <details class="set-acc" open>
+                    <summary>Профіль оператора</summary>
+                    <div class="set-acc-body">
+                        <div class="set-profile">
+                            <div class="set-avatar" id="profAvatar">?</div>
+                            <div><div class="set-name" id="profName">Користувач</div><div class="set-sub" id="profSub">—</div></div>
+                        </div>
+                        <div class="set-form">
+                            <div class="field"><label for="cpCurrent">Поточний пароль</label><input id="cpCurrent" type="password" placeholder="••••••" autocomplete="current-password"></div>
+                            <div class="field"><label for="cpNew">Новий пароль</label><input id="cpNew" type="password" placeholder="Мінімум 6 символів" autocomplete="new-password"></div>
+                            <button id="btnChangePass" class="btn" type="button">Зберегти пароль</button>
+                        </div>
                     </div>
-                    <div class="set-form">
-                        <div class="field"><label for="cpCurrent">Поточний пароль</label><input id="cpCurrent" type="password" placeholder="••••••" autocomplete="current-password"></div>
-                        <div class="field"><label for="cpNew">Новий пароль</label><input id="cpNew" type="password" placeholder="Мінімум 6 символів" autocomplete="new-password"></div>
-                        <button id="btnChangePass" class="btn" type="button">Зберегти пароль</button>
+                </details>
+
+                <details class="set-acc">
+                    <summary>Стан бази даних</summary>
+                    <div class="set-acc-body">
+                        <div id="dbStatus" class="db-status"><span class="db-dot"></span>Перевірка…</div>
+                        <div id="dbInfo" class="db-info"></div>
                     </div>
-                </div>
-                <div class="panel">
-                    <h3>Резервне копіювання БД</h3>
-                    <p style="margin:0 0 16px;opacity:.8;line-height:1.5">Створіть резервну копію бази даних у форматі JSON. Ви зможете відновити її пізніше.</p>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap">
-                        <button id="btnBackup" class="btn" type="button">Зробити бекап</button>
-                        <label class="btn btn-ghost" style="cursor:pointer">Відновити з файлу
-                            <input id="fileRestore" type="file" accept=".json" style="display:none">
-                        </label>
+                </details>
+
+                <details class="set-acc">
+                    <summary>Резервне копіювання</summary>
+                    <div class="set-acc-body">
+                        <p style="margin:0 0 16px;opacity:.8;line-height:1.5">Експорт усіх даних у файл JSON або відновлення з резервної копії.</p>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap">
+                            <button id="btnBackup" class="btn" type="button">Зробити бекап</button>
+                            <label class="btn btn-ghost" style="cursor:pointer">Відновити з файлу
+                                <input id="fileRestore" type="file" accept=".json" style="display:none">
+                            </label>
+                        </div>
+                        <div id="backupStatus" style="margin-top:12px"></div>
                     </div>
-                    <div id="backupStatus" style="margin-top:12px"></div>
-                </div>
-                <div class="panel">
-                    <h3>Стан бази даних</h3>
-                    <div id="dbStatus" class="db-status"><span class="db-dot"></span>Перевірка…</div>
-                    <div id="dbInfo" class="db-info"></div>
-                </div>
-                <div class="panel">
-                    <h3>Інформація про систему</h3>
-                    <p style="margin:0;opacity:.8;line-height:1.8">
-                        <strong>Версія:</strong> 1.0.0 (Фінальний реліз)<br>
-                        <strong>Бекенд:</strong> .NET 8 Web API<br>
-                        <strong>Фронтенд:</strong> Electron + Vanilla JS<br>
-                        <strong>БД:</strong> MariaDB / MySQL<br>
-                    </p>
-                </div>
-            </section>
+                </details>
+            </div>
         </main>
     </div>
     <script src="../../core/common.js"></script>

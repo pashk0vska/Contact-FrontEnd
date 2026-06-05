@@ -185,16 +185,22 @@ main.analytics {
         grid-column: 1 / -1;
     }
 
-/* графіки-плейсхолдери */
+/* графіки (сучасний контейнер, як на дашборді) */
 .chart-box {
-    height: 280px;
-    border: 1px dashed #2a363f;
-    border-radius: 12px;
-    background: #11181f;
-    display: grid;
-    place-items: center;
+    position: relative;
+    height: 300px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: linear-gradient(180deg,#0f161c,#0c1217);
+    padding: 14px;
     overflow: hidden;
 }
+
+/* сегментований перемикач періоду */
+.seg { display: inline-flex; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { background: transparent; color: #9aa4ad; border: none; border-radius: 9px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.seg button.active { background: rgba(31,226,106,.15); color: #1fe26a; }
+.seg button:hover:not(.active) { color: #e6e6e6; }
 
 .spark {
     width: 100%;
