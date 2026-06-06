@@ -1,4 +1,4 @@
-﻿/**
+/**
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
@@ -215,6 +215,12 @@ function initHotkeys() {
         if (typeof window[fn] === 'function') { window[fn](); break; }
       }
     }
+
+    // ? — відкрити сторінку Допомоги
+    if (e.key === '?' && !isEditing && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      if (!/help\.html$/i.test(location.pathname)) location.href = '../help/help.html';
+    }
   });
 }
 
@@ -332,7 +338,8 @@ function injectUsersLink(){
 
   const a = document.createElement('a');
   a.href = '../users/users.html';
-a.innerHTML = '<img class="ico" src="../../assets/icons/users.png" width="22" height="22" alt="Користувачі"><span>Користувачі</span>';
+  a.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Користувачі</span>';
+
   const analytics = menu.querySelector('a[href$="analytics.html"]');
   if (analytics) analytics.insertAdjacentElement('afterend', a);
   else menu.appendChild(a);
@@ -373,6 +380,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const cfg = document.getElementById('btnConfigurator');
   if (cfg) cfg.addEventListener('click', function(e){ e.preventDefault(); window.open(CONFIGURATOR_URL, '_blank'); });
+
+  // Пункт «Допомога» у сайдбарі (на більшості сторінок лінк без href) — централізована навігація
+  document.querySelectorAll('.sidebar .menu a').forEach(a => {
+    if ((a.textContent || '').trim() === 'Допомога' && !a.classList.contains('active') && !a.getAttribute('href')) {
+      a.style.cursor = 'pointer';
+      a.addEventListener('click', (e) => { e.preventDefault(); location.href = '../help/help.html'; });
+    }
+  });
 
   const token = localStorage.getItem('token');
   if (token){
