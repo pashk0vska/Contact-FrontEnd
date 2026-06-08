@@ -1,0 +1,101 @@
+/* ============================================================
+   RECEIPT — стилізований чек/акт із друком
+   На екрані: темне тло + білий «паперовий» чек по центру.
+   На друку: лише білий чек (панель дій ховається).
+   ============================================================ */
+
+:root{
+  --rc-ink:#1b1b1b;
+  --rc-muted:#6b7176;
+  --rc-line:#e2e2e2;
+  --rc-accent:#0f1418;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  background:#0e1216;
+  color:#e6e6e6;
+  font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 48px;
+  min-height:100vh;
+}
+
+/* Панель дій (зверху) */
+.rc-actions{
+  width:100%;max-width:520px;
+  display:flex;gap:10px;align-items:center;justify-content:flex-end;
+  margin-bottom:18px;
+}
+.rc-actions .rc-back{margin-right:auto;}
+.rc-btn{
+  border:none;border-radius:12px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.rc-btn.primary{background:linear-gradient(180deg,#00B712,#158a45);color:#fff;}
+.rc-btn.primary:hover{filter:brightness(1.08);}
+.rc-btn.ghost{background:transparent;color:#1fe26a;border:1px solid #1fe26a;}
+.rc-btn.ghost:hover{background:rgba(31,226,106,.10);}
+.rc-btn.neutral{background:transparent;color:#9aa4ad;border:1px solid #2a363f;}
+.rc-btn.neutral:hover{color:#e6e6e6;border-color:#3a4a55;}
+
+/* Білий папір */
+.paper{
+  width:100%;max-width:520px;
+  background:#fff;color:var(--rc-ink);
+  border-radius:14px;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  padding:34px 38px 30px;
+}
+
+/* Шапка */
+.rc-head{text-align:center;border-bottom:2px solid var(--rc-accent);padding-bottom:16px;margin-bottom:16px;}
+.rc-logo{height:54px;width:auto;display:inline-block;margin-bottom:8px;}
+.rc-shop{font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--rc-ink);text-transform:uppercase;}
+.rc-sub{font-size:12px;color:var(--rc-muted);margin-top:3px;}
+
+/* Номер + дата */
+.rc-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+.rc-no{font-size:18px;font-weight:800;}
+.rc-date{font-size:13px;color:var(--rc-muted);}
+
+/* Рядки інфо (клієнт/пристрій тощо) */
+.rc-info{margin-bottom:14px;}
+.rc-info .rc-row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-size:14px;}
+.rc-info .rc-row .k{color:var(--rc-muted);flex:0 0 auto;}
+.rc-info .rc-row .v{font-weight:600;text-align:right;word-break:break-word;}
+
+/* Таблиця позицій */
+.rc-table{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:13.5px;}
+.rc-table th{
+  text-align:left;color:var(--rc-muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  border-bottom:1px solid var(--rc-line);padding:0 0 7px;
+}
+.rc-table td{padding:8px 0;border-bottom:1px dashed var(--rc-line);vertical-align:top;}
+.rc-table th.num,.rc-table td.num{text-align:right;white-space:nowrap;}
+.rc-table th.qty,.rc-table td.qty{text-align:center;white-space:nowrap;width:46px;}
+.rc-table .it-name{font-weight:600;}
+.rc-table .it-type{display:block;color:var(--rc-muted);font-size:11px;font-weight:500;margin-top:1px;}
+
+/* Підсумок */
+.rc-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:14px;border-top:2px solid var(--rc-accent);}
+.rc-total .lbl{font-size:16px;font-weight:800;}
+.rc-total .amt{font-size:22px;font-weight:900;}
+
+/* Підвал чека */
+.rc-foot{margin-top:18px;text-align:center;color:var(--rc-muted);font-size:12px;line-height:1.6;}
+.rc-foot .pay{color:var(--rc-ink);font-weight:600;}
+
+.rc-loading,.rc-error{color:#9aa4ad;text-align:center;padding:40px 0;}
+.rc-error{color:#ff8a8a;}
+
+/* ===== ДРУК ===== */
+@media print{
+  @page{margin:12mm;}
+  body{background:#fff;padding:0;display:block;}
+  .rc-actions{display:none !important;}
+  .paper{box-shadow:none;border-radius:0;max-width:100%;width:100%;padding:0;}
+  .rc-head{border-bottom:2px solid #000;}
+  .rc-total{border-top:2px solid #000;}
+}

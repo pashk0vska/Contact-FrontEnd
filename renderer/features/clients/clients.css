@@ -167,21 +167,26 @@
         .table-clients tbody tr:hover {
             background: #142029;
         }
-    /* ширини колонок */
+    /* ширини колонок — 5 колонок: [чекбокс] Ім'я · Телефон · Email · Дії
+       email = auto: забирає всю вільну ширину і більше не ховається в "…" */
     .table-clients thead th:nth-child(1), .table-clients tbody td:nth-child(1) {
-        width: 34%;
+        width: 44px;
     }
 
     .table-clients thead th:nth-child(2), .table-clients tbody td:nth-child(2) {
-        width: 22%;
+        width: 26%;
     }
 
     .table-clients thead th:nth-child(3), .table-clients tbody td:nth-child(3) {
-        width: 32%;
+        width: 20%;
     }
 
     .table-clients thead th:nth-child(4), .table-clients tbody td:nth-child(4) {
-        width: 12%;
+        width: auto;
+    }
+
+    .table-clients thead th:nth-child(5), .table-clients tbody td:nth-child(5) {
+        width: 72px;
         text-align: right;
     }
 

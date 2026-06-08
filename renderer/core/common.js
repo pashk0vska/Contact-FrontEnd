@@ -1,4 +1,4 @@
-﻿/**
+/**
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
@@ -10,6 +10,9 @@
  *  initHotkeys()
  *  checkAutoOpen()   — для ?action=add
  *  getUserRole()     — роль користувача (superadmin/admin/master)
+ *  phoneToPretty / phoneToCanonical / isValidUaPhone / attachPhoneInput — телефони (+380)
+ *  isValidEmail
+ *  makeClientSuggest(input, onPick) — стилізований автодоповнювач клієнта
  */
 
 // ─── 0. Підключаємо компоненти.css якщо не підключено ──────────────────────
@@ -334,7 +337,7 @@ function injectUsersLink(){
   if (role !== 'superadmin' && role !== 'admin' && role !== 'master') return;
   const menu = document.querySelector('.sidebar .menu');
   if (!menu) return;
-  
+
   // Якщо пункт вже є в HTML (як на сторінці users.html) — нічого не робимо
   if (document.querySelector('.sidebar a[href$="users.html"]') || menu.querySelector('a.active[data-page="users"]')) return;
 
@@ -407,3 +410,110 @@ document.addEventListener('DOMContentLoaded', function(){
     }catch(e){}
   }
 });
+
+// ─── 12. ТЕЛЕФОН (український формат +380) ─────────────────────────────────
+/**
+ * Робота з українськими номерами.
+ *  - Користувач вводить просто цифри (09..., 09501234567, 50..., +380...).
+ *  - У полі автоматично форматується у вигляд: +380 (50) 123 45 67
+ *  - У БД зберігаємо канонічний вигляд: +380XXXXXXXXX
+ *  - Валідний номер = рівно 9 цифр абонента (після коду 380 / провідного 0).
+ */
+function _phoneSubscriber(value){
+  let d = (value || '').replace(/\D/g, '');
+  if (d.startsWith('380')) d = d.slice(3);
+  else if (d.startsWith('0')) d = d.slice(1);
+  return d.slice(0, 9);
+}
+function isValidUaPhone(value){ return _phoneSubscriber(value).length === 9; }
+function phoneToCanonical(value){ const d = _phoneSubscriber(value); return d.length === 9 ? ('+380' + d) : ''; }
+function phoneToPretty(value){
+  const d = _phoneSubscriber(value);
+  if (d.length !== 9) return value || '';   // не вдалось розпізнати — показуємо як є
+  return `+380 (${d.slice(0,2)}) ${d.slice(2,5)} ${d.slice(5,7)} ${d.slice(7,9)}`;
+}
+/** Жива маска для <input>: форматує під час вводу, ставить каретку в кінець. */
+function attachPhoneInput(input){
+  if (!input || input.dataset.uaPhone) return;
+  input.dataset.uaPhone = '1';
+  input.setAttribute('inputmode', 'tel');
+  input.setAttribute('maxlength', '19');
+  const handler = () => {
+    const digits = (input.value || '').replace(/\D/g, '');
+    let d = digits;
+    if (d.startsWith('380')) d = d.slice(3);
+    else if (d.startsWith('0')) d = d.slice(1);
+    d = d.slice(0, 9);
+    let out = '';
+    if (digits.length) {
+      out = '+380 (' + d.slice(0, 2);
+      if (d.length >= 2) out += ') ';
+      if (d.length > 2)  out += d.slice(2, 5);
+      if (d.length > 5)  out += ' ' + d.slice(5, 7);
+      if (d.length > 7)  out += ' ' + d.slice(7, 9);
+    }
+    input.value = out;
+    try { input.setSelectionRange(out.length, out.length); } catch {}
+  };
+  input.addEventListener('input', handler);
+}
+window.isValidUaPhone   = isValidUaPhone;
+window.phoneToCanonical = phoneToCanonical;
+window.phoneToPretty    = phoneToPretty;
+window.attachPhoneInput = attachPhoneInput;
+
+// ─── 13. EMAIL ──────────────────────────────────────────────────────────────
+function isValidEmail(value){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((value || '').trim()); }
+window.isValidEmail = isValidEmail;
+
+// ─── 14. СТИЛІЗОВАНИЙ ПІДБІР КЛІЄНТА (заміна нативного <datalist>) ──────────
+/**
+ * makeClientSuggest(inputEl, onPick) → { render(list), hide() }
+ *  - render(list): list = [{id, fullName, phone}] показує спадне меню під полем.
+ *  - onPick(client): викликається при кліку на елемент.
+ * Меню — position:fixed, додане в body, тож коректно лягає поверх модалок.
+ */
+function makeClientSuggest(input, onPick){
+  if (!input) return { render(){}, hide(){} };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const box = document.createElement('div');
+  box.className = 'client-suggest';
+  box.hidden = true;
+  document.body.appendChild(box);
+  let items = [];
+
+  function position(){
+    const r = input.getBoundingClientRect();
+    box.style.left  = r.left + 'px';
+    box.style.top   = (r.bottom + 4) + 'px';
+    box.style.width = r.width + 'px';
+  }
+  function hide(){ box.hidden = true; }
+  function render(list){
+    items = list || [];
+    if (!items.length){ hide(); return; }
+    box.innerHTML = items.map((c, i) =>
+      `<button type="button" class="cs-item" data-i="${i}">
+         <span class="cs-name">${esc(c.fullName)}</span>
+         <span class="cs-phone">${esc(phoneToPretty(c.phone))}</span>
+       </button>`).join('');
+    position();
+    box.hidden = false;
+  }
+
+  // mousedown (а не click) — щоб спрацювати до blur поля
+  box.addEventListener('mousedown', (e) => {
+    const btn = e.target.closest('.cs-item');
+    if (!btn) return;
+    e.preventDefault();
+    const c = items[+btn.dataset.i];
+    hide();
+    if (c && onPick) onPick(c);
+  });
+  input.addEventListener('blur', () => setTimeout(hide, 150));
+  window.addEventListener('scroll', hide, true);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+
+  return { render, hide, position };
+}
+window.makeClientSuggest = makeClientSuggest;

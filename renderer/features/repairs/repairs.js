@@ -12,6 +12,12 @@ async function apiFetch(path,init={}){
   try{return await tryOnce(API);}catch{for(const c of API_CANDIDATES){if(c===API)continue;try{const out=await tryOnce(c);localStorage.setItem("apiBase",c);API=c;return out;}catch{}}throw new Error("API not reachable");}
 }
 
+// Телефон/email-хелпери (із common.js)
+const prettyPhone = (v) => (window.phoneToPretty ? window.phoneToPretty(v) : (v || ""));
+const canonPhone  = (v) => (window.phoneToCanonical ? window.phoneToCanonical(v) : (v || ""));
+const validPhone  = (v) => (window.isValidUaPhone ? window.isValidUaPhone(v) : !!(v || "").trim());
+const validEmail  = (v) => (window.isValidEmail ? window.isValidEmail(v) : /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((v || "").trim()));
+
 async function loadMasters(selectId, selectedId){
   const sel=document.getElementById(selectId); if(!sel) return;
   sel.innerHTML='<option value="">— не призначено —</option>';
@@ -116,12 +122,9 @@ function openRowMenu(btn,repairId){
 }
 function closeRowMenu(){portal.hidden=true;currentMenuAnchor=null;}
 
-async function fetchPdf(url){
-  try{const res=await fetch(url,{headers:{"Authorization":`Bearer ${token}`}});
-    if(!res.ok){showToast('error','Помилка PDF: '+res.status);return;}
-    const blob=await res.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.target='_blank';a.download='document.pdf';document.body.appendChild(a);a.click();a.remove();
-  }catch(e){showToast('error',e.message);}
-}
+// Чек ремонту → стилізована сторінка-чек із друком
+function openRepairReceipt(id){ location.href=`../receipt/receipt.html?type=repair&id=${id}&back=repairs`; }
+
 async function createRepair(model){const{res}=await apiFetch(`${API}/api/Repairs`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(model)});if(!res.ok)throw new Error(`Помилка: ${res.status}`);return await res.json();}
 async function deleteRepair(id){const{res}=await apiFetch(`${API}/api/Repairs/${id}`,{method:"DELETE",headers:{"Authorization":`Bearer ${token}`}});if(res.ok){showToast('success','Видалено');await loadRepairs();}else showToast('error',"Помилка: "+res.status);}
 async function createSaleFromRepair(repairId){
@@ -141,7 +144,7 @@ document.addEventListener("click",(e)=>{
     else if(kcAct.dataset.act==="edit") openEditRepairModal(id);
     else if(kcAct.dataset.act==="details") location.href="./repair-details.html?id="+id;
     else if(kcAct.dataset.act==="createSale") confirmAction("Створити продаж на основі цього ремонту?",(ok)=>{if(ok)createSaleFromRepair(id);});
-    else if(kcAct.dataset.act==="receipt") fetchPdf(`${API}/api/Receipts/repair/${id}/pdf`);
+    else if(kcAct.dataset.act==="receipt") openRepairReceipt(id);
     closeRowMenu();return;
   }
   if(!e.target.closest("#rowMenuPortal"))closeRowMenu();
@@ -152,58 +155,71 @@ $("#fReset")?.addEventListener("click",()=>{$("#fStatus").value="";$("#fDeviceTy
 $("#sApply")?.addEventListener("click",()=>{sort=$("#sortField").value||"Date";dir=$("#sortDir").value||"desc";page=1;loadRepairs();});
 $("#sReset")?.addEventListener("click",()=>{$("#sortField").value="Date";$("#sortDir").value="desc";sort="Date";dir="desc";page=1;loadRepairs();});
 
-// New client phone toggle
-// (стара setupNewClientPhone прибрана — клієнт розпізнається через clientMap нижче)
-
 // Create/Edit modal
 const repairModal=$("#repairModal"),repairForm=$("#repairForm"),rfClient=$("#rfClient"),rfClientId=$("#rfClientId");
-function openRepairModal(){repairForm.reset();repairForm.dataset.editId="";$("#repairModalTitle").textContent="Створити ордер";$("#rfSubmitBtn").textContent="Зберегти";
-  const d=new Date();$("#rfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  $("#clientList").innerHTML="";rfClientId.value="";clientMap={};setPhoneVisible(false);loadMasters("rfMaster",null);repairModal.hidden=false;}
-function closeRepairModal(){repairModal.hidden=true;}
-$("#btnCreate")?.addEventListener("click",openRepairModal);
-$("#rfCancel")?.addEventListener("click",closeRepairModal);
 
-
-// мапа знайдених клієнтів: lower(ПІБ) -> id, для надійного розпізнавання наявного клієнта
+// мапа знайдених клієнтів: lower(ПІБ) -> id
 let clientMap = {};
-function setPhoneVisible(show){
-  const row=document.getElementById('rfNewClientPhoneRow');
+function setNewClientVisible(show){
+  const row=document.getElementById('rfNewClientRow');
   if(row) row.style.display = show ? '' : 'none';
-  const ph=$("#rfNewClientPhone");
-  if(ph){ ph.required = !!show; if(!show) ph.value=''; }
+  const ph=$("#rfNewClientPhone"), em=$("#rfNewClientEmail");
+  if(ph){ ph.required=!!show; if(!show) ph.value=''; }
+  if(em){ em.required=!!show; if(!show) em.value=''; }
 }
 function resolveClient(){
   const name=(rfClient.value||'').trim().toLowerCase();
   const id=clientMap[name];
-  if(id){ rfClientId.value=id; setPhoneVisible(false); return true; }
+  if(id){ rfClientId.value=id; setNewClientVisible(false); return true; }
   rfClientId.value="";
-  // телефон просимо лише якщо введено нове ім'я, якого немає в базі
-  setPhoneVisible((rfClient.value||'').trim().length>0);
+  setNewClientVisible((rfClient.value||'').trim().length>0);
   return false;
 }
 
+// Стилізований підбір клієнта (заміна <datalist>)
+const clientSuggest = window.makeClientSuggest ? makeClientSuggest(rfClient,(c)=>{
+  rfClient.value=c.fullName; rfClientId.value=c.id;
+  clientMap[(c.fullName||'').toLowerCase()]=c.id;
+  setNewClientVisible(false);
+}) : {render(){},hide(){}};
+
+function openRepairModal(){repairForm.reset();repairForm.dataset.editId="";$("#repairModalTitle").textContent="Створити ордер";$("#rfSubmitBtn").textContent="Зберегти";
+  const d=new Date();$("#rfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  clientSuggest.hide();rfClientId.value="";clientMap={};setNewClientVisible(false);loadMasters("rfMaster",null);repairModal.hidden=false;}
+function closeRepairModal(){repairModal.hidden=true;clientSuggest.hide();}
+$("#btnCreate")?.addEventListener("click",openRepairModal);
+$("#rfCancel")?.addEventListener("click",closeRepairModal);
+
 rfClient?.addEventListener("input",debounce(async()=>{
   const q=rfClient.value.trim();
-  if(!q||q.length<2){$("#clientList").innerHTML="";clientMap={};resolveClient();return;}
+  if(!q||q.length<2){clientSuggest.hide();clientMap={};resolveClient();return;}
   const url=new URL(`/api/Clients`,API);url.searchParams.set("q",q);url.searchParams.set("page",1);url.searchParams.set("pageSize",20);
   const{res}=await apiFetch(url.href,{headers:{"Authorization":`Bearer ${token}`}});if(!res.ok)return;
   const data=await res.json();
-  clientMap={};
-  $("#clientList").innerHTML=(data.items||[]).map(c=>{clientMap[(c.fullName||'').toLowerCase()]=c.id;return `<option value="${c.fullName}" data-id="${c.id}">${c.phone||''}</option>`;}).join("");
+  clientMap={}; (data.items||[]).forEach(c=>{clientMap[(c.fullName||'').toLowerCase()]=c.id;});
+  clientSuggest.render(data.items||[]);
   resolveClient();
 },300));
 rfClient?.addEventListener("change",resolveClient);
 rfClient?.addEventListener("blur",resolveClient);
+if(window.attachPhoneInput) attachPhoneInput($("#rfNewClientPhone"));
 
 repairForm?.addEventListener("submit",async(e)=>{
   e.preventDefault();const btn=repairForm.querySelector('button[type="submit"]');btn.disabled=true;
   try{const dateRaw=$("#rfDate").value;const dateValue=dateRaw?`${dateRaw}T00:00:00`:new Date().toISOString();
     if(!repairForm.dataset.editId) resolveClient();
     const clientId=+(rfClientId.value||0),clientName=rfClient.value.trim();
-    if(!clientId&&!clientName){showToast('warning',"Вкажи клієнта");return;}
-    const isEditMode2=!!repairForm.dataset.editId;if(!isEditMode2&&!clientId){const phone=$("#rfNewClientPhone").value.trim();if(!phone){showToast("warning","Вкажи телефон нового клієнта");return;}}
-    const model={clientId:clientId||null,clientName:clientId?null:clientName,clientPhone:clientId?null:$("#rfNewClientPhone").value.trim(),
+    if(!clientId&&!clientName){showToast('warning',"Вкажіть клієнта");return;}
+    if(!$("#rfDevice").value.trim()){showToast('warning','Вкажіть пристрій');return;}
+    if(!$("#rfProblem").value.trim()){showToast('warning','Опишіть проблему');return;}
+    const isEditMode2=!!repairForm.dataset.editId;
+    const newPhone=$("#rfNewClientPhone").value.trim(), newEmail=$("#rfNewClientEmail").value.trim();
+    if(!isEditMode2&&!clientId){
+      if(!validPhone(newPhone)){showToast("warning","Вкажіть коректний телефон нового клієнта");return;}
+      if(!validEmail(newEmail)){showToast("warning","Вкажіть коректний email нового клієнта");return;}
+    }
+    const model={clientId:clientId||null,clientName:clientId?null:clientName,
+      clientPhone:clientId?null:canonPhone(newPhone),clientEmail:clientId?null:newEmail,
       date:dateValue,device:$("#rfDevice").value.trim(),problem:$("#rfProblem").value.trim(),status:$("#rfStatus").value,price:Math.max(0,+$("#rfPrice").value||0),masterId:$("#rfMaster").value?+$("#rfMaster").value:null};
     const editId=repairForm.dataset.editId;
     if(editId){const{res}=await apiFetch(`${API}/api/Repairs/${editId}`,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(model)});
@@ -220,7 +236,7 @@ async function openEditRepairModal(id){
     $("#repairModalTitle").textContent="Редагувати ордер";$("#rfSubmitBtn").textContent="Оновити";
     if(r.date||r.Date){const d=new Date(r.date||r.Date);if(!isNaN(d))$("#rfDate").value=d.toISOString().slice(0,10);}
     $("#rfStatus").value=r.status||"new";rfClient.value=r.clientName||"";rfClientId.value="";
-    clientMap={};setPhoneVisible(false);
+    clientMap={};clientSuggest.hide();setNewClientVisible(false);
     $("#rfDevice").value=r.deviceType||"";$("#rfProblem").value=r.problem||"";$("#rfPrice").value=r.totalCost||0;
     loadMasters("rfMaster", r.masterId);
     repairModal.hidden=false;

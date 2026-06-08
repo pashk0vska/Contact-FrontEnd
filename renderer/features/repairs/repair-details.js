@@ -16,6 +16,7 @@ const $ = (s,r=document)=>r.querySelector(s);
 const escapeHtml = s => (s ?? "").toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmtMoney = v => `₴ ${Number(v||0).toLocaleString("uk-UA")}`;
 const fmtDate = s => { if(!s) return "—"; const d=new Date(s); return Number.isNaN(d.getTime())?s:d.toLocaleDateString("uk-UA"); };
+const prettyPhone = (v) => (window.phoneToPretty ? window.phoneToPretty(v) : (v || ""));
 
 const params = new URLSearchParams(location.search);
 const repairId = params.get("id");
@@ -52,7 +53,8 @@ function render(r){
   const closed = st==="done" || st==="issued";
   const canceled = st==="canceled";
 
-  const phone = c.phone ? `<a href="tel:${escapeHtml(c.phone)}" style="color:#1fe26a">${escapeHtml(c.phone)}</a>` : "—";
+  const phonePretty = c.phone ? prettyPhone(c.phone) : "";
+  const phone = c.phone ? `<a href="tel:${escapeHtml(c.phone)}" style="color:#1fe26a">${escapeHtml(phonePretty)}</a>` : "—";
   const email = c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:#1fe26a">${escapeHtml(c.email)}</a>` : "—";
 
   $("#rdContent").innerHTML = `
@@ -83,7 +85,7 @@ function render(r){
     </div>`;
 
   $("#rdEdit")?.addEventListener("click",()=>{ localStorage.setItem("openEditRepair", String(r.id)); location.href="./repairs.html"; });
-  $("#rdReceipt")?.addEventListener("click",()=>fetchPdf(`${API}/api/Receipts/repair/${r.id}/pdf`));
+  $("#rdReceipt")?.addEventListener("click",()=>{ location.href=`../receipt/receipt.html?type=repair&id=${r.id}&back=repairs`; });
   $("#rdClose")?.addEventListener("click",()=>confirmAction("Закрити ремонт (статус «Готово»)?",(ok)=>{if(ok)setStatus("done");}));
   $("#rdCancel")?.addEventListener("click",()=>confirmAction("Позначити як «Відмова клієнта» (скасувати)?",(ok)=>{if(ok)setStatus("canceled");}));
 }
@@ -104,16 +106,6 @@ async function setStatus(newStatus){
     const {res}=await apiFetch(`${API}/api/Repairs/${current.id}`,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(dto)});
     if(res.ok||res.status===204){ showToast('success','Статус оновлено'); await load(); }
     else showToast('error','Помилка: '+((await res.text().catch(()=>""))||res.status));
-  }catch(e){ showToast('error',e.message); }
-}
-
-async function fetchPdf(url){
-  try{
-    const res=await fetch(url,{headers:{"Authorization":`Bearer ${token}`}});
-    if(!res.ok){ showToast('error','Помилка PDF: '+res.status); return; }
-    const blob=await res.blob(); const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob); a.target='_blank'; a.download=`receipt-repair-${current?.id||""}.pdf`;
-    document.body.appendChild(a); a.click(); a.remove();
   }catch(e){ showToast('error',e.message); }
 }
 

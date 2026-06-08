@@ -16,6 +16,11 @@ async function apiFetch(path, init = {}) {
   }
 }
 
+// Телефон/email-хелпери (із common.js)
+const canonPhone  = (v) => (window.phoneToCanonical ? window.phoneToCanonical(v) : (v || ""));
+const validPhone  = (v) => (window.isValidUaPhone ? window.isValidUaPhone(v) : !!(v || "").trim());
+const validEmail  = (v) => (window.isValidEmail ? window.isValidEmail(v) : /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((v || "").trim()));
+
 async function loadMasters(selectId, selectedId){
   const sel=document.getElementById(selectId); if(!sel) return;
   sel.innerHTML='<option value="">— не призначено —</option>';
@@ -115,17 +120,8 @@ async function deleteSale(id){
   if(res.ok){showToast('success','Видалено');await loadSales();}else showToast('error',"Помилка: "+res.status);
 }
 
-// PDF receipt with proper blob handling
-async function openReceiptPdf(saleId){
-  try{
-    const res = await fetch(`${API}/api/Receipts/sale/${saleId}/pdf`,{headers:{"Authorization":`Bearer ${token}`}});
-    if(!res.ok){showToast('error','Помилка генерації чека: '+res.status);return;}
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    window.open(url,'_blank');
-    setTimeout(()=>URL.revokeObjectURL(url),60000);
-  }catch(e){showToast('error','Помилка: '+e.message);}
-}
+// Чек продажу → стилізована сторінка-чек із друком
+function openSaleReceipt(saleId){ location.href=`../receipt/receipt.html?type=sale&id=${saleId}&back=sales`; }
 
 async function bulkDeleteSales(){
   if(!selectedIds.size)return;
@@ -148,8 +144,8 @@ document.addEventListener("click",(e)=>{
     else if(act.dataset.act==="edit") openEditSaleModal(id);
     else if(act.dataset.act==="details") openSaleDetails(id);
     else if(act.dataset.act==="duplicate") confirmAction("Дублювати цей продаж?",(ok)=>{if(ok)duplicateSale(id);});
-    else if(act.dataset.act==="receipt") openReceiptPdf(id);
-    else if(act.dataset.act==="invoice") openReceiptPdf(id);
+    else if(act.dataset.act==="receipt") openSaleReceipt(id);
+    else if(act.dataset.act==="invoice") openSaleReceipt(id);
     closeRowMenu();return;}
   if(!e.target.closest("#rowMenuPortal"))closeRowMenu();
 });
@@ -160,10 +156,9 @@ $("#fReset")?.addEventListener("click",()=>{$("#fFrom").value=$("#fTo").value=""
 $("#sApply")?.addEventListener("click",()=>{sort=$("#sortField").value||"Date";dir=$("#sortDir").value||"desc";page=1;loadSales();});
 $("#sReset")?.addEventListener("click",()=>{$("#sortField").value="Date";$("#sortDir").value="desc";sort="Date";dir="desc";page=1;loadSales();});
 
-// === New client phone toggle (через clientMap нижче) ===
-
 // === Create Sale Modal ===
 const saleModal=$("#saleModal"),saleForm=$("#saleForm"),sfClient=$("#sfClient"),sfClientId=$("#sfClientId");
+
 // ===== POS: позиції продажу (T6) =====
 function addItemRow(item){
   const wrap=document.getElementById('sfItems'); if(!wrap) return;
@@ -186,9 +181,9 @@ function addItemRow(item){
 function resetItems(){const w=document.getElementById('sfItems'); if(w) w.innerHTML=''; addItemRow();}
 function rowSum(r){return Math.max(1,+r.querySelector('.pi-qty').value||1)*Math.max(0,+r.querySelector('.pi-price').value||0);}
 function recalcTotal(){
-  let t=0;
-  document.querySelectorAll('#sfItems .pos-row').forEach(r=>{const s=rowSum(r);t+=s;const sp=r.querySelector('.pi-sum');if(sp)sp.textContent=fmtMoney(s);});
-  const el=document.getElementById('sfTotal'); if(el) el.textContent=fmtMoney(t);
+  let total=0;
+  document.querySelectorAll('#sfItems .pos-row').forEach(r=>{const s=rowSum(r);total+=s;const sp=r.querySelector('.pi-sum');if(sp)sp.textContent=fmtMoney(s);});
+  const el=document.getElementById('sfTotal'); if(el) el.textContent=fmtMoney(total);
 }
 function collectItems(){
   const out=[];
@@ -208,43 +203,51 @@ document.getElementById('sfItems')?.addEventListener('click',(e)=>{
   recalcTotal();
 });
 
-function openSaleModal(){saleForm.reset();saleForm.dataset.editId="";$("#saleModalTitle").textContent="Зареєструвати продаж";$("#sfSubmitBtn").textContent="Зберегти";
-  const d=new Date();$("#sfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  sfClientId.value="";$("#clientList").innerHTML="";clientMap={};setPhoneVisible(false);loadMasters("sfMaster",null);resetItems();saleModal.hidden=false;}
-function closeSaleModal(){saleModal.hidden=true;}
-$("#btnAddSale")?.addEventListener("click",openSaleModal);
-$("#sfCancel")?.addEventListener("click",closeSaleModal);
-// modal only closes via Cancel button
-
-// мапа знайдених клієнтів: lower(ПІБ) -> id, для надійного розпізнавання наявного клієнта
+// мапа знайдених клієнтів: lower(ПІБ) -> id
 let clientMap = {};
-function setPhoneVisible(show){
-  const row=document.getElementById('sfNewClientPhoneRow');
+function setNewClientVisible(show){
+  const row=document.getElementById('sfNewClientRow');
   if(row) row.style.display = show ? '' : 'none';
-  const ph=$("#sfNewClientPhone");
-  if(ph){ ph.required = !!show; if(!show) ph.value=''; }
+  const ph=$("#sfNewClientPhone"), em=$("#sfNewClientEmail");
+  if(ph){ ph.required=!!show; if(!show) ph.value=''; }
+  if(em){ em.required=!!show; if(!show) em.value=''; }
 }
 function resolveClient(){
   const name=(sfClient.value||'').trim().toLowerCase();
   const id=clientMap[name];
-  if(id){ sfClientId.value=id; setPhoneVisible(false); return true; }
+  if(id){ sfClientId.value=id; setNewClientVisible(false); return true; }
   sfClientId.value="";
-  setPhoneVisible((sfClient.value||'').trim().length>0);
+  setNewClientVisible((sfClient.value||'').trim().length>0);
   return false;
 }
 
+// Стилізований підбір клієнта (заміна <datalist>)
+const clientSuggest = window.makeClientSuggest ? makeClientSuggest(sfClient,(c)=>{
+  sfClient.value=c.fullName; sfClientId.value=c.id;
+  clientMap[(c.fullName||'').toLowerCase()]=c.id;
+  setNewClientVisible(false);
+}) : {render(){},hide(){}};
+
+function openSaleModal(){saleForm.reset();saleForm.dataset.editId="";$("#saleModalTitle").textContent="Зареєструвати продаж";$("#sfSubmitBtn").textContent="Зберегти";
+  const d=new Date();$("#sfDate").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  sfClientId.value="";clientSuggest.hide();clientMap={};setNewClientVisible(false);loadMasters("sfMaster",null);resetItems();saleModal.hidden=false;}
+function closeSaleModal(){saleModal.hidden=true;clientSuggest.hide();}
+$("#btnAddSale")?.addEventListener("click",openSaleModal);
+$("#sfCancel")?.addEventListener("click",closeSaleModal);
+
 sfClient?.addEventListener("input", debounce(async()=>{
   const q=sfClient.value.trim();
-  if(!q||q.length<2){$("#clientList").innerHTML="";clientMap={};resolveClient();return;}
+  if(!q||q.length<2){clientSuggest.hide();clientMap={};resolveClient();return;}
   const url=new URL(`/api/Clients`,API);url.searchParams.set("q",q);url.searchParams.set("page",1);url.searchParams.set("pageSize",20);
   const{res}=await apiFetch(url.href,{headers:{"Authorization":`Bearer ${token}`}});if(!res.ok)return;
   const data=await res.json();
-  clientMap={};
-  $("#clientList").innerHTML=(data.items||[]).map(c=>{clientMap[(c.fullName||'').toLowerCase()]=c.id;return `<option value="${c.fullName}" data-id="${c.id}">${c.phone||''}</option>`;}).join("");
+  clientMap={}; (data.items||[]).forEach(c=>{clientMap[(c.fullName||'').toLowerCase()]=c.id;});
+  clientSuggest.render(data.items||[]);
   resolveClient();
 },300));
 sfClient?.addEventListener("change",resolveClient);
 sfClient?.addEventListener("blur",resolveClient);
+if(window.attachPhoneInput) attachPhoneInput($("#sfNewClientPhone"));
 
 async function submitSale(openReceipt){
   const btn=document.getElementById('sfSubmitBtn');const rbtn=document.getElementById('sfReceipt');
@@ -253,10 +256,17 @@ async function submitSale(openReceipt){
     if(!saleForm.dataset.editId) resolveClient();
     const clientId=+($("#sfClientId").value||0),clientName=$("#sfClient").value.trim();
     const newPhone=$("#sfNewClientPhone")?.value?.trim()||"";
+    const newEmail=$("#sfNewClientEmail")?.value?.trim()||"";
     if(!clientId&&!clientName){showToast('warning',"Вкажи клієнта");return;}
-    const isEditMode=!!saleForm.dataset.editId;if(!isEditMode&&!clientId&&!newPhone){showToast('warning','Вкажи телефон нового клієнта');return;}
+    const isEditMode=!!saleForm.dataset.editId;
+    if(!isEditMode&&!clientId){
+      if(!validPhone(newPhone)){showToast('warning','Вкажіть коректний телефон нового клієнта');return;}
+      if(!validEmail(newEmail)){showToast('warning','Вкажіть коректний email нового клієнта');return;}
+    }
     const saleItems=collectItems(); if(!saleItems.length){showToast('warning','Додай хоча б одну позицію');return;}
-    const model={clientId:clientId||null,clientName:clientId?null:clientName,clientPhone:clientId?null:newPhone,date:dateValue,payment:$("#sfPayment").value,status:$("#sfStatus2").value,note:$("#sfNote").value.trim(),
+    const model={clientId:clientId||null,clientName:clientId?null:clientName,
+      clientPhone:clientId?null:canonPhone(newPhone),clientEmail:clientId?null:newEmail,
+      date:dateValue,payment:$("#sfPayment").value,status:$("#sfStatus2").value,note:$("#sfNote").value.trim(),
       items:saleItems,upsertService:true,masterId:$("#sfMaster").value?+$("#sfMaster").value:null};
     const editId=saleForm.dataset.editId;
     let saleId=editId?+editId:null;
@@ -264,8 +274,9 @@ async function submitSale(openReceipt){
       const{res}=await apiFetch(`${API}/api/Sales/${editId}`,{method:"PUT",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify(model)});
       if(res.ok||res.status===204)showToast('success','Продаж оновлено');else{showToast('error','Помилка: '+res.status);return;}
     }else{const d=await createSale(model);saleId=d&&d.id?d.id:null;showToast('success','Продаж створено');}
-    closeSaleModal();page=1;await loadSales();
-    if(openReceipt&&saleId) openReceiptPdf(saleId);
+    closeSaleModal();
+    if(openReceipt&&saleId){ openSaleReceipt(saleId); return; }
+    page=1;await loadSales();
   }catch(err){showToast('error',err.message);}
   finally{btn.disabled=false; if(rbtn) rbtn.disabled=false;}
 }
@@ -286,7 +297,7 @@ async function openEditSaleModal(id){
     if(items.length){for(const it of items) addItemRow(it);} else { addItemRow(); }
     $("#sfStatus2").value=sale.status||"done";
     $("#sfNote").value=sale.note||"";
-    clientMap={};setPhoneVisible(false);loadMasters("sfMaster", sale.masterId);
+    clientMap={};clientSuggest.hide();setNewClientVisible(false);loadMasters("sfMaster", sale.masterId);
     saleModal.hidden=false;
   }catch(e){showToast('error',e.message);}
 }
@@ -324,7 +335,7 @@ async function openSaleDetails(id){
       <table class="table-mini" style="margin-top:14px"><thead><tr><th>Назва</th><th>Тип</th><th>К-ть</th><th>Ціна</th><th>Сума</th></tr></thead><tbody>${rows}</tbody></table>
       <div style="text-align:right;margin-top:12px;font-weight:800;font-size:16px">Разом: <span style="color:#1fe26a">${fmtMoney(sale.total)}</span></div>
       <div class="actions" style="margin-top:14px"><button class="btn-ghost" id="sdReceiptBtn" type="button">Чек (PDF)</button></div>`;
-    document.getElementById('sdReceiptBtn')?.addEventListener('click',()=>openReceiptPdf(sale.id));
+    document.getElementById('sdReceiptBtn')?.addEventListener('click',()=>openSaleReceipt(sale.id));
   }catch(e){document.getElementById('sdContent').innerHTML='<p class="err">'+e.message+'</p>';}
 }
 

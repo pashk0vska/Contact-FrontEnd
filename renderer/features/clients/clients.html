@@ -51,10 +51,10 @@
             <!-- Add Modal -->
             <div id="clientModal" class="modal-layer" hidden>
                 <div class="modal-card">
-                    <form id="clientForm" class="card" autocomplete="off">
+                    <form id="clientForm" class="card" autocomplete="off" novalidate>
                         <h2 class="card-title">Новий клієнт</h2>
                         <div class="row"><div class="field"><label for="cfFullName">Ім'я *</label><input id="cfFullName" type="text" required></div></div>
-                        <div class="row two"><div class="field"><label for="cfPhone">Телефон *</label><input id="cfPhone" type="tel" required></div><div class="field"><label for="cfEmail">Email</label><input id="cfEmail" type="email"></div></div>
+                        <div class="row two"><div class="field"><label for="cfPhone">Телефон *</label><input id="cfPhone" type="tel" inputmode="tel" maxlength="19" placeholder="0XX XXX XX XX" required></div><div class="field"><label for="cfEmail">Email *</label><input id="cfEmail" type="email" placeholder="email@example.com" required></div></div>
                         <div class="actions"><button type="button" class="btn btn-ghost" id="cfCancel">Скасувати</button><button type="submit" class="btn">Зберегти</button></div>
                     </form>
                 </div>
@@ -63,11 +63,11 @@
             <!-- Edit Modal -->
             <div id="editClientModal" class="modal-layer" hidden>
                 <div class="modal-card">
-                    <form id="editClientForm" class="card" autocomplete="off">
+                    <form id="editClientForm" class="card" autocomplete="off" novalidate>
                         <h2 class="card-title">Редагувати клієнта</h2>
                         <input id="efId" type="hidden">
                         <div class="row"><div class="field"><label for="efFullName">Ім'я *</label><input id="efFullName" type="text" required></div></div>
-                        <div class="row two"><div class="field"><label for="efPhone">Телефон *</label><input id="efPhone" type="tel" required></div><div class="field"><label for="efEmail">Email</label><input id="efEmail" type="email"></div></div>
+                        <div class="row two"><div class="field"><label for="efPhone">Телефон *</label><input id="efPhone" type="tel" inputmode="tel" maxlength="19" required></div><div class="field"><label for="efEmail">Email *</label><input id="efEmail" type="email" required></div></div>
                         <div class="actions"><button type="button" class="btn btn-ghost" id="efCancel">Скасувати</button><button type="submit" class="btn">Зберегти</button></div>
                     </form>
                 </div>
@@ -86,7 +86,7 @@
             <div class="table-wrap">
                 <table class="table-clients">
                     <thead><tr>
-                        <th style="width:40px"><input type="checkbox" id="selectAll"></th>
+                        <th class="col-cb"><input type="checkbox" id="selectAll"></th>
                         <th data-sort="FullName">Ім'я</th>
                         <th data-sort="Phone">Телефон</th>
                         <th data-sort="Email">Email</th>

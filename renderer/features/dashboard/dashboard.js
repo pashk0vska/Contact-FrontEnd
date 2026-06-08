@@ -35,7 +35,17 @@ if (whoEl) whoEl.textContent = usernameFromToken(token) || "користувач
 document.getElementById("logout")?.addEventListener("click",()=>{localStorage.removeItem("token");localStorage.removeItem("role");location.href="../auth/index.html";});
 
 const num = n => `₴${Number(n||0).toLocaleString("uk-UA")}`;
+const cnt = n => Number(n||0).toLocaleString("uk-UA");
 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+// Підрядок KPI: нейтральний (контекст) та "приріст" (зелений, зі стрілкою)
+function subMuted(id, text){ const el=document.getElementById(id); if(el){ el.className='kpi-sub'; el.textContent=text; } }
+function subPlus(id, n, label){
+  const el=document.getElementById(id); if(!el) return;
+  n = Number(n||0);
+  if(n>0){ el.className='kpi-sub up'; el.textContent=`▲ +${cnt(n)} ${label}`; }
+  else { el.className='kpi-sub'; el.textContent=`${cnt(n)} ${label}`; }
+}
 
 function _ini(n){return (n||"").trim().split(/\s+/).slice(0,2).map(s=>s[0]||"").join("").toUpperCase();}
 function statusPill(v){const s=(v||"").toLowerCase();const label=(typeof STATUS_UA!=="undefined"&&STATUS_UA[s])||v||"\u2014";const col=(typeof STATUS_COLOR!=="undefined"&&STATUS_COLOR[s])||"#5b6b76";return `<span class="st-pill" style="background:${col}22;color:${col};border:1px solid ${col}55">${label}</span>`;}
@@ -44,6 +54,17 @@ function masterCell(name){if(!name)return '<span style="opacity:.4">\u2014</span
 function render(d = {}) {
   set("salesToday",d.salesToday??0);set("profitSales",num(d.profitSales??0));set("incomeWeek",num(d.incomeWeek??0));set("newClients",d.newClients??0);
   set("repairsToday",d.repairsToday??0);set("profitRepair",num(d.profitRepair??0));set("clientsTotal",d.clientsTotal??0);set("activeRepairs",d.activeRepairs??0);
+
+  // Порівняльна / контекстна статистика (з наявних полів відповіді)
+  subMuted("subSalesToday",  `за місяць: ${cnt(d.salesMonth??0)}`);
+  subMuted("subProfitSales", `за місяць: ${num(d.salesMonthSum??0)}`);
+  subMuted("subIncomeWeek",  `за місяць: ${num(d.totalIncomeMonth??0)}`);
+  subMuted("subNewClients",  `у базі всього: ${cnt(d.clientsTotal??0)}`);
+  subMuted("subRepairsToday",`за місяць: ${cnt(d.repairsMonth??0)}`);
+  subMuted("subProfitRepair",`за місяць: ${num(d.repairsMonthSum??0)}`);
+  subPlus("subClientsTotal",  d.newClients??0,   "сьогодні");
+  subPlus("subActiveRepairs", d.repairsToday??0, "сьогодні");
+
   const tb = document.getElementById("recentRepairs");
   if (tb) { const rr=d.recentRepairs??[];tb.innerHTML=rr.map(r=>`<tr><td>${r.clientName??""}</td><td>${r.device??""}</td><td>${statusPill(r.status)}</td><td style="text-align:right">${num(r.totalCost??0)}</td><td>${masterCell(r.masterName)}</td></tr>`).join(""); }
   renderCharts(d);

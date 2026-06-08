@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Дашборд</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./dashboard.css?v=1">
+    <link rel="stylesheet" href="./dashboard.css?v=2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -39,17 +39,38 @@
                 <p class="muted">Гарного робочого дня!</p>
             </section>
             <section class="grid kpi">
-                <div class="card"><div class="title">Продажів сьогодні</div><div class="value" id="salesToday">0</div></div>
-                <div class="card"><div class="title">Прибуток сьогодні <span class="muted">(продажі)</span></div><div class="value" id="profitSales">₴0</div></div>
-                <div class="card"><div class="title">Дохід за тиждень <span class="muted">(загальний)</span></div><div class="value" id="incomeWeek">₴0</div></div>
-                <div class="card"><div class="title">Нових клієнтів</div><div class="value" id="newClients">0</div></div>
-                <div class="card"><div class="title">Ремонтів сьогодні</div><div class="value" id="repairsToday">0</div></div>
-                <div class="card"><div class="title">Прибуток сьогодні <span class="muted">(ремонт)</span></div><div class="value" id="profitRepair">₴0</div></div>
                 <div class="card">
-                    <div class="title">Всього клієнтів</div>
-                    <div class="value" id="clientsTotal">0</div>
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 12.3a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.8L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/></svg></div>
+                    <div class="title">Продажів сьогодні</div><div class="value" id="salesToday">0</div><div class="kpi-sub" id="subSalesToday"></div>
                 </div>
-                <div class="card"><div class="title">Активні ремонти</div><div class="value" id="activeRepairs">0</div></div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+                    <div class="title">Прибуток сьогодні <span class="muted">(продажі)</span></div><div class="value" id="profitSales">₴0</div><div class="kpi-sub" id="subProfitSales"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8M21 7v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="title">Дохід за тиждень <span class="muted">(загальний)</span></div><div class="value" id="incomeWeek">₴0</div><div class="kpi-sub" id="subIncomeWeek"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM19 8v6M22 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="title">Нових клієнтів</div><div class="value" id="newClients">0</div><div class="kpi-sub" id="subNewClients"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5-2-2 1.5-3.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+                    <div class="title">Ремонтів сьогодні</div><div class="value" id="repairsToday">0</div><div class="kpi-sub" id="subRepairsToday"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M9.5 9.8c0-1 1.1-1.6 2.5-1.6s2.5.7 2.5 1.7c0 2.4-5 1.2-5 3.6 0 1 1.1 1.7 2.5 1.7s2.5-.6 2.5-1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+                    <div class="title">Прибуток сьогодні <span class="muted">(ремонт)</span></div><div class="value" id="profitRepair">₴0</div><div class="kpi-sub" id="subProfitRepair"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="title">Всього клієнтів</div><div class="value" id="clientsTotal">0</div><div class="kpi-sub" id="subClientsTotal"></div>
+                </div>
+                <div class="card">
+                    <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2 6 4-14 2 8h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="title">Активні ремонти</div><div class="value" id="activeRepairs">0</div><div class="kpi-sub" id="subActiveRepairs"></div>
+                </div>
             </section>
             <section class="split">
                 <div class="panel"><h3>Дохід за 14 днів</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
@@ -77,6 +98,6 @@
         </main>
     </div>
     <script src="../../core/common.js"></script>
-    <script src="./dashboard.js?v=2"></script>
+    <script src="./dashboard.js?v=3"></script>
 </body>
 </html>

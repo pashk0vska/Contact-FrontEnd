@@ -73,10 +73,10 @@
     <div id="repairModal" class="modal-layer" hidden>
         <div class="modal-card card" role="dialog">
             <h3 class="card-title" id="repairModalTitle">Створити ордер</h3>
-            <form id="repairForm" class="body">
+            <form id="repairForm" class="body" novalidate>
                 <div class="row two"><div class="field"><label>Дата</label><input id="rfDate" type="date" required></div><div class="field"><label>Статус</label><select id="rfStatus"><option value="new">Новий</option><option value="progress">В процесі</option><option value="done">Готово</option><option value="issued">Видано</option><option value="canceled">Скасовано</option></select></div></div>
-                <div class="row two"><div class="field"><label>Клієнт</label><input id="rfClient" list="clientList" placeholder="Ім'я або телефон…" autocomplete="off"><datalist id="clientList"></datalist><input id="rfClientId" type="hidden"></div><div class="field"><label>Пристрій</label><input id="rfDevice" type="text" required></div></div>
-                <div class="row" id="rfNewClientPhoneRow" style="display:none"><div class="field"><label for="rfNewClientPhone">Телефон нового клієнта *</label><input id="rfNewClientPhone" type="tel" placeholder="Напр. 0971112233"></div></div>
+                <div class="row two"><div class="field"><label>Клієнт</label><input id="rfClient" placeholder="Ім'я або телефон…" autocomplete="off"><input id="rfClientId" type="hidden"></div><div class="field"><label>Пристрій</label><input id="rfDevice" type="text" required></div></div>
+                <div class="row two" id="rfNewClientRow" style="display:none"><div class="field"><label for="rfNewClientPhone">Телефон нового клієнта *</label><input id="rfNewClientPhone" type="tel" inputmode="tel" maxlength="19" placeholder="0XX XXX XX XX"></div><div class="field"><label for="rfNewClientEmail">Email нового клієнта *</label><input id="rfNewClientEmail" type="email" placeholder="email@example.com"></div></div>
                 <div class="row"><div class="field"><label>Проблема</label><input id="rfProblem" type="text" required></div></div>
                 <div class="row two"><div class="field"><label for="rfMaster">Майстер</label><select id="rfMaster"></select></div><div class="field"><label>Вартість (₴)</label><input id="rfPrice" type="number" min="0" value="0"></div></div>
                 <div class="row"><div class="field"><label>Нотатка</label><input id="rfNote" type="text"></div></div>

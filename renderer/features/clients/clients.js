@@ -17,6 +17,12 @@ async function apiFetch(path, init = {}) {
   }
 }
 
+// Телефон/email-хелпери з common.js (із запасними варіантами на випадок, якщо common.js не підвантажився)
+const prettyPhone = (v) => (window.phoneToPretty ? window.phoneToPretty(v) : (v || ""));
+const canonPhone  = (v) => (window.phoneToCanonical ? window.phoneToCanonical(v) : (v || ""));
+const validPhone  = (v) => (window.isValidUaPhone ? window.isValidUaPhone(v) : !!(v || "").trim());
+const validEmail  = (v) => (window.isValidEmail ? window.isValidEmail(v) : /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((v || "").trim()));
+
 let page = 1, pageSize = 10, sort = "FullName", dir = "asc";
 let selectedIds = new Set();
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -53,7 +59,7 @@ function renderTable(items) {
   for (const c of items) {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td><input type="checkbox" class="row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''}></td>
-      <td>${escapeHtml(c.fullName)}</td><td>${escapeHtml(c.phone)}</td><td>${escapeHtml(c.email||"")}</td>
+      <td>${escapeHtml(c.fullName)}</td><td>${escapeHtml(prettyPhone(c.phone))}</td><td>${escapeHtml(c.email||"")}</td>
       <td class="actions"><div class="row-actions"><button class="menu-btn" data-id="${c.id}" title="Дії">⋯</button></div></td>`;
     tbody.appendChild(tr);
   }
@@ -123,19 +129,40 @@ document.getElementById("btnAdd")?.addEventListener("click",()=>{clientForm.rese
 document.getElementById("cfCancel")?.addEventListener("click",()=>{clientModal.hidden=true;});
 
 function closeModal(){clientModal.hidden=true;}
-clientForm?.addEventListener("submit",async(e)=>{e.preventDefault();const fn=$("#cfFullName").value.trim(),ph=$("#cfPhone").value.trim(),em=$("#cfEmail").value.trim();if(!fn||!ph){showToast('warning',"Заповни Ім'я та Телефон.");return;}await saveClient({fullName:fn,phone:ph,email:em});});
+clientForm?.addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  const fn=$("#cfFullName").value.trim();
+  const phRaw=$("#cfPhone").value.trim();
+  const em=$("#cfEmail").value.trim();
+  if(!fn){showToast('warning',"Вкажіть ім'я.");return;}
+  if(!validPhone(phRaw)){showToast('warning','Вкажіть коректний номер телефону.');return;}
+  if(!validEmail(em)){showToast('warning','Вкажіть коректний email.');return;}
+  await saveClient({fullName:fn,phone:canonPhone(phRaw),email:em});
+  closeModal();
+});
 
 // Edit modal
 const editModal=document.getElementById("editClientModal");
 function openEditModal(id){
   apiFetch(`${API}/api/Clients?q=&page=1&pageSize=200`,{headers:{"Authorization":`Bearer ${token}`}}).then(async({res})=>{
     if(!res.ok)return;const data=await res.json();const c=(data.items||[]).find(x=>x.id===id);if(!c){showToast('error','Не знайдено');return;}
-    $("#efId").value=c.id;$("#efFullName").value=c.fullName;$("#efPhone").value=c.phone;$("#efEmail").value=c.email||"";editModal.hidden=false;});
+    $("#efId").value=c.id;$("#efFullName").value=c.fullName;$("#efPhone").value=prettyPhone(c.phone);$("#efEmail").value=c.email||"";editModal.hidden=false;});
 }
 function closeEditModal(){editModal.hidden=true;}
 $("#efCancel")?.addEventListener("click",closeEditModal);
 
-$("#editClientForm")?.addEventListener("submit",async(e)=>{e.preventDefault();const id=+$("#efId").value;await saveClient({fullName:$("#efFullName").value.trim(),phone:$("#efPhone").value.trim(),email:$("#efEmail").value.trim()},id);closeEditModal();});
+$("#editClientForm")?.addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  const id=+$("#efId").value;
+  const fn=$("#efFullName").value.trim();
+  const phRaw=$("#efPhone").value.trim();
+  const em=$("#efEmail").value.trim();
+  if(!fn){showToast('warning',"Вкажіть ім'я.");return;}
+  if(!validPhone(phRaw)){showToast('warning','Вкажіть коректний номер телефону.');return;}
+  if(!validEmail(em)){showToast('warning','Вкажіть коректний email.');return;}
+  await saveClient({fullName:fn,phone:canonPhone(phRaw),email:em},id);
+  closeEditModal();
+});
 
 // History modal
 const historyModal=document.getElementById("historyModal");
@@ -155,6 +182,8 @@ async function openHistoryModal(cid){
 function closeHistoryModal(){historyModal.hidden=true;}
 $("#historyClose")?.addEventListener("click",closeHistoryModal);
 
+// Жива маска телефону у модалках
+if (window.attachPhoneInput) { attachPhoneInput($("#cfPhone")); attachPhoneInput($("#efPhone")); }
 
 (()=>{const key=localStorage.getItem("openModal");if(!key)return;localStorage.removeItem("openModal");if(key==="client")document.getElementById("btnAdd")?.click();})();
 loadClients();
