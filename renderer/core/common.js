@@ -1,4 +1,4 @@
-/**
+﻿/**
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
@@ -334,11 +334,15 @@ function injectUsersLink(){
   if (role !== 'superadmin' && role !== 'admin' && role !== 'master') return;
   const menu = document.querySelector('.sidebar .menu');
   if (!menu) return;
+  
+  // Якщо пункт вже є в HTML (як на сторінці users.html) — нічого не робимо
   if (document.querySelector('.sidebar a[href$="users.html"]') || menu.querySelector('a.active[data-page="users"]')) return;
 
   const a = document.createElement('a');
   a.href = '../users/users.html';
-  a.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Користувачі</span>';
+  // a.className = 'active'; <--- ПРИБРАЛИ
+  a.dataset.page = 'users';
+  a.innerHTML = '<img class="ico" src="../../assets/icons/users.png" width="22" height="22" alt=""><span>Користувачі</span>';
 
   const analytics = menu.querySelector('a[href$="analytics.html"]');
   if (analytics) analytics.insertAdjacentElement('afterend', a);
