@@ -57,6 +57,10 @@ function attachDatePicker(input, onChange){
   function close(){ pop.hidden=true; }
   input.addEventListener('click',()=>{ pop.hidden?open():close(); });
   pop.addEventListener('click',(e)=>{
+    // Клік усередині календаря не повинен «спливати» до глобального
+    // обробника закриття: інакше після перемальовування (‹ ›) ціль кліку
+    // вже видалена з DOM, pop.contains(target) === false і календар закривається.
+    e.stopPropagation();
     const nav=e.target.closest('[data-nav]');
     if(nav){ view.setMonth(view.getMonth()+(+nav.dataset.nav)); render(); return; }
     const cell=e.target.closest('.dp-cell[data-d]');
@@ -90,6 +94,21 @@ function renderTopTable(items){
   if(!items||!items.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;opacity:.7">Немає даних за період</td></tr>`;return;}
   for(const it of items){const tr=document.createElement('tr');tr.innerHTML=`<td>${it.product||''}</td><td>${it.category||''}</td><td style="text-align:center">${Number(it.qty||0).toLocaleString('uk-UA')}</td><td style="text-align:right">${fmtMoney(it.sum)}</td>`;tbody.appendChild(tr);}
 }
+
+// ===== Таблиця деталізації ремонтів за пристроями (режим «Лише ремонти») =====
+function renderRepDeviceTable(items){
+  const tbody=document.getElementById('repDeviceTbody');if(!tbody)return;tbody.innerHTML='';
+  if(!items||!items.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;opacity:.7">Немає ремонтів за період</td></tr>`;return;}
+  for(const it of items){
+    const count=Number(it.count||0);
+    const sum=Number(it.sum||0);
+    const avg=count>0?sum/count:0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${it.device||'—'}</td><td style="text-align:center">${count.toLocaleString('uk-UA')}</td><td style="text-align:right">${fmtMoney(sum)}</td><td style="text-align:right">${fmtMoney(avg)}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
 function renderKpi(kpi){setText('kpiIncome',fmtMoney(kpi?.income));setText('kpiSalesCount',String(kpi?.salesCount??0));setText('kpiRepairsCount',String(kpi?.repairsCount??0));setText('kpiAvgCheck',fmtMoney(kpi?.avgCheck));setText('kpiProfit',fmtMoney(kpi?.profitEstimate));setText('kpiNewClients',String(kpi?.newClients??0));}
 
 // ===== Графіки (стиль дашборду) =====
@@ -205,14 +224,14 @@ async function loadAnalytics(){
   const from=getPickerIso(document.getElementById('fromDate'));
   const to=getPickerIso(document.getElementById('toDate'));
   const url=new URL('/api/Analytics/summary',API);if(from)url.searchParams.set('from',from);if(to)url.searchParams.set('to',to);url.searchParams.set('type',mode);
-  renderKpi({});renderTopTable([]);
+  renderKpi({});renderTopTable([]);renderRepDeviceTable([]);
   let out;
   try{out=await apiFetch(url.href,{headers:{'Authorization':`Bearer ${token}`}});}catch(e){return;}
   const{res}=out;
   if(res.status===401){showToast('error','Сесія завершилась');localStorage.removeItem('token');location.href="../auth/index.html";return;}
   if(!res.ok)return;
   const data=await res.json();lastData=data;
-  renderKpi(data.kpi);renderTopTable(data.topProducts);renderCharts(data);
+  renderKpi(data.kpi);renderTopTable(data.topProducts);renderRepDeviceTable(data.repairsByDevice);renderCharts(data);
 }
 
 // Excel export (професійний .xlsx з бекенду)

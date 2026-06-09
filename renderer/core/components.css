@@ -34,9 +34,18 @@ input[type="checkbox"]:focus-visible{outline:2px solid #1fe26a44;outline-offset:
 #confirm-box p{margin:0 0 20px;font-size:15px;line-height:1.5;}
 #confirm-box .confirm-actions{display:flex;gap:10px;justify-content:flex-end;}
 #confirm-box .confirm-actions button{border:none;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;}
-#confirm-ok{background:linear-gradient(180deg,#e24040,#a01010);color:#fff;}
-#confirm-cancel{background:transparent;color:#00b712;border:1px solid #00b712 !important;}
-#confirm-cancel:hover{background:rgba(0,183,18,.08);}
+
+/* За замовчуванням (звичайні/конструктивні дії): «Підтвердити» — зелене, «Скасувати» — червоне */
+#confirm-ok{background:linear-gradient(180deg,#00B712,#158a45);color:#fff;}
+#confirm-ok:hover{filter:brightness(1.08);}
+#confirm-cancel{background:transparent;color:#e24040;border:1px solid #e24040 !important;}
+#confirm-cancel:hover{background:rgba(226,64,64,.10);}
+
+/* Деструктивні дії (видалення) — клас .danger на оверлеї:
+   «Підтвердити» стає червоним (попередження), «Скасувати» — нейтральним */
+#confirm-overlay.danger #confirm-ok{background:linear-gradient(180deg,#e24040,#a01010);color:#fff;}
+#confirm-overlay.danger #confirm-cancel{background:transparent;color:#9aa4ad;border:1px solid #3a4a55 !important;}
+#confirm-overlay.danger #confirm-cancel:hover{background:rgba(255,255,255,.06);color:#e6e6e6;}
 
 /* ===== SKELETON ===== */
 .skeleton{position:relative;overflow:hidden;background:#1B1F24;border-radius:6px;color:transparent!important;pointer-events:none;}

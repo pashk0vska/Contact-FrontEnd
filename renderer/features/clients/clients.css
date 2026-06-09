@@ -190,11 +190,6 @@
         text-align: right;
     }
 
-    .table-clients td.actions {
-        position: relative;
-        text-align: right;
-    }
-
 /* === PORTAL MENU (⋯) — поверх усього UI === */
 .row-menu-portal {
     position: fixed;
@@ -387,31 +382,28 @@
     .modal-layer .btn-ghost:hover {
         background: rgba(0,183,18,0.08);
     }
-/* ==== ВИРІВНЮВАННЯ КОЛОНКИ "ДІЇ" ==== */
 
-/* 1. Вирівнюємо заголовок колонки */
+/* ==== ВИРІВНЮВАННЯ КОЛОНКИ "ДІЇ" (той самий патерн, що на Продажах) ====
+   Раніше тут було display:table-cell !important + padding:0 !important —
+   через цю комбінацію обгортка .row-actions (position:absolute) інколи
+   рендерилась не в своїй клітинці, і ⋯ з'являвся біля чекбокса.
+   Лишаємо лише position:relative на клітинці — як у table-sales. */
 .table-clients thead th:last-child {
     text-align: right;
-    padding-right: 12px; /* Відступ для симетрії з кнопкою */
+    padding-right: 14px;
 }
 
-/* 2. Робимо саму клітинку "контейнером"
-   (Важливо: скидаємо всі flex-властивості, якщо вони були) */
 .table-clients td.actions {
-    position: relative; /* База для абсолютного позиціонування */
-    padding: 0 !important; /* Скидаємо відступи, щоб кнопка стала чітко */
-    display: table-cell !important; /* Скидаємо flex, якщо він був */
+    position: relative;
+    text-align: right;
+    padding-right: 0;
 }
 
-    /* 3. Позиціонуємо обгортку кнопки (.row-actions),
-   яка генерується у вашому clients.js */
     .table-clients td.actions .row-actions {
         position: absolute;
-        right: 12px; /* Відступ 12px від правого краю клітинки */
-        top: 50%; /* На 50% висоти */
-        transform: translateY(-50%); /* Центруємо по вертикалі */
-        /* Скидаємо будь-які інші стилі позиціонування */
-        display: inline-flex;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
         justify-content: flex-end;
-        margin-left: 0;
     }
