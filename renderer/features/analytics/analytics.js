@@ -215,18 +215,14 @@ async function loadAnalytics(){
   renderKpi(data.kpi);renderTopTable(data.topProducts);renderCharts(data);
 }
 
-// CSV export
-function exportCSV(){
-  if(!lastData)return;const kpi=lastData.kpi||{};const top=lastData.topProducts||[];const cats=lastData.byCategory||[];
-  let csv='KPI\nПоказник,Значення\n';
-  csv+=`Дохід,${kpi.income||0}\nПродажів,${kpi.salesCount||0}\nРемонтів,${kpi.repairsCount||0}\nСер. чек,${kpi.avgCheck||0}\nПрибуток,${kpi.profitEstimate||0}\nНових клієнтів,${kpi.newClients||0}\n\n`;
-  csv+='Дохід за категоріями\nКатегорія,Сума\n';
-  for(const c of cats) csv+=`"${c.name}",${c.value}\n`;
-  csv+='\nТОП-10 товарів\nПродукт,Категорія,Кількість,Сума\n';
-  for(const t of top) csv+=`"${t.product}","${t.category}",${t.qty},${t.sum}\n`;
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`analytics_${new Date().toISOString().slice(0,10)}.csv`;a.click();
-  showToast('success','CSV завантажено');
+// Excel export (професійний .xlsx з бекенду)
+async function exportExcel(){
+  const from=getPickerIso(document.getElementById('fromDate'));const to=getPickerIso(document.getElementById('toDate'));const type=getMode();
+  const url=new URL('/api/Analytics/report-excel',API);if(from)url.searchParams.set('from',from);if(to)url.searchParams.set('to',to);url.searchParams.set('type',type);
+  try{const{res}=await apiFetch(url.href,{headers:{'Authorization':`Bearer ${token}`}});
+    if(!res.ok){showToast('error','Помилка генерації Excel');return;}
+    const blob=await res.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kontakt-zvit_${from||'all'}_${to||'all'}.xlsx`;a.click();showToast('success','Excel завантажено');
+  }catch(e){showToast('error',e.message);}
 }
 
 // PDF report
@@ -262,6 +258,6 @@ setDefaultRange();
 document.getElementById('applyBtn')?.addEventListener('click',()=>{document.querySelectorAll('#periodSeg button').forEach(x=>x.classList.remove('active'));loadAnalytics();});
 document.getElementById('resetBtn')?.addEventListener('click',()=>{setPicker(document.getElementById('fromDate'),'');setPicker(document.getElementById('toDate'),'');const sel=document.getElementById('typeSelect');if(sel)sel.selectedIndex=0;setDefaultRange();loadAnalytics();});
 document.getElementById('typeSelect')?.addEventListener('change',loadAnalytics);
-document.getElementById('btnExportCSV')?.addEventListener('click',exportCSV);
+document.getElementById('btnExportCSV')?.addEventListener('click',exportExcel);
 document.getElementById('btnExportPDF')?.addEventListener('click',exportPDF);
 loadAnalytics();
