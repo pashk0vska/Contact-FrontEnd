@@ -79,7 +79,7 @@ function renderTable(items) {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td><input type="checkbox" class="row-cb" data-id="${id}" ${selectedIds.has(id)?'checked':''}></td>
       <td>${fmtDate(date)}</td><td>${clientName}</td><td>${productName}</td><td style="text-align:center">${quantity}</td>
-      <td style="text-align:right">${fmtMoney(totalPrice)}</td><td>${payment}</td><td class="${statusClass(status)}">${statusText(status)}</td>
+      <td style="text-align:right">${fmtMoney(totalPrice)}</td><td>${paymentChip(payment)}</td><td>${saleStatusBadge(status)}</td>
       <td class="actions"><div class="row-actions"><button class="menu-btn" data-id="${id}" title="Дії">⋯</button></div></td>`;
     tbody.appendChild(tr);
   }
@@ -87,6 +87,9 @@ function renderTable(items) {
 
 function statusClass(v){switch((v||"").toLowerCase()){case "done":case "завершено":return "status-done";case "processing":case "в обробці":return "status-processing";case "cancelled":case "скасовано":return "status-cancelled";default:return "";}}
 function statusText(v){const s=(v||"").toLowerCase();if(s==="done")return "Завершено";if(s==="processing")return "В обробці";if(s==="cancelled")return "Скасовано";if(s==="returned")return "Повернення";return v||"";}
+// Бейдж статусу (стилістика як у Ремонтах) + чип способу оплати
+function saleStatusBadge(v){const s=(v||"").toLowerCase();const map={done:["done","Завершено"],processing:["progress","В обробці"],cancelled:["canceled","Скасовано"],returned:["returned","Повернення"]};const x=map[s]||["",statusText(v)||"—"];return `<span class="sale-badge ${x[0]}">${x[1]}</span>`;}
+function paymentChip(v){const s=(v||"").toLowerCase();const cls=s.includes("карт")?"card":(s?"cash":"");return `<span class="pay-chip ${cls}">${v||"—"}</span>`;}
 
 function renderPager(total){
   const root=$("#pager");const pages=Math.max(1,Math.ceil(total/pageSize));page=Math.min(page,pages);
@@ -327,8 +330,8 @@ async function openSaleDetails(id){
       <div class="sd-grid">
         <div><span class="sd-k">Клієнт</span><div class="sd-v">${sale.clientName||'—'}</div></div>
         <div><span class="sd-k">Дата</span><div class="sd-v">${fmtDate(sale.date)}</div></div>
-        <div><span class="sd-k">Оплата</span><div class="sd-v">${sale.payment||'—'}</div></div>
-        <div><span class="sd-k">Статус</span><div class="sd-v">${statusText(sale.status)}</div></div>
+        <div><span class="sd-k">Оплата</span><div class="sd-v">${paymentChip(sale.payment)}</div></div>
+        <div><span class="sd-k">Статус</span><div class="sd-v">${saleStatusBadge(sale.status)}</div></div>
         <div><span class="sd-k">Майстер</span><div class="sd-v">${sale.masterName||'—'}</div></div>
         <div><span class="sd-k">Примітка</span><div class="sd-v">${sale.note||'—'}</div></div>
       </div>

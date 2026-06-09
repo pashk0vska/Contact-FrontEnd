@@ -36,12 +36,12 @@
                     <div class="seg" id="periodSeg"><button data-period="month" class="active" type="button">Місяць</button><button data-period="quarter" type="button">Квартал</button><button data-period="year" type="button">Рік</button></div>
                     <details class="dropdown" id="dateDrop"><summary class="btn btn-ghost">Вибрати конкретну дату</summary>
                         <div class="dropdown-menu narrow">
-                            <label>З <input id="fromDate" type="date"></label>
-                            <label>По <input id="toDate" type="date"></label>
+                            <label>З <input id="fromDate" type="text" class="dp-input" readonly placeholder="дд.мм.рррр" autocomplete="off"></label>
+                            <label>По <input id="toDate" type="text" class="dp-input" readonly placeholder="дд.мм.рррр" autocomplete="off"></label>
                             <div class="dropdown-actions"><button id="resetBtn" class="btn btn-ghost" type="button">Скинути</button><button id="applyBtn" class="btn" type="button">Застосувати</button></div></div></details>
                     <details class="dropdown"><summary class="btn btn-ghost">Тип даних</summary>
                         <div class="dropdown-menu narrow">
-                            <label>Показати<select><option>Продажі + Ремонти</option><option>Лише продажі</option><option>Лише ремонти</option></select></label></div></details>
+                            <label>Показати<select id="typeSelect"><option>Продажі + Ремонти</option><option>Лише продажі</option><option>Лише ремонти</option></select></label></div></details>
                 </div>
                 <div class="right">
                     <button id="btnExportCSV" class="btn btn-ghost" type="button">Експорт CSV</button>
@@ -49,19 +49,21 @@
                 </div>
             </div>
             <section class="grid kpi">
-                <div class="card"><div class="title">Дохід за період</div><div class="value" id="kpiIncome">₴ 0</div></div>
-                <div class="card"><div class="title">К-ть продажів</div><div class="value" id="kpiSalesCount">0</div></div>
-                <div class="card"><div class="title">К-ть ремонтів</div><div class="value" id="kpiRepairsCount">0</div></div>
-                <div class="card"><div class="title">Сер. чек</div><div class="value" id="kpiAvgCheck">₴ 0</div></div>
-                <div class="card"><div class="title">Прибуток (оцінка)</div><div class="value" id="kpiProfit">₴ 0</div></div>
-                <div class="card"><div class="title">Нових клієнтів</div><div class="value" id="kpiNewClients">0</div></div>
+                <div class="card" data-modes="all sales repairs"><div class="title">Дохід за період</div><div class="value" id="kpiIncome">₴ 0</div></div>
+                <div class="card" data-modes="all sales"><div class="title">К-ть продажів</div><div class="value" id="kpiSalesCount">0</div></div>
+                <div class="card" data-modes="all repairs"><div class="title">К-ть ремонтів</div><div class="value" id="kpiRepairsCount">0</div></div>
+                <div class="card" data-modes="all sales"><div class="title">Сер. чек</div><div class="value" id="kpiAvgCheck">₴ 0</div></div>
+                <div class="card" data-modes="all sales repairs"><div class="title">Прибуток (оцінка)</div><div class="value" id="kpiProfit">₴ 0</div></div>
+                <div class="card" data-modes="all sales repairs"><div class="title">Нових клієнтів</div><div class="value" id="kpiNewClients">0</div></div>
             </section>
             <section class="split">
-                <div class="panel"><h3>Дохід за категоріями</h3><div class="chart-box"><canvas id="catChartCanvas"></canvas></div></div>
-                <div class="panel"><h3>Топ послуг</h3><div class="chart-box"><canvas id="svcChartCanvas"></canvas></div></div>
-                <div class="panel"><h3>Продажі за період (ТОП товарів)</h3><div class="chart-box"><canvas id="salesChartCanvas"></canvas></div></div>
-                <div class="panel"><h3>Кількість (ТОП товарів)</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
-                <div class="panel wide"><h3>ТОП-10 продуктів</h3>
+                <div class="panel" data-modes="all sales repairs"><h3>Дохід за категоріями</h3><div class="chart-box"><canvas id="catChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all repairs"><h3>Ремонти за статусами</h3><div class="chart-box"><canvas id="repStatusChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all repairs"><h3>Топ пристроїв (ремонти)</h3><div class="chart-box"><canvas id="repDeviceChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all sales"><h3>Топ послуг</h3><div class="chart-box"><canvas id="svcChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all sales"><h3>Продажі за період (ТОП товарів)</h3><div class="chart-box"><canvas id="salesChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all sales"><h3>Кількість (ТОП товарів)</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
+                <div class="panel wide" data-modes="all sales"><h3>ТОП-10 продуктів</h3>
                     <div class="table-wrap"><table class="table"><thead><tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr></thead><tbody id="topTbody"><tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr></tbody></table></div>
                 </div>
             </section>

@@ -120,13 +120,19 @@ main.analytics {
         color: #9aa4ad;
     }
 
-    .dropdown-menu select {
+    .dropdown-menu select,
+    .dropdown-menu input {
         background: var(--card);
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 8px 10px;
+        width: 100%;
     }
+
+/* поле дати — клікабельне, відкриває кастомний календар */
+.dp-input { cursor: pointer; }
+.dp-input::placeholder { color: #7f8a93; }
 
 .dropdown-actions {
     grid-column: 1/-1;
@@ -184,6 +190,10 @@ main.analytics {
     .panel.wide {
         grid-column: 1 / -1;
     }
+
+/* приховування KPI/панелей залежно від типу даних */
+.grid.kpi .card[hidden],
+.split .panel[hidden] { display: none !important; }
 
 /* графіки (сучасний контейнер, як на дашборді) */
 .chart-box {
@@ -283,3 +293,35 @@ main.analytics {
 .seg button { height: 34px; display: inline-flex; align-items: center; }
 .toolbar .dropdown > summary.btn-ghost { height: 40px; display: inline-flex; align-items: center; border-radius: 12px; }
 .toolbar .right .btn, .toolbar .right .btn-ghost { height: 40px; display: inline-flex; align-items: center; }
+
+/* ===== КАСТОМНИЙ КАЛЕНДАР (під стилістику програми) ===== */
+.dp-pop {
+    position: fixed;
+    z-index: 6000;
+    width: 264px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 18px 44px rgba(0,0,0,.55);
+}
+.dp-pop[hidden] { display: none; }
+.dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.dp-title { font-weight: 700; font-size: 14px; color: #e6e6e6; }
+.dp-nav {
+    background: transparent; border: 1px solid var(--border); color: #e6e6e6;
+    border-radius: 9px; width: 30px; height: 30px; cursor: pointer; font-size: 16px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.dp-nav:hover { border-color: #1fe26a; color: #1fe26a; }
+.dp-wd { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 4px; }
+.dp-wd span { text-align: center; font-size: 11px; color: #7d8b96; padding: 4px 0; font-weight: 600; }
+.dp-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.dp-cell {
+    height: 32px; border: 1px solid transparent; background: transparent; color: #cdd4da;
+    border-radius: 8px; cursor: pointer; font-size: 13px;
+}
+.dp-cell.empty { visibility: hidden; cursor: default; }
+.dp-cell:hover:not(.empty) { background: rgba(31,226,106,.12); color: #1fe26a; }
+.dp-cell.today { border-color: #2a4a33; }
+.dp-cell.sel { background: linear-gradient(180deg,#00B712,#158a45); color: #fff; font-weight: 700; border-color: transparent; }

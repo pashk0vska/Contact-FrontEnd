@@ -311,9 +311,19 @@ html, body {
 .mini-master{display:flex;align-items:center;gap:8px;}
 .mini-ava{width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0;}
 
-/* KPI: міні-іконка у правому куті + рядок порівняльної статистики */
+/* KPI: міні-іконка в "капсулі" (обводка як у дизайні) + рядок порівняльної статистики */
 .grid.kpi .card{position:relative;}
-.kpi-ic{position:absolute;top:14px;right:14px;width:30px;height:30px;color:#30D73C;opacity:.45;pointer-events:none;}
-.kpi-ic svg{width:100%;height:100%;display:block;}
+.grid.kpi .card .title{padding-right:48px;}
+.kpi-ic{
+    position:absolute;top:14px;right:14px;
+    width:40px;height:40px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    color:#30D73C;
+    background:rgba(48,215,60,.10);
+    border:1px solid rgba(48,215,60,.35);
+    box-shadow:inset 0 0 0 1px rgba(48,215,60,.06);
+    pointer-events:none;
+}
+.kpi-ic svg{width:21px;height:21px;display:block;}
 .kpi-sub{margin-top:8px;font-size:12px;color:#9aa4ad;min-height:14px;line-height:1.2;}
 .kpi-sub.up{color:#1fe26a;font-weight:600;}

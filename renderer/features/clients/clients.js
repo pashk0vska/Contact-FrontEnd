@@ -29,6 +29,17 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const escapeHtml = s => (s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
+// Статуси українською + кольорові пігулки для історії клієнта
+const REPAIR_STATUS_UA={new:"Новий",progress:"В процесі",done:"Готово",issued:"Видано",canceled:"Скасовано"};
+const SALE_STATUS_UA={done:"Завершено",processing:"В обробці",cancelled:"Скасовано",returned:"Повернення"};
+const STATUS_COLOR={new:"#1f8ee2",progress:"#e2b81f",done:"#1fe26a",issued:"#58d27a",canceled:"#e2706a",processing:"#e2b81f",cancelled:"#e2706a",returned:"#9b6cf0"};
+function histPill(v,kind){
+  const s=(v||"").toLowerCase();
+  const label=(kind==='sale'?SALE_STATUS_UA:REPAIR_STATUS_UA)[s]||v||"—";
+  const col=STATUS_COLOR[s]||"#5b6b76";
+  return `<span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:${col}22;color:${col};border:1px solid ${col}55;white-space:nowrap">${escapeHtml(label)}</span>`;
+}
+
 function updateSortIndicators() {
   $$("th[data-sort]").forEach(th => {
     const old = th.querySelector('.sort-ind'); if (old) old.remove();
@@ -171,10 +182,10 @@ async function openHistoryModal(cid){
   try{const{res}=await apiFetch(`${API}/api/Clients/${cid}/history`,{headers:{"Authorization":`Bearer ${token}`}});if(!res.ok){$("#historyContent").innerHTML='<p>Помилка</p>';return;}
     const d=await res.json();let h=`<h4>${escapeHtml(d.clientName)}</h4>`;
     if(d.repairs&&d.repairs.length){h+=`<h5>Ремонти (${d.repairs.length})</h5><table class="table-mini"><thead><tr><th>Дата</th><th>Пристрій</th><th>Проблема</th><th>Статус</th><th>Ціна</th></tr></thead><tbody>`;
-      for(const r of d.repairs)h+=`<tr><td>${new Date(r.date).toLocaleDateString('uk-UA')}</td><td>${escapeHtml(r.device)}</td><td>${escapeHtml(r.problem)}</td><td>${escapeHtml(r.status)}</td><td>₴${Number(r.price).toLocaleString('uk-UA')}</td></tr>`;h+=`</tbody></table>`;}
+      for(const r of d.repairs)h+=`<tr><td>${new Date(r.date).toLocaleDateString('uk-UA')}</td><td>${escapeHtml(r.device)}</td><td>${escapeHtml(r.problem)}</td><td>${histPill(r.status,'repair')}</td><td>₴${Number(r.price).toLocaleString('uk-UA')}</td></tr>`;h+=`</tbody></table>`;}
     else h+=`<p style="opacity:.7">Ремонтів немає</p>`;
     if(d.sales&&d.sales.length){h+=`<h5>Покупки (${d.sales.length})</h5><table class="table-mini"><thead><tr><th>Дата</th><th>Товар</th><th>Сума</th><th>Статус</th></tr></thead><tbody>`;
-      for(const s of d.sales)h+=`<tr><td>${new Date(s.date).toLocaleDateString('uk-UA')}</td><td>${escapeHtml(s.product)}</td><td>₴${Number(s.total).toLocaleString('uk-UA')}</td><td>${escapeHtml(s.status)}</td></tr>`;h+=`</tbody></table>`;}
+      for(const s of d.sales)h+=`<tr><td>${new Date(s.date).toLocaleDateString('uk-UA')}</td><td>${escapeHtml(s.product)}</td><td>₴${Number(s.total).toLocaleString('uk-UA')}</td><td>${histPill(s.status,'sale')}</td></tr>`;h+=`</tbody></table>`;}
     else h+=`<p style="opacity:.7">Покупок немає</p>`;
     $("#historyContent").innerHTML=h;
   }catch(e){$("#historyContent").innerHTML='<p>Помилка: '+e.message+'</p>';}
