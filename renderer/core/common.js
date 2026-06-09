@@ -76,14 +76,11 @@ window.showToast = showToast;
 
 /**
  * confirmAction('Видалити запис?', () => doDelete())
- * confirmAction('Відновити з файлу?', cb)            → зелене «Підтвердити» (звичайна дія)
- * confirmAction('Видалити…', cb)                      → червоне «Підтвердити» (визначається авто)
- * confirmAction('…', cb, true) / confirmAction('…', cb, {danger:true}) → примусово «небезпечний» стиль
  *
- * За замовчуванням кнопка підтвердження ЗЕЛЕНА, а скасування ЧЕРВОНА.
- * Для деструктивних дій (видалення) — навпаки: підтвердження ЧЕРВОНЕ (клас .danger),
- * скасування нейтральне. «Небезпечність» визначається автоматично за словом
- * «видалити» в тексті, або задається третім аргументом.
+ * Єдиний стиль для ВСІХ діалогів підтвердження:
+ *  • «Підтвердити» — зелена заповнена кнопка;
+ *  • «Скасувати» — лише червона обводка (з неоновою підсвіткою).
+ * Третій аргумент лишено для зворотної сумісності, але на вигляд не впливає.
  */
 function confirmAction(message, callback, options) {
   const overlay  = document.getElementById('confirm-overlay');
@@ -92,12 +89,7 @@ function confirmAction(message, callback, options) {
   const btnCancel= document.getElementById('confirm-cancel');
   if (!overlay) return;
 
-  // Визначаємо «небезпечний» (деструктивний) стиль
-  let danger;
-  if (options === true) danger = true;
-  else if (options && typeof options === 'object') danger = !!options.danger;
-  else danger = /видалит/i.test(message || '');   // авто: будь-яке "видалити…"
-  overlay.classList.toggle('danger', danger);
+  overlay.classList.remove('danger');   // завжди єдиний стиль
 
   msgEl.textContent = message;
   overlay.hidden = false;

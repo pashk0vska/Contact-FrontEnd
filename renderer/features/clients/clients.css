@@ -169,8 +169,15 @@
         }
     /* ширини колонок — 5 колонок: [чекбокс] Ім'я · Телефон · Email · Дії
        email = auto: забирає всю вільну ширину і більше не ховається в "…" */
+    /* Колонка чекбокса: 44px з падінгами 14+14 лишали лише 16px контенту,
+       а сам чекбокс — 18px, тож text-overflow:ellipsis домальовував "…".
+       Прибираємо обрізання саме для цієї колонки + трохи більше місця. */
     .table-clients thead th:nth-child(1), .table-clients tbody td:nth-child(1) {
-        width: 44px;
+        width: 52px;
+        padding-left: 14px;
+        padding-right: 6px;
+        overflow: visible;
+        text-overflow: clip;
     }
 
     .table-clients thead th:nth-child(2), .table-clients tbody td:nth-child(2) {

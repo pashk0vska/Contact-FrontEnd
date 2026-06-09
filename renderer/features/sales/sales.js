@@ -106,7 +106,6 @@ function openRowMenu(btn, saleId){
     <button data-act="edit" data-id="${saleId}">Редагувати</button>
     <button data-act="duplicate" data-id="${saleId}">Дублювати</button>
     <button data-act="receipt" data-id="${saleId}">Чек (PDF)</button>
-    <button data-act="invoice" data-id="${saleId}">Накладна</button>
     <button data-act="del" data-id="${saleId}">Видалити</button>`;
   portal.hidden=false;
   requestAnimationFrame(()=>{const r=btn.getBoundingClientRect();let left=Math.min(window.innerWidth-portal.offsetWidth-12,r.right-portal.offsetWidth+2);let top=Math.min(window.innerHeight-portal.offsetHeight-12,r.bottom+8);portal.style.left=`${Math.max(12,left)}px`;portal.style.top=`${Math.max(12,top)}px`;});
@@ -148,7 +147,6 @@ document.addEventListener("click",(e)=>{
     else if(act.dataset.act==="details") openSaleDetails(id);
     else if(act.dataset.act==="duplicate") confirmAction("Дублювати цей продаж?",(ok)=>{if(ok)duplicateSale(id);});
     else if(act.dataset.act==="receipt") openSaleReceipt(id);
-    else if(act.dataset.act==="invoice") openSaleReceipt(id);
     closeRowMenu();return;}
   if(!e.target.closest("#rowMenuPortal"))closeRowMenu();
 });
