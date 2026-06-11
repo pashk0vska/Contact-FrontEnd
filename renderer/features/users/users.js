@@ -5,8 +5,8 @@ const logoutEl = document.getElementById('logout');
 if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
 // ===== API =====
-const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
-let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
+const API_CANDIDATES = [window.API_BASE];
+let API = window.API_BASE;
 const token = localStorage.getItem("token");
 if (!token) location.href = "../auth/index.html";
 

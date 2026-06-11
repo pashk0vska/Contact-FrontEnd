@@ -1,10 +1,11 @@
 {
     "name": "contact-desktop",
     "version": "1.0.0",
-    "description": "",
+    "description": "Kontakt CRM — десктоп-клієнт (Electron)",
     "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "dist": "electron-builder"
     },
     "keywords": [],
     "author": "",
@@ -12,5 +13,22 @@
     "devDependencies": {
         "electron": "^30.5.1",
         "electron-builder": "^26.0.12"
+    },
+    "build": {
+        "appId": "com.kontakt.crm",
+        "productName": "Kontakt CRM",
+        "files": [
+            "main.js",
+            "renderer/**/*"
+        ],
+        "win": {
+            "target": "nsis"
+        },
+        "nsis": {
+            "oneClick": true,
+            "perMachine": false,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        }
     }
 }

@@ -1,5 +1,5 @@
-const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
-let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
+const API_CANDIDATES = [window.API_BASE];
+let API = window.API_BASE;
 async function apiFetch(path, init = {}) {
   const tryOnce = async (base) => {
     const url = path.startsWith("http") ? path : `${base}${path}`;

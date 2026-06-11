@@ -3,8 +3,8 @@ const elToday = document.getElementById('today'); if (elToday) elToday.textConte
 const token = localStorage.getItem('token'); if (!token) location.href = "../auth/index.html";
 const logoutEl = document.getElementById('logout'); if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
-const API_CANDIDATES = ["http://localhost:5101", "https://localhost:7286"];
-let API = localStorage.getItem("apiBase") || API_CANDIDATES[0];
+const API_CANDIDATES = [window.API_BASE];
+let API = window.API_BASE;
 async function apiFetch(path, init = {}) {
   const tryOnce = async(base)=>{const url=path.startsWith("http")?path:`${base}${path}`;return{res:await fetch(url,init),base};};
   try{return await tryOnce(API);}catch{for(const c of API_CANDIDATES){if(c===API)continue;try{const out=await tryOnce(c);localStorage.setItem("apiBase",c);API=c;return out;}catch{}}throw new Error("API not reachable");}
