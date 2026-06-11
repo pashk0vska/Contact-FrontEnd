@@ -69,8 +69,10 @@ function renderTable(items) {
   if (!items || !items.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;opacity:.7">Нічого не знайдено</td></tr>`; return; }
   for (const c of items) {
     const tr = document.createElement("tr");
+    // Позначка «К» — клієнт, створений у Конфігураторі ПК (FromConfigurator з бекенду).
+    const cfgBadge = c.fromConfigurator ? ` <span class="cfg-badge" title="Клієнт із Конфігуратора ПК">К</span>` : "";
     tr.innerHTML = `<td><input type="checkbox" class="row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''}></td>
-      <td>${escapeHtml(c.fullName)}</td><td>${escapeHtml(prettyPhone(c.phone))}</td><td>${escapeHtml(c.email||"")}</td>
+      <td>${escapeHtml(c.fullName)}${cfgBadge}</td><td>${escapeHtml(prettyPhone(c.phone))}</td><td>${escapeHtml(c.email||"")}</td>
       <td class="actions"><div class="row-actions"><button class="menu-btn" data-id="${c.id}" title="Дії">⋯</button></div></td>`;
     tbody.appendChild(tr);
   }
