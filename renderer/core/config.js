@@ -1,4 +1,4 @@
-﻿window.API_BASE = "contact-backend-production-c5a3.up.railway.app";
+﻿window.API_BASE = "https://contact-backend-production-c5a3.up.railway.app";
 
 // Підстраховка: затираємо стару закешовану адресу localhost,
 // щоб застосунок не стукав у неіснуючий локальний бекенд.

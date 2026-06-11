@@ -1,4 +1,4 @@
-{
+﻿{
     "name": "contact-desktop",
     "version": "1.0.0",
     "description": "Kontakt CRM — десктоп-клієнт (Electron)",
@@ -22,13 +22,16 @@
             "renderer/**/*"
         ],
         "win": {
-            "target": "nsis"
+            "target": "nsis",
+            "icon": "icon.ico"
         },
         "nsis": {
             "oneClick": true,
             "perMachine": false,
             "createDesktopShortcut": true,
-            "createStartMenuShortcut": true
+            "createStartMenuShortcut": true,
+            "installerIcon": "icon.ico",
+            "uninstallerIcon": "icon.ico"
         }
     }
 }
