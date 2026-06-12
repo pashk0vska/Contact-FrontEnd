@@ -234,7 +234,7 @@
     font-weight: 700;
 }
 
-/* ===== СТАТУС-БЕЙДЖІ (стилістика як у Ремонтах) ===== */
+/* СТАТУС-БЕЙДЖІ (стилістика як у Ремонтах) */
 .sale-badge {
     display: inline-block;
     padding: 6px 12px;
@@ -250,7 +250,7 @@
 .sale-badge.canceled { color: #442022; background: #d86e7a; border-color: #a43e49; }
 .sale-badge.returned { color: #fff;    background: #184054; border-color: #255a73; }
 
-/* ===== ЧИП СПОСОБУ ОПЛАТИ ===== */
+/* ЧИП СПОСОБУ ОПЛАТИ */
 .pay-chip {
     display: inline-flex;
     align-items: center;
@@ -363,7 +363,7 @@
             background: #0f1b22;
         }
 
-/* ===== MODAL: форма продажу (як у клієнтів) ===== */
+/* MODAL: форма продажу (як у клієнтів) */
 .modal-layer {
     position: fixed;
     inset: 0;
@@ -453,7 +453,7 @@
     }
 
 
-/* ===== POS: позиції продажу (T6) ===== */
+/* POS: позиції продажу */
 .pos-items{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
 .pos-row{display:grid;grid-template-columns:108px 1fr 64px 96px 84px 32px;gap:8px;align-items:center;}
 .pos-row .pi-type,.pos-row input{background:#0e151b;border:1px solid var(--border);border-radius:8px;color:#e6e6e6;padding:8px;font-size:13px;width:100%;}
@@ -465,13 +465,13 @@
 .pos-total #sfTotal{color:#1fe26a;}
 @media(max-width:680px){.pos-row{grid-template-columns:84px 1fr 52px 76px;}.pos-row .pi-sum,.pos-row .pi-del{grid-column:span 2;}}
 
-/* POS-полиш: футер "До сплати" + кнопки (Блок D) */
+/* POS-полиш: футер "До сплати" + кнопки */
 .pos-actions{align-items:center;}
 .pos-spacer{flex:1;}
 .pos-pay{font-weight:700;font-size:15px;color:#e6e6e6;}
 .pos-pay #sfTotal{color:#1fe26a;font-size:20px;font-weight:800;margin-left:6px;}
 
-/* Деталі продажу (Блок D) */
+/* Деталі продажу */
 .sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;}
 .sd-grid .sd-k{color:#9aa4ad;font-size:12px;}
 .sd-grid .sd-v{font-weight:600;margin-top:2px;word-break:break-word;}

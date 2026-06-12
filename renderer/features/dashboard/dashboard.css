@@ -1,5 +1,5 @@
 :root {
-    /* кольори 1-в-1 */
+    /* кольори */
     --bg: #111418;
     --panel: #151C22; /* appbar + sidebar */
     --card: #1B1F24; /* картки/плитки */
@@ -7,7 +7,7 @@
     --muted: #9aa4ad;
     --green: #00B712;
     --border: #22303b;
-    --appbar-h: 88px; /* висота appbar як у макеті */
+    --appbar-h: 88px; /* висота appbar */
 }
 
 /* базове */
@@ -27,7 +27,7 @@ html, body {
 /* ЛЕЙАУТ */
 .layout {
     display: grid;
-    grid-template-columns: 280px 1fr; /* ширина лівої панелі з макета */
+    grid-template-columns: 280px 1fr; /* ширина лівої панелі */
     min-height: 100vh;
 }
 
@@ -125,7 +125,7 @@ html, body {
     align-items: start;
 }
 
-/* Вітання — типографіка з макета */
+/* Вітання */
 .welcome {
     margin-bottom: 6px
 }
@@ -141,7 +141,7 @@ html, body {
         color: var(--muted)
     }
 
-/* KPI 4×2, відступи з макета */
+/* KPI 4×2, відступи */
 .grid.kpi {
     display: grid;
     grid-template-columns: repeat(4,1fr);
@@ -277,7 +277,7 @@ html, body {
         color: #81f29a
     }
 
-/* Адаптив: звуження — зберігаємо пропорції макета */
+/* Адаптив: звуження вікна */
 @media (max-width:1200px) {
     .layout {
         grid-template-columns: 84px 1fr
@@ -302,16 +302,16 @@ html, body {
 }
 
 
-/* контейнери графіків дашборду (T4) */
+/* контейнери графіків дашборду */
 .chart-box{position:relative;height:300px;background:linear-gradient(180deg,#0f161c,#0c1217);border:1px solid var(--border);border-radius:14px;padding:14px;overflow:hidden;}
 
 
-/* Останні ремонти: статус-пілюля + аватар майстра (Блок C) */
+/* Останні ремонти: статус-пілюля + аватар майстра */
 .st-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;line-height:1;white-space:nowrap;}
 .mini-master{display:flex;align-items:center;gap:8px;}
 .mini-ava{width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0;}
 
-/* KPI: міні-іконка в "капсулі" (обводка як у дизайні) + рядок порівняльної статистики */
+/* KPI: міні-іконка в "капсулі" (обводка) + рядок порівняльної статистики */
 .grid.kpi .card{position:relative;}
 .grid.kpi .card .title{padding-right:48px;}
 .kpi-ic{

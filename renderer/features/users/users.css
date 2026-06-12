@@ -1,4 +1,4 @@
-/* ===== USERS PAGE ===== */
+/* USERS PAGE */
 .users .page-title {
     font-size: 48px;
     font-weight: 900;
@@ -28,7 +28,7 @@
 
 .muted-hint { color: #9aa4ad; font-size: 13px; margin: 0 0 14px; }
 
-/* ===== TABLE ===== */
+/* TABLE */
 .table-wrap { overflow-x: auto; overflow-y: visible; }
 
 .table-users {
@@ -119,7 +119,7 @@
     .btn-mini.danger { border-color: rgba(226,64,64,.5); color: #e87a7a; }
     .btn-mini.danger:hover { border-color: #e24040; color: #ff6b6b; background: rgba(226,64,64,.10); }
 
-/* ===== ROLE BADGES ===== */
+/* ROLE BADGES */
 .role-badge {
     display: inline-block;
     padding: 5px 12px;
@@ -133,7 +133,7 @@
     .role-badge.admin      { color: #0d2717; background: #81f29a; border-color: #3aa95a; }
     .role-badge.master     { color: #fff;    background: #184054; border-color: #255a73; }
 
-/* ===== MODAL ===== */
+/* MODAL */
 .modal-layer {
     position: fixed;
     inset: 0;

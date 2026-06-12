@@ -15,7 +15,7 @@ const fmtMoney=v=>`₴ ${Number(v||0).toLocaleString('uk-UA',{maximumFractionDig
 function setText(id,text){const el=document.getElementById(id);if(el)el.textContent=text;}
 function isoDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
-// ===== Значення полів дати (джерело істини — dataset.iso) =====
+// Значення полів дати (джерело істини — dataset.iso)
 function setPicker(input, iso){
   if(!input) return;
   input.dataset.iso = iso || '';
@@ -24,7 +24,7 @@ function setPicker(input, iso){
 }
 function getPickerIso(input){ return input?.dataset.iso || ''; }
 
-// ===== Кастомний календар (під стилістику програми) =====
+// Кастомний календар (під стилістику програми)
 const DP_WD=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
 const DP_MON=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 function attachDatePicker(input, onChange){
@@ -81,7 +81,7 @@ function getMode(){const sel=document.getElementById('typeSelect');const v=(sel?
 
 let lastData = null;
 
-// ===== Показ/приховування KPI та панелей за типом даних =====
+// Показ/приховування KPI та панелей за типом даних
 function applyModeVisibility(mode){
   document.querySelectorAll('[data-modes]').forEach(el=>{
     const modes=(el.dataset.modes||'').split(/\s+/);
@@ -95,7 +95,7 @@ function renderTopTable(items){
   for(const it of items){const tr=document.createElement('tr');tr.innerHTML=`<td>${it.product||''}</td><td>${it.category||''}</td><td style="text-align:center">${Number(it.qty||0).toLocaleString('uk-UA')}</td><td style="text-align:right">${fmtMoney(it.sum)}</td>`;tbody.appendChild(tr);}
 }
 
-// ===== Таблиця деталізації ремонтів за пристроями (режим «Лише ремонти») =====
+// Таблиця деталізації ремонтів за пристроями (режим «Лише ремонти»)
 function renderRepDeviceTable(items){
   const tbody=document.getElementById('repDeviceTbody');if(!tbody)return;tbody.innerHTML='';
   if(!items||!items.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;opacity:.7">Немає ремонтів за період</td></tr>`;return;}
@@ -111,7 +111,7 @@ function renderRepDeviceTable(items){
 
 function renderKpi(kpi){setText('kpiIncome',fmtMoney(kpi?.income));setText('kpiSalesCount',String(kpi?.salesCount??0));setText('kpiRepairsCount',String(kpi?.repairsCount??0));setText('kpiAvgCheck',fmtMoney(kpi?.avgCheck));setText('kpiProfit',fmtMoney(kpi?.profitEstimate));setText('kpiNewClients',String(kpi?.newClients??0));}
 
-// ===== Графіки (стиль дашборду) =====
+// Графіки (стиль дашборду)
 let catChart=null, svcChart=null, salesChart=null, profitChart=null, repStatusChart=null, repDeviceChart=null;
 const CAT_COLORS={'Ремонти':'#30D73C','Товари':'#1f8ee2','Збірки':'#9b6cf0','Послуги':'#e2b81f'};
 const RSTATUS_UA={new:"Новий",progress:"В процесі",done:"Готово",issued:"Видано",canceled:"Скасовано"};
@@ -137,7 +137,7 @@ function renderCharts(data){
     });
   }
 
-  // ===== РЕМОНТИ: за статусами (doughnut) =====
+  // РЕМОНТИ: за статусами (doughnut)
   const rbs=(data.repairsByStatus||[]).filter(x=>(x.count||0)>0);
   const rsEl=document.getElementById('repStatusChartCanvas');
   if(rsEl){
@@ -155,7 +155,7 @@ function renderCharts(data){
     }
   }
 
-  // ===== РЕМОНТИ: топ типів пристроїв за доходом (bar) =====
+  // РЕМОНТИ: топ типів пристроїв за доходом (bar)
   const rbd=(data.repairsByDevice||[]);
   const rdEl=document.getElementById('repDeviceChartCanvas');
   if(rdEl){

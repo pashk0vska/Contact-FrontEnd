@@ -12,7 +12,7 @@ async function apiFetch(path,init={}){
   try{return await tryOnce(API);}catch{for(const c of API_CANDIDATES){if(c===API)continue;try{const out=await tryOnce(c);localStorage.setItem("apiBase",c);API=c;return out;}catch{}}throw new Error("API not reachable");}
 }
 
-// ===== Профіль оператора (Блок A) =====
+// Профіль оператора
 const ROLE_LABEL = { superadmin:'СуперАдмін', admin:'Адміністратор', master:'Майстер' };
 function _tokenJson(tok){try{const[,p]=tok.split('.');const bin=atob(p.replace(/-/g,'+').replace(/_/g,'/'));return JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));}catch{return{};}}
 function _initials(n){return (n||'').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase()||'?';}
@@ -46,7 +46,7 @@ document.getElementById('btnChangePass')?.addEventListener('click', async()=>{
   finally{btn.disabled=false;}
 });
 
-// ===== Стан бази даних (Блок A) =====
+// Стан бази даних
 async function loadDbStatus(){
   const txt=document.getElementById('dbStatus');
   const info=document.getElementById('dbInfo');
@@ -65,7 +65,7 @@ async function loadDbStatus(){
   }catch(e){ txt.innerHTML='<span class="db-dot"></span>Немає зʼєднання з API'; }
 }
 
-// ===== Бекап =====
+// Бекап
 document.getElementById("btnBackup")?.addEventListener("click", async()=>{
   document.getElementById("backupStatus").textContent="Створення бекапу…";
   try{
@@ -77,7 +77,7 @@ document.getElementById("btnBackup")?.addEventListener("click", async()=>{
   }catch(e){showToast('error',e.message);document.getElementById("backupStatus").textContent="";}
 });
 
-// ===== Відновлення =====
+// Відновлення
 document.getElementById("fileRestore")?.addEventListener("change", async(e)=>{
   const file=e.target.files[0]; if(!file)return;
   confirmAction("Відновити БД з файлу? Поточні дані будуть замінені!",async(ok)=>{

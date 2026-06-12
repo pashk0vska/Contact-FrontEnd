@@ -132,7 +132,7 @@
     gap: 8px;
 }
 
-/* === TABLE (стабільна сітка) === */
+/* TABLE (стабільна сітка) */
 .table-wrap {
     overflow-x: auto;
     overflow-y: visible;
@@ -197,7 +197,7 @@
         text-align: right;
     }
 
-/* === PORTAL MENU (⋯) — поверх усього UI === */
+/* PORTAL MENU (⋯) — поверх усього UI */
 .row-menu-portal {
     position: fixed;
     left: 0;
@@ -230,7 +230,7 @@
             background: #0f1b22;
         }
 
-/* === PAGER === */
+/* PAGER */
 .pager {
     display: flex;
     gap: 8px;
@@ -256,7 +256,7 @@
             font-weight: 700;
         }
 
-/* === CUSTOM MODAL LAYER (замість <dialog>) === */
+/* CUSTOM MODAL LAYER (замість <dialog>) */
 .modal-layer {
     position: fixed;
     inset: 0;
@@ -343,7 +343,7 @@
     .modal-layer .btn-ghost:hover {
         background: rgba(43,108,176,.08);
     }
-/* === FIX: кнопки ⋯ вигляд темний як у решті програми === */
+/* FIX: кнопки ⋯ вигляд темний як у решті програми */
 .menu-btn {
     width: 34px;
     height: 34px;
@@ -365,7 +365,7 @@
         border-color: #3c4b55;
     }
 
-/* === FIX: кнопки в модалці зелені === */
+/* FIX: кнопки в модалці зелені */
 .modal-layer .btn {
     background: linear-gradient(180deg, #00B712, #158a45);
     color: #fff;
@@ -390,11 +390,9 @@
         background: rgba(0,183,18,0.08);
     }
 
-/* ==== ВИРІВНЮВАННЯ КОЛОНКИ "ДІЇ" (той самий патерн, що на Продажах) ====
-   Раніше тут було display:table-cell !important + padding:0 !important —
-   через цю комбінацію обгортка .row-actions (position:absolute) інколи
-   рендерилась не в своїй клітинці, і ⋯ з'являвся біля чекбокса.
-   Лишаємо лише position:relative на клітинці — як у table-sales. */
+/* Вирівнювання колонки «Дії» (той самий патерн, що на Продажах).
+   Лишаємо position:relative на клітинці — як у table-sales — щоб обгортка
+   .row-actions рендерилась у своїй клітинці, а не біля чекбокса. */
 .table-clients thead th:last-child {
     text-align: right;
     padding-right: 14px;
@@ -415,8 +413,8 @@
         justify-content: flex-end;
     }
 
-/* ===== Позначка «К» — клієнт із Конфігуратора ПК =====
-   Невелика сіра мітка біля імені. Показується, коли бекенд повертає
+/* Позначка «К» — клієнт із Конфігуратора ПК.
+   Невелика сіра мітка біля імені; показується, коли бекенд повертає
    fromConfigurator = true (clients.Source == "configurator"). */
 .cfg-badge {
     display: inline-flex;

@@ -1,10 +1,10 @@
-﻿// ===== Параметри сторінки =====
+﻿// Параметри сторінки
 const params = new URLSearchParams(location.search);
 const RC_TYPE = (params.get("type") || "sale").toLowerCase();   // sale | repair
 const RC_ID   = params.get("id");
 const RC_BACK = params.get("back") || "";
 
-// ===== API =====
+// API
 const API_CANDIDATES = [window.API_BASE];
 let API = window.API_BASE;
 const token = localStorage.getItem("token");
@@ -100,7 +100,7 @@ async function load(){
   if(RC_TYPE==="repair") renderRepair(data); else renderSale(data);
 }
 
-// ===== Дії =====
+// Дії
 function goBack(){
   if (window.history.length > 1) { window.history.back(); return; }
   const map = { sales:"../sales/sales.html", repairs:"../repairs/repairs.html" };

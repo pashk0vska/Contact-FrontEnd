@@ -2,20 +2,20 @@
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
- *  showToast(type, message, duration?)
- *  confirmAction(message, callback, options?)  — options: true | {danger:true}
- *  debounce(fn, ms)
- *  setButtonLoading(btn, bool)
- *  checkSessionTimeout()
- *  initHotkeys()
- *  checkAutoOpen()   — для ?action=add
- *  getUserRole()     — роль користувача (superadmin/admin/master)
- *  phoneToPretty / phoneToCanonical / isValidUaPhone / attachPhoneInput — телефони (+380)
- *  isValidEmail
- *  makeClientSuggest(input, onPick) — стилізований автодоповнювач клієнта
+ * showToast(type, message, duration?)
+ * confirmAction(message, callback, options?) — options: true | {danger:true}
+ * debounce(fn, ms)
+ * setButtonLoading(btn, bool)
+ * checkSessionTimeout()
+ * initHotkeys()
+ * checkAutoOpen() — для ?action=add
+ * getUserRole() — роль користувача (superadmin/admin/master)
+ * phoneToPretty / phoneToCanonical / isValidUaPhone / attachPhoneInput — телефони (+380)
+ * isValidEmail
+ * makeClientSuggest(input, onPick) — стилізований автодоповнювач клієнта
  */
 
-// ─── 0. Підключаємо компоненти.css якщо не підключено ──────────────────────
+// Підключаємо компоненти.css якщо не підключено
 (function ensureComponentsCss() {
   if (!document.querySelector('link[href*="components.css"]')) {
     const link = document.createElement('link');
@@ -25,7 +25,7 @@
   }
 })();
 
-// ─── 1. TOAST ───────────────────────────────────────────────────────────────
+// TOAST
 (function initToastContainer() {
   if (!document.getElementById('toast-container')) {
     const el = document.createElement('div');
@@ -57,7 +57,7 @@ function showToast(type, message, duration = 4000) {
 // Зберігаємо у window для доступу з інших скриптів
 window.showToast = showToast;
 
-// ─── 2. CUSTOM CONFIRM ──────────────────────────────────────────────────────
+// CUSTOM CONFIRM
 (function initConfirmDialog() {
   if (document.getElementById('confirm-overlay')) return;
   const overlay = document.createElement('div');
@@ -78,8 +78,8 @@ window.showToast = showToast;
  * confirmAction('Видалити запис?', () => doDelete())
  *
  * Єдиний стиль для ВСІХ діалогів підтвердження:
- *  • «Підтвердити» — зелена заповнена кнопка;
- *  • «Скасувати» — лише червона обводка (з неоновою підсвіткою).
+ * • «Підтвердити» — зелена заповнена кнопка;
+ * • «Скасувати» — лише червона обводка (з неоновою підсвіткою).
  * Третій аргумент лишено для зворотної сумісності, але на вигляд не впливає.
  */
 function confirmAction(message, callback, options) {
@@ -107,7 +107,7 @@ function confirmAction(message, callback, options) {
 
 window.confirmAction = confirmAction;
 
-// ─── 3. OUTSIDE CLICK — закриття <details> і модалок ───────────────────────
+// OUTSIDE CLICK — закриття <details> і модалок
 document.addEventListener('click', function(e) {
   // Закриваємо всі відкриті <details> при кліку поза ними
   document.querySelectorAll('details[open]').forEach(det => {
@@ -115,7 +115,7 @@ document.addEventListener('click', function(e) {
   });
 });
 
-// ─── 4. DEBOUNCE ────────────────────────────────────────────────────────────
+// DEBOUNCE
 function debounce(fn, ms = 300) {
   let timer;
   return function(...args) {
@@ -125,9 +125,9 @@ function debounce(fn, ms = 300) {
 }
 window.debounce = debounce;
 
-// ─── 5. BUTTON LOADING HELPER ───────────────────────────────────────────────
+// BUTTON LOADING HELPER
 /**
- * setButtonLoading(btn, true)  — блокує кнопку, зберігає текст
+ * setButtonLoading(btn, true) — блокує кнопку, зберігає текст
  * setButtonLoading(btn, false) — розблокує, повертає текст
  */
 function setButtonLoading(btn, isLoading) {
@@ -145,7 +145,7 @@ function setButtonLoading(btn, isLoading) {
 }
 window.setButtonLoading = setButtonLoading;
 
-// ─── 6. SESSION TIMEOUT CHECK ───────────────────────────────────────────────
+// SESSION TIMEOUT CHECK
 /**
  * Декодує JWT, перевіряє exp.
  * Якщо до закінчення < 5 хв — показує toast.
@@ -187,7 +187,7 @@ setInterval(checkSessionTimeout, 60_000);
 
 window.checkSessionTimeout = checkSessionTimeout;
 
-// ─── 7. ГАРЯЧІ КЛАВІШІ ──────────────────────────────────────────────────────
+// ГАРЯЧІ КЛАВІШІ
 function initHotkeys() {
   document.addEventListener('keydown', function(e) {
     const tag = (document.activeElement?.tagName || '').toLowerCase();
@@ -257,7 +257,7 @@ function initHotkeys() {
 
 initHotkeys();
 
-// ─── 8. AUTO-OPEN MODAL при ?action=add ─────────────────────────────────────
+// AUTO-OPEN MODAL при ?action=add
 /**
  * Якщо URL містить ?action=add — автоматично відкриває модалку додавання.
  * Виклик: checkAutoOpen() — вже вбудований нижче з затримкою для DOM.
@@ -292,7 +292,7 @@ if (document.readyState === 'loading') {
 
 window.checkAutoOpen = checkAutoOpen;
 
-// ─── 9. GLOBAL LOGOUT WITH CONFIRM ─────────────────────────────────────────
+// GLOBAL LOGOUT WITH CONFIRM
 document.addEventListener('DOMContentLoaded', function(){
   const logoutBtn = document.getElementById('logout');
   if(logoutBtn){
@@ -308,10 +308,10 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-// ─── 10. РОЛІ (superadmin / admin / master) ────────────────────────────────
+// РОЛІ (superadmin / admin / master)
 /**
  * Повертає роль користувача у нижньому регістрі.
- * Спершу зі збереженого localStorage('role') (кладеться при логіні),
+ * Спершу зі збереженого localStorage('role') (кладеться при логіні)
  * у запасному варіанті — з JWT (claim role).
  */
 function getUserRole() {
@@ -338,13 +338,13 @@ function _initials(n){
   return (n||'').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase() || '?';
 }
 
-/** Гейтинг UI за роллю: ставить body[data-role], решту робить CSS (components.css). */
+/* * Гейтинг UI за роллю: ставить body[data-role], решту робить CSS (components.css). */
 function applyRoleGating(){
   const role = getUserRole();
   if (document.body) document.body.dataset.role = role || 'guest';
 }
 
-/** master не має доступу до Аналітики/Налаштувань/Користувачів — якщо зайшов напряму, повертаємо на дашборд. */
+/* * master не має доступу до Аналітики/Налаштувань/Користувачів — якщо зайшов напряму, повертаємо на дашборд. */
 function guardPageByRole(){
   const role = getUserRole();
   if (role === 'master') {
@@ -371,7 +371,6 @@ function injectUsersLink(){
 
   const a = document.createElement('a');
   a.href = '../users/users.html';
-  // a.className = 'active'; <--- ПРИБРАЛИ
   a.dataset.page = 'users';
   a.innerHTML = '<img class="ico" src="../../assets/icons/users.png" width="22" height="22" alt=""><span>Користувачі</span>';
 
@@ -405,7 +404,7 @@ function applyMasterLocks(){
   });
 }
 
-// ─── 11. Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ─────────────
+// Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі
 const CONFIGURATOR_URL = "https://configuratorkontakt-production.up.railway.app/"; 
 document.addEventListener('DOMContentLoaded', function(){
   applyRoleGating();
@@ -439,13 +438,13 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-// ─── 12. ТЕЛЕФОН (український формат +380) ─────────────────────────────────
+// ТЕЛЕФОН (український формат +380)
 /**
  * Робота з українськими номерами.
- *  - Користувач вводить просто цифри (09..., 09501234567, 50..., +380...).
- *  - У полі автоматично форматується у вигляд: +380 (50) 123 45 67
- *  - У БД зберігаємо канонічний вигляд: +380XXXXXXXXX
- *  - Валідний номер = рівно 9 цифр абонента (після коду 380 / провідного 0).
+ * Користувач вводить просто цифри (09..., 09501234567, 50..., +380...).
+ * У полі автоматично форматується у вигляд: +380 (50) 123 45 67
+ * У БД зберігаємо канонічний вигляд: +380XXXXXXXXX
+ * Валідний номер = рівно 9 цифр абонента (після коду 380 / провідного 0).
  */
 function _phoneSubscriber(value){
   let d = (value || '').replace(/\D/g, '');
@@ -460,7 +459,7 @@ function phoneToPretty(value){
   if (d.length !== 9) return value || '';   // не вдалось розпізнати — показуємо як є
   return `+380 (${d.slice(0,2)}) ${d.slice(2,5)} ${d.slice(5,7)} ${d.slice(7,9)}`;
 }
-/** Жива маска для <input>: форматує під час вводу, ставить каретку в кінець. */
+/* * Жива маска для <input>: форматує під час вводу, ставить каретку в кінець. */
 function attachPhoneInput(input){
   if (!input || input.dataset.uaPhone) return;
   input.dataset.uaPhone = '1';
@@ -490,15 +489,15 @@ window.phoneToCanonical = phoneToCanonical;
 window.phoneToPretty    = phoneToPretty;
 window.attachPhoneInput = attachPhoneInput;
 
-// ─── 13. EMAIL ──────────────────────────────────────────────────────────────
+// EMAIL
 function isValidEmail(value){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((value || '').trim()); }
 window.isValidEmail = isValidEmail;
 
-// ─── 14. СТИЛІЗОВАНИЙ ПІДБІР КЛІЄНТА (заміна нативного <datalist>) ──────────
+// СТИЛІЗОВАНИЙ ПІДБІР КЛІЄНТА (заміна нативного <datalist>)
 /**
  * makeClientSuggest(inputEl, onPick) → { render(list), hide() }
- *  - render(list): list = [{id, fullName, phone}] показує спадне меню під полем.
- *  - onPick(client): викликається при кліку на елемент.
+ * render(list): list = [{id, fullName, phone}] показує спадне меню під полем.
+ * onPick(client): викликається при кліку на елемент.
  * Меню — position:fixed, додане в body, тож коректно лягає поверх модалок.
  */
 function makeClientSuggest(input, onPick){

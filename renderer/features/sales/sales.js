@@ -157,10 +157,10 @@ $("#fReset")?.addEventListener("click",()=>{$("#fFrom").value=$("#fTo").value=""
 $("#sApply")?.addEventListener("click",()=>{sort=$("#sortField").value||"Date";dir=$("#sortDir").value||"desc";page=1;loadSales();});
 $("#sReset")?.addEventListener("click",()=>{$("#sortField").value="Date";$("#sortDir").value="desc";sort="Date";dir="desc";page=1;loadSales();});
 
-// === Create Sale Modal ===
+// Create Sale Modal
 const saleModal=$("#saleModal"),saleForm=$("#saleForm"),sfClient=$("#sfClient"),sfClientId=$("#sfClientId");
 
-// ===== POS: позиції продажу (T6) =====
+// POS: позиції продажу
 function addItemRow(item){
   const wrap=document.getElementById('sfItems'); if(!wrap) return;
   const div=document.createElement('div'); div.className='pos-row';
@@ -284,7 +284,7 @@ async function submitSale(openReceipt){
 saleForm?.addEventListener("submit",(e)=>{e.preventDefault();submitSale(false);});
 document.getElementById('sfReceipt')?.addEventListener('click',()=>submitSale(true));
 
-// === Full Edit Sale Modal (reuses create modal) ===
+// Full Edit Sale Modal (reuses create modal)
 async function openEditSaleModal(id){
   try{const{res}=await apiFetch(`${API}/api/Sales/${id}`,{headers:{"Authorization":`Bearer ${token}`}});
     if(!res.ok){showToast('error','Не знайдено');return;}const sale=await res.json();

@@ -1,4 +1,4 @@
-// === Today in appbar ===
+// Today in appbar
 const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 const logoutBtn = document.getElementById('logout');

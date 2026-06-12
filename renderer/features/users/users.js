@@ -1,10 +1,10 @@
-﻿// ===== Appbar / logout =====
+﻿// Appbar / logout
 const t = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' });
 const elToday = document.getElementById('today'); if (elToday) elToday.textContent = `Сьогодні: ${t}`;
 const logoutEl = document.getElementById('logout');
 if (logoutEl) logoutEl.addEventListener('click', () => { localStorage.removeItem('token'); localStorage.removeItem('role'); location.href = "../auth/index.html"; });
 
-// ===== API =====
+// API
 const API_CANDIDATES = [window.API_BASE];
 let API = window.API_BASE;
 const token = localStorage.getItem("token");
@@ -22,7 +22,7 @@ const $ = (s, r = document) => r.querySelector(s);
 const escapeHtml = s => (s ?? "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 const authHeaders = { "Authorization": `Bearer ${token}` };
 
-// ===== Caller role / identity =====
+// Caller role / identity
 const myRole = (window.getUserRole && window.getUserRole()) || '';
 if (myRole && myRole !== 'superadmin' && myRole !== 'admin') {
   // master сюди не має доступу (бекенд також поверне 403)
@@ -72,7 +72,7 @@ function canEdit(u) {
 
 let usersCache = [];
 
-// ===== Load & render =====
+// Load & render
 async function loadUsers() {
   const tbody = $("#usersTbody");
   tbody.innerHTML = `<tr><td colspan="5" style="opacity:.7">Завантаження…</td></tr>`;
@@ -103,7 +103,7 @@ function renderUsers(users) {
   }
 }
 
-// ===== Row "Дії" portal menu =====
+// Row "Дії" portal menu
 const portal = document.getElementById("rowMenuPortal");
 let currentAnchor = null;
 function openRowMenu(btn, id) {
@@ -129,7 +129,7 @@ function closeRowMenu() { portal.hidden = true; currentAnchor = null; }
 document.addEventListener("scroll", () => closeRowMenu(), true);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRowMenu(); });
 
-// ===== Create modal =====
+// Create modal
 const userModal = $("#userModal"), userForm = $("#userForm");
 function openUserModal() {
   userForm.reset();
@@ -167,7 +167,7 @@ userForm?.addEventListener("submit", async (e) => {
   finally { btn.disabled = false; }
 });
 
-// ===== Delete =====
+// Delete
 async function deleteUser(id, username) {
   confirmAction(`Видалити користувача «${username}»?`, async (ok) => {
     if (!ok) return;
@@ -179,7 +179,7 @@ async function deleteUser(id, username) {
   });
 }
 
-// ===== Edit modal (uses future PUT /api/Users/{id}) =====
+// Edit modal (uses future PUT /api/Users/{id})
 const editModal = $("#editUserModal"), editForm = $("#editUserForm");
 function openEditModal(u) {
   $("#euId").value = u.id;
@@ -232,7 +232,7 @@ editForm?.addEventListener("submit", async (e) => {
   finally { btn.disabled = false; }
 });
 
-// ===== Click delegation: Дії button + portal items =====
+// Click delegation: Дії button + portal items
 document.addEventListener("click", (e) => {
   const trigger = e.target.closest(".menu-btn");
   if (trigger) { openRowMenu(trigger, trigger.dataset.id); return; }

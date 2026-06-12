@@ -167,7 +167,7 @@ main.analytics {
         margin-top: 8px;
     }
 
-/* макет із двома графіками та широкою таблицею */
+/* розкладка: два графіки + широка таблиця */
 .split {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -294,7 +294,7 @@ main.analytics {
 .toolbar .dropdown > summary.btn-ghost { height: 40px; display: inline-flex; align-items: center; border-radius: 12px; }
 .toolbar .right .btn, .toolbar .right .btn-ghost { height: 40px; display: inline-flex; align-items: center; }
 
-/* ===== КАСТОМНИЙ КАЛЕНДАР (під стилістику програми) ===== */
+/* КАСТОМНИЙ КАЛЕНДАР (під стилістику програми) */
 .dp-pop {
     position: fixed;
     z-index: 6000;

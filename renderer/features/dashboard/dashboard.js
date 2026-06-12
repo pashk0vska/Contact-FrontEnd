@@ -70,7 +70,7 @@ function render(d = {}) {
   renderCharts(d);
 }
 
-// ===== Графіки дашборду (Chart.js) — T4 =====
+// Графіки дашборду (Chart.js)
 let profitChart=null, statusChart=null;
 const STATUS_UA={new:"Новий",progress:"В процесі",done:"Готово",issued:"Видано",canceled:"Скасовано"};
 const STATUS_COLOR={new:"#1f8ee2",progress:"#e2b81f",done:"#1fe26a",issued:"#58d27a",canceled:"#e2706a"};
