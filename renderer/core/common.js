@@ -206,22 +206,44 @@ function initHotkeys() {
       document.querySelectorAll('details[open]').forEach(d => { d.open = false; });
     }
 
-    // Ctrl+N — натиснути першу "зелену" кнопку (Додати / Створити)
-    if (e.ctrlKey && e.key === 'n' && !isEditing) {
+    // Ctrl+N — створити новий запис на поточній сторінці (Додати / Створити).
+    // Використовуємо e.code (фізична клавіша), бо при українській розкладці
+    // e.key повертає «т», і перевірка === 'n' не спрацьовувала.
+    if (e.ctrlKey && !e.altKey && e.code === 'KeyN' && !isEditing) {
       e.preventDefault();
-      const primary = document.querySelector(
-        '#btnCreate, #btnAddSale, #btnAdd, #btnAddRepair, [id^="btn"]:not(#logout)'
-      );
-      primary?.click();
+      // Явний перелік за пріоритетом — щоб НЕ зачепити кнопку «Конфігуратор ПК»
+      // (вона стоїть у шапці першою і раніше перехоплювалась через [id^="btn"]).
+      const createBtn =
+        document.getElementById('btnAddSale')  ||
+        document.getElementById('btnCreate')   ||
+        document.getElementById('btnAdd')      ||
+        document.getElementById('btnAddUser')  ||
+        document.getElementById('btnAddRepair');
+      createBtn?.click();
     }
 
-    // F5 — оновити список (клік по першій кнопці сортування або reload)
+    // Enter — підтвердити (зберегти) форму у відкритому вікні.
+    // Не чіпаємо багаторядкове поле (textarea) та саму кнопку (щоб не дублювати клік).
+    if (e.key === 'Enter' && tag !== 'textarea' && tag !== 'button') {
+      const openModals = document.querySelectorAll('.modal-layer:not([hidden])');
+      const openModal = openModals[openModals.length - 1];
+      if (openModal) {
+        const submitBtn =
+          openModal.querySelector('button[type="submit"]') ||
+          openModal.querySelector('.btn.primary, button.primary, .actions .btn:not(.btn-ghost)');
+        if (submitBtn) {
+          e.preventDefault();
+          submitBtn.click();
+        }
+      }
+    }
+
+    // F5 — оновити список на поточній сторінці (без повного перезавантаження).
+    // preventDefault лише якщо є завантажувач — інакше хай працює звичайний reload.
     if (e.key === 'F5' && !e.ctrlKey) {
-      e.preventDefault();
-      // якщо є функція loadSales/loadRepairs/loadClients — спробуємо
       const loaders = ['loadSales', 'loadRepairs', 'loadClients', 'loadAnalytics', 'loadDashboard'];
       for (const fn of loaders) {
-        if (typeof window[fn] === 'function') { window[fn](); break; }
+        if (typeof window[fn] === 'function') { e.preventDefault(); window[fn](); break; }
       }
     }
 
