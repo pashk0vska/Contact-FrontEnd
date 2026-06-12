@@ -1,0 +1,89 @@
+/* responsive.css — адаптивний шар поверх базових стилів.
+   Підключається останнім на сторінках-оболонках, тож перекриває брейкпоінти
+   dashboard.css / сторінкових файлів без редагування самих файлів. */
+
+/* Модалки: плавні на вузькому вікні */
+/* Було min-width:520px — на вузькому вікні давало горизонтальний скрол усього
+   накладення. Робимо ширину гнучкою та додаємо власний скрол для високих форм. */
+.modal-card {
+    min-width: min(520px, 92vw);
+    max-height: 90vh;
+    overflow: auto;
+}
+
+/* Таблиці: надійний горизонтальний скрол + читабельні колонки */
+.table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* Мінімальні ширини, щоб колонки не «схлопувались» у суцільні «…».
+   Якщо вікно вужче за це значення — таблиця плавно скролиться в .table-wrap,
+   а не тисне текст. Ширше — колонки розподіляються по 100% контейнера. */
+.table-sales   { min-width: 980px;  }
+.table-clients { min-width: 700px;  }
+.table-repairs { min-width: 1080px; }
+
+/* Ноутбук (широкий): більше місця контенту.
+   Згортаємо сайдбар у іконки вже з 1440px (а не з 1200px) — на типовому ноуті
+   1366px контент отримує ~150px ширше, тож таблиці й KPI перестають тиснутись.
+   KPI-сітки переходять у 3 колонки, заголовок трохи менший. */
+@media (max-width: 1440px) {
+    .layout { grid-template-columns: 84px 1fr; }
+
+    /* Згорнутий сайдбар: лише іконки. Підписи ховаємо через font-size:0, бо в
+       розмітці вони здебільшого голим текстом (а не в <span>), тож display:none
+       на span їх не прибирав і вони вилазили за межі панелі. Іконки — це <img>,
+       на них font-size не впливає; overflow:hidden гарантує, що нічого не вилізе. */
+    .sidebar { overflow: hidden; }
+    .menu a {
+        gap: 0;
+        justify-content: center;
+        padding: 12px 0;
+        font-size: 0;
+        overflow: hidden;
+    }
+    .menu a .ico { margin: 0; }
+    .menu-title { text-align: center; font-size: 10px; overflow: hidden; }
+
+    .side-profile { justify-content: center; }
+    .sp-meta { display: none; }
+
+    .grid.kpi { grid-template-columns: repeat(3, 1fr); }
+
+    .welcome h1 { font-size: 40px; }
+    .main { padding: 20px 22px 24px; }
+}
+
+/* Вузьке вікно */
+@media (max-width: 1080px) {
+    .grid.kpi { grid-template-columns: repeat(2, 1fr); }
+    .split { grid-template-columns: 1fr; }
+
+    .welcome h1 { font-size: 34px; }
+    .main { padding: 16px 16px 20px; }
+    .appbar { padding: 0 18px; }
+
+    /* трохи стискаємо клітинки, щоб уміщалось більше без скролу */
+    .table th, .table td,
+    .table-sales th, .table-sales td,
+    .table-repairs th, .table-repairs td,
+    .table-clients th, .table-clients td { padding: 9px 10px; }
+}
+
+/* Планшет / маленьке вікно */
+@media (max-width: 760px) {
+    .grid.kpi { grid-template-columns: 1fr; }
+    .welcome h1 { font-size: 28px; }
+
+    .toolbar { flex-wrap: wrap; }
+    .toolbar .left, .toolbar .right { flex-wrap: wrap; }
+    .search { width: 100%; }
+
+    .quick { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Дуже вузько (рідко для desktop, але хай не ламається) */
+@media (max-width: 520px) {
+    .quick { grid-template-columns: 1fr; }
+    .main { padding: 12px 12px 16px; }
+}

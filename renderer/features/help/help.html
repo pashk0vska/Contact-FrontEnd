@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Допомога</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../dashboard/dashboard.css">
+    <link rel="stylesheet" href="../analytics/analytics.css">
+    <link rel="stylesheet" href="../help/help.css"><link rel="stylesheet" href="../../core/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="../sales/sales.html"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt=""><span>Аналітика</span></a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a class="active"><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main analytics" style="padding-top:16px;">
+            <h1 class="page-title">Допомога</h1>
+            <div class="help-wrap">
+                <input id="helpSearch" class="help-search" type="search" placeholder="Пошук у довідці… (наприклад: продаж, пароль, клавіші)">
+                <p class="help-intro">Коротка довідка про роботу з CRM «Контакт». Натисніть розділ, щоб розгорнути. Підказка: цю сторінку можна відкрити будь-коли клавішею <span class="kbd">?</span>.</p>
+
+                <details class="help-acc" open>
+                    <summary><span class="help-acc-title"><span class="help-ico">📋</span> Про програму</span></summary>
+                    <div class="help-body">
+                        <p><b>«Контакт»</b> — це CRM для майстерні з ремонту та продажу техніки. Програма допомагає вести облік продажів і ремонтів, клієнтську базу, бачити аналітику доходів і керувати майстрами в одному вікні.</p>
+                        <p>Основні розділи зліва в меню:</p>
+                        <ul>
+                            <li><b>Дашборд</b> — головні показники за день/тиждень і останні ремонти.</li>
+                            <li><b>Продажі</b> — реєстрація та історія продажів (товари, послуги, збірки).</li>
+                            <li><b>Ремонти</b> — облік ремонтів у вигляді дошки за статусами.</li>
+                            <li><b>Клієнти</b> — база клієнтів із контактами.</li>
+                            <li><b>Аналітика</b> — графіки доходів, топ товарів/послуг, звіти.</li>
+                            <li><b>Налаштування</b> — профіль, зміна пароля, стан бази, резервні копії.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🚀</span> Перші кроки та вхід</span></summary>
+                    <div class="help-body">
+                        <ol>
+                            <li>Запустіть програму та увійдіть під своїм логіном і паролем.</li>
+                            <li>Після входу відкриється <b>Дашборд</b> із поточними показниками.</li>
+                            <li>Переходьте між розділами через меню зліва.</li>
+                            <li>Кнопка <b>Конфігуратор ПК</b> угорі відкриває окремий інструмент для збірок.</li>
+                        </ol>
+                        <div class="tip">Сесія діє обмежений час. За 5 хвилин до завершення зʼявиться попередження — збережіть роботу. Після завершення потрібно увійти знову.</div>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🧭</span> Навігація та інтерфейс</span></summary>
+                    <div class="help-body">
+                        <ul>
+                            <li><b>Меню зліва</b> — перемикання між розділами.</li>
+                            <li><b>Кнопки «+ Додати / Створити»</b> — угорі кожного списку відкривають форму нового запису.</li>
+                            <li><b>Меню рядка (⋯)</b> — додаткові дії над записом: деталі, редагування, дублювання, документи, видалення.</li>
+                            <li><b>Спливаючі підказки (toast)</b> — короткі повідомлення про результат дії праворуч унизу.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🛒</span> Як зареєструвати продаж</span></summary>
+                    <div class="help-body">
+                        <ol>
+                            <li>Відкрийте розділ <b>Продажі</b> і натисніть <b>«+ Новий продаж»</b>.</li>
+                            <li>Виберіть наявного клієнта або введіть нового (тоді вкажіть телефон).</li>
+                            <li>Натискайте <b>«+ Додати позицію»</b> для кожного товару/послуги. Для кожної позиції оберіть <b>тип</b> (<i>Товар</i>, <i>Послуга</i> або <i>Збірка</i>), назву, кількість і ціну.</li>
+                            <li>За потреби вкажіть <b>спосіб оплати</b>, <b>майстра</b> та примітку. Сума <b>«До сплати»</b> рахується автоматично.</li>
+                            <li>Завершіть продаж однією з кнопок:
+                                <ul>
+                                    <li><b>Прийняти оплату</b> — зберегти продаж з обраним статусом.</li>
+                                    <li><b>Відкрити чек</b> — зберегти й одразу відкрити чек (PDF).</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        <p>У меню рядка продажу доступні: <b>Деталі</b>, <b>Редагувати</b>, <b>Дублювати</b>, <b>Чек (PDF)</b>, <b>Накладна</b>, <b>Видалити</b>.</p>
+                        <div class="tip">«Дублювати» створює копію продажу з тими ж позиціями — зручно для типових замовлень.</div>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🔧</span> Робота з ремонтами</span></summary>
+                    <div class="help-body">
+                        <p>Розділ <b>Ремонти</b> показує заявки у вигляді дошки з трьома колонками за статусом: <b>Нові</b> → <b>В роботі</b> → <b>Готові</b>.</p>
+                        <ol>
+                            <li>Натисніть <b>«+ Новий ремонт»</b>, оберіть клієнта, вкажіть пристрій, опис несправності та орієнтовну вартість.</li>
+                            <li>Призначте <b>майстра</b> — його тег зʼявиться на картці й у таблиці.</li>
+                            <li>Відкрийте <b>деталі ремонту</b>, щоб змінити статус, відредагувати дані або закрити/скасувати заявку.</li>
+                        </ol>
+                        <p>Останні ремонти також видно на <b>Дашборді</b> з поточним статусом і майстром.</p>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">👤</span> Клієнти</span></summary>
+                    <div class="help-body">
+                        <p>У розділі <b>Клієнти</b> ведеться база контактів. Клієнта можна створити заздалегідь або прямо під час оформлення продажу/ремонту. Телефон клієнта підтягується в документи та списки автоматично.</p>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">📈</span> Аналітика та звіти</span></summary>
+                    <div class="help-body">
+                        <ul>
+                            <li>Угорі оберіть <b>період</b> — <span class="kbd">Місяць</span> / <span class="kbd">Квартал</span> / <span class="kbd">Рік</span>, або задайте власний діапазон через <b>«Вибрати конкретну дату»</b>.</li>
+                            <li><b>«Тип даних»</b> дозволяє показувати лише продажі, лише ремонти або все разом.</li>
+                            <li>Графіки: <b>дохід за категоріями</b>, <b>топ послуг</b>, <b>продажі й кількість по топ-товарах</b>, а також таблиця <b>ТОП-10</b>.</li>
+                            <li>Дані можна вивантажити: <b>Експорт CSV</b> або згенерувати <b>Звіт (PDF)</b>.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">⚙️</span> Налаштування</span></summary>
+                    <div class="help-body">
+                        <p>Розділ <b>Налаштування</b> згорнуто в окремі блоки:</p>
+                        <ul>
+                            <li><b>Профіль оператора</b> — імʼя, роль і зміна пароля.</li>
+                            <li><b>Стан бази даних</b> — підключення, версія, кількість таблиць і записів.</li>
+                            <li><b>Резервне копіювання</b> — створення бекапу та відновлення з файлу.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🔐</span> Ролі та права доступу</span></summary>
+                    <div class="help-body">
+                        <ul>
+                            <li><b>СуперАдмін</b> — повний доступ, керування користувачами та ролями.</li>
+                            <li><b>Адміністратор</b> — усі робочі розділи, керування записами.</li>
+                            <li><b>Майстер</b> — Продажі, Ремонти, Клієнти та Дашборд. Розділи <b>Аналітика</b>, <b>Налаштування</b> й <b>Користувачі</b> заблоковані (позначені 🔒), видалення записів недоступне.</li>
+                        </ul>
+                        <div class="warn">Якщо потрібного розділу не видно або зʼявляється «Доступно лише адміністратору» — зверніться до адміністратора для зміни ролі.</div>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">⌨️</span> Гарячі клавіші</span></summary>
+                    <div class="help-body">
+                        <table class="help-keys">
+                            <tr><td><span class="kbd">Esc</span></td><td>Закрити відкрите вікно, меню або список, що випадає.</td></tr>
+                            <tr><td><span class="kbd">Ctrl</span> + <span class="kbd">N</span></td><td>Створити новий запис на поточній сторінці (продаж / ремонт / клієнт).</td></tr>
+                            <tr><td><span class="kbd">F5</span></td><td>Оновити список на поточній сторінці.</td></tr>
+                            <tr><td><span class="kbd">Enter</span></td><td>Підтвердити (зберегти) форму у відкритому вікні.</td></tr>
+                            <tr><td><span class="kbd">?</span></td><td>Відкрити цю сторінку Допомоги.</td></tr>
+                        </table>
+                        <div class="tip">Клавіші не спрацьовують, поки ви друкуєте в полі вводу — спершу зніміть фокус із поля.</div>
+                    </div>
+                </details>
+
+                <details class="help-acc">
+                    <summary><span class="help-acc-title"><span class="help-ico">🛠️</span> Часті питання та усунення помилок</span></summary>
+                    <div class="help-body">
+                        <p><b>Дані не завантажуються / «API недоступний».</b> Перевірте, що сервер запущено та є зʼєднання. Стан підключення видно в <b>Налаштування → Стан бази даних</b>.</p>
+                        <p><b>«Сесія завершена» і вийшло саме.</b> Час дії входу минув — просто увійдіть знову.</p>
+                        <p><b>Забув пароль.</b> Якщо памʼятаєте поточний — змініть його в <b>Налаштуваннях</b>. Якщо ні — попросіть адміністратора скинути пароль.</p>
+                        <p><b>Не відкривається чек/звіт (PDF).</b> Дозвольте спливаючі вікна та перевірте, що сервер працює.</p>
+                        <p><b>Помилковий продаж.</b> Через меню рядка виберіть <b>Видалити</b> (доступно адміністратору) або <b>Редагувати</b>, щоб виправити.</p>
+                        <div class="warn">Якщо помилка повторюється — занотуйте, що саме ви робили перед нею, і повідомте адміністратора. Це пришвидшить вирішення.</div>
+                    </div>
+                </details>
+
+                <div id="helpEmpty" class="help-empty" hidden>За запитом нічого не знайдено.</div>
+            </div>
+        </main>
+    </div>
+    <script src="../../core/config.js"></script>
+    <script src="../../core/common.js"></script>
+    <script src="./help.js"></script>
+</body>
+</html>

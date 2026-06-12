@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <title>Чек — Контакт</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./receipt.css">
+</head>
+<body>
+    <div class="rc-actions">
+        <button id="rcBack" class="rc-btn neutral rc-back" type="button">← Закрити</button>
+        <button id="rcPdf" class="rc-btn ghost" type="button">Зберегти PDF</button>
+        <button id="rcPrint" class="rc-btn primary" type="button">🖶 Друкувати</button>
+    </div>
+
+    <div id="paper" class="paper">
+        <div class="rc-loading">Завантаження…</div>
+    </div>
+
+    <script src="../../core/config.js"></script>
+    <script src="../../core/common.js"></script>
+    <script src="./receipt.js"></script>
+</body>
+</html>

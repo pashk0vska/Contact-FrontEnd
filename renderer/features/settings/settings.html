@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Налаштування</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="../analytics/analytics.css"><link rel="stylesheet" href="../../core/responsive.css">
+    <style>
+        .set-wrap{max-width:760px;}
+        .set-acc{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+        .set-acc>summary{list-style:none;cursor:pointer;padding:16px 18px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;}
+        .set-acc>summary::-webkit-details-marker{display:none;}
+        .set-acc>summary::after{content:'▾';color:#9aa4ad;font-size:14px;transition:transform .15s ease;}
+        .set-acc[open]>summary::after{transform:rotate(180deg);}
+        .set-acc>summary:hover{background:#0f1b22;}
+        .set-acc-body{padding:0 18px 18px;}
+        .set-profile{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+        .set-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;}
+        .set-name{font-weight:700;font-size:16px;}
+        .set-sub{color:#9aa4ad;font-size:13px;}
+        .set-form{display:grid;gap:12px;max-width:420px;}
+        .set-form .field label{display:block;font-size:12px;color:#9aa4ad;margin-bottom:6px;}
+        .set-form .field input{width:100%;padding:10px 12px;border-radius:10px;background:var(--bg);color:var(--fg);border:1px solid var(--border);}
+        .set-form .btn{justify-self:start;background:linear-gradient(180deg,#00B712,#158a45);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;}
+        .db-status{display:flex;align-items:center;gap:10px;font-size:15px;}
+        .db-dot{width:10px;height:10px;border-radius:50%;background:#e2706a;box-shadow:0 0 0 3px rgba(226,112,106,.18);flex-shrink:0;}
+        .db-dot.on{background:#1fe26a;box-shadow:0 0 0 3px rgba(31,226,106,.18);}
+        .db-info{color:#9aa4ad;font-size:13px;margin-top:10px;line-height:1.7;}
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="../sales/sales.html"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt=""> Аналітика</a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a class="active"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main analytics" style="padding-top:16px;">
+            <h1 class="page-title">Налаштування</h1>
+            <div class="set-wrap">
+                <details class="set-acc" open>
+                    <summary>Профіль оператора</summary>
+                    <div class="set-acc-body">
+                        <div class="set-profile">
+                            <div class="set-avatar" id="profAvatar">?</div>
+                            <div><div class="set-name" id="profName">Користувач</div><div class="set-sub" id="profSub">—</div></div>
+                        </div>
+                        <div class="set-form">
+                            <div class="field"><label for="cpCurrent">Поточний пароль</label><input id="cpCurrent" type="password" placeholder="••••••" autocomplete="current-password"></div>
+                            <div class="field"><label for="cpNew">Новий пароль</label><input id="cpNew" type="password" placeholder="Мінімум 6 символів" autocomplete="new-password"></div>
+                            <button id="btnChangePass" class="btn" type="button">Зберегти пароль</button>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="set-acc">
+                    <summary>Стан бази даних</summary>
+                    <div class="set-acc-body">
+                        <div id="dbStatus" class="db-status"><span class="db-dot"></span>Перевірка…</div>
+                        <div id="dbInfo" class="db-info"></div>
+                    </div>
+                </details>
+
+                <details class="set-acc">
+                    <summary>Резервне копіювання</summary>
+                    <div class="set-acc-body">
+                        <p style="margin:0 0 16px;opacity:.8;line-height:1.5">Експорт усіх даних у файл JSON або відновлення з резервної копії.</p>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap">
+                            <button id="btnBackup" class="btn" type="button">Зробити бекап</button>
+                            <label class="btn btn-ghost" style="cursor:pointer">Відновити з файлу
+                                <input id="fileRestore" type="file" accept=".json" style="display:none">
+                            </label>
+                        </div>
+                        <div id="backupStatus" style="margin-top:12px"></div>
+                    </div>
+                </details>
+            </div>
+        </main>
+    </div>
+    <script src="../../core/config.js"></script>
+    <script src="../../core/common.js"></script>
+    <script src="./settings.js"></script>
+</body>
+</html>

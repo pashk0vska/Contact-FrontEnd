@@ -1,0 +1,34 @@
+﻿<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8"><title>Реєстрація — Контакт</title>
+    <link rel="stylesheet" href="./auth.css">
+    <style>.key-item{background:#0d2717;border:1px solid #1fe26a44;border-radius:8px;padding:10px 14px;margin:6px 0;font-size:15px;}.key-item code{color:#1fe26a;font-size:16px;letter-spacing:1px;}#recoveryKeys{max-width:400px;margin:0 auto;text-align:left;}.keys-warn{color:#e2b81f;font-size:13px;margin-top:10px;line-height:1.5;}</style>
+</head>
+<body>
+    <div class="auth-page">
+        <img src="../../assets/logo.jpg" alt="Контакт" class="logo-big">
+        <h2 class="subtitle">Створіть новий акаунт</h2>
+        <div class="links" style="justify-content:center;gap:6px;margin-bottom:8px;">
+            <span style="color:#9aa4ad">Вже маєте акаунт?</span>
+            <a href="index.html">Увійти</a>
+        </div>
+        <form id="regForm" class="auth-form" novalidate>
+            <input type="text" name="username" placeholder="Логін" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit" class="btn-primary">Зареєструватись</button>
+        </form>
+        <div id="recoveryKeys" hidden>
+            <h3 style="color:#1fe26a;text-align:center;">Акаунт створено!</h3>
+            <p style="text-align:center;color:#e6e6e6;">Збережіть ці ключі відновлення. Вони потрібні для скидання пароля:</p>
+            <div id="keysList"></div>
+            <p class="keys-warn">Увага: Ці ключі показуються лише один раз! Збережіть їх у безпечному місці.</p>
+            <a href="index.html" class="btn-primary" style="display:block;text-align:center;margin-top:16px;text-decoration:none;padding:12px;">Перейти до входу</a>
+        </div>
+        <p id="msg" class="hint" hidden></p>
+    </div>
+    <script src="../../core/config.js"></script>
+    <script src="./register.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Продажі</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="./sales.css"><link rel="stylesheet" href="../../core/responsive.css">
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a class="active"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt="">Ремонти</a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt="">Клієнти</a>
+                <a href="../analytics/analytics.html"><img class="ico" src="../../assets/icons/analytics.png" alt="">Аналітика</a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main sales">
+            <h1 class="page-title">Продажі</h1>
+            <div class="toolbar">
+                <div class="left">
+                    <div class="search"><svg class="search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="q" type="text" placeholder="Пошук: клієнт або товар"></div>
+                    <details class="dropdown"><summary class="btn btn-ghost">Фільтри</summary>
+                        <div class="dropdown-menu"><label>Дата від <input id="fFrom" type="date"></label><label>Дата до <input id="fTo" type="date"></label>
+                            <label>Статус<select id="fStatus"><option value="">Будь-який</option><option value="done">Завершено</option><option value="processing">В обробці</option><option value="cancelled">Скасовано</option></select></label>
+                            <div class="dropdown-actions"><button class="btn btn-ghost" id="fReset">Скинути</button><button class="btn" id="fApply">Застосувати</button></div></div></details>
+                    <details class="dropdown"><summary class="btn btn-ghost">Сортування</summary>
+                        <div class="dropdown-menu narrow"><label>Поле<select id="sortField"><option value="Date">Дата</option><option value="ClientName">Клієнт</option><option value="ProductName">Товар</option><option value="TotalPrice">Ціна</option></select></label>
+                            <label>Порядок<select id="sortDir"><option value="desc">Спадання ↓</option><option value="asc">Зростання ↑</option></select></label>
+                            <div class="dropdown-actions"><button class="btn btn-ghost" id="sReset">Скинути</button><button class="btn" id="sApply">Ок</button></div></div></details>
+                    <button id="btnBulkDeleteSales" class="btn btn-danger" style="display:none">Видалити вибрані</button>
+                </div>
+                <div class="right"><button id="btnAddSale" class="btn" type="button">Зареєструвати продаж</button></div>
+            </div>
+            <div class="table-wrap">
+                <table class="table-sales"><thead><tr>
+                    <th style="width:40px"><input type="checkbox" id="selectAllSales"></th>
+                    <th data-sort="Date">Дата</th><th data-sort="ClientName">Клієнт</th><th data-sort="ProductName">Товар</th><th data-sort="Quantity">К-ть</th><th data-sort="TotalPrice">Ціна</th><th data-sort="Payment">Оплата</th><th data-sort="Status">Статус</th><th style="width:60px">Дії</th>
+                </tr></thead><tbody id="salesTbody"></tbody></table>
+            </div>
+            <div id="pager" class="pager"></div>
+        </main>
+    </div>
+
+    <!-- Create/Edit sale modal -->
+    <div id="saleModal" class="modal-layer" hidden><div class="modal-card"><form id="saleForm" class="card" autocomplete="off" novalidate>
+        <h2 class="card-title" id="saleModalTitle">Зареєструвати продаж</h2>
+        <div class="row two"><div class="field"><label for="sfDate">Дата *</label><input id="sfDate" type="date" required></div><div class="field"><label for="sfPayment">Оплата *</label><select id="sfPayment" required><option value="Готівка">Готівка</option><option value="Картка">Картка</option></select></div></div>
+        <div class="row"><div class="field"><label for="sfClient">Клієнт *</label><input id="sfClient" type="text" placeholder="Почни вводити ім'я…" autocomplete="off" required><input id="sfClientId" type="hidden"></div></div>
+        <div class="row two" id="sfNewClientRow" style="display:none"><div class="field"><label for="sfNewClientPhone">Телефон нового клієнта *</label><input id="sfNewClientPhone" type="tel" inputmode="tel" maxlength="19" placeholder="0XX XXX XX XX"></div><div class="field"><label for="sfNewClientEmail">Email нового клієнта *</label><input id="sfNewClientEmail" type="email" placeholder="email@example.com"></div></div>
+        <div class="row"><div class="field"><label>Позиції *</label><div id="sfItems" class="pos-items"></div><div class="pos-bar"><button type="button" class="btn-ghost btn-sm" id="sfAddItem">+ Додати позицію</button></div></div></div>
+        <div class="row two"><div class="field"><label for="sfStatus2">Статус *</label><select id="sfStatus2" required><option value="done">Завершено</option><option value="processing">В обробці</option><option value="cancelled">Скасовано</option><option value="returned">Повернення</option></select></div><div class="field"><label for="sfMaster">Майстер</label><select id="sfMaster"></select></div></div>
+        <div class="row"><div class="field"><label for="sfNote">Примітка</label><input id="sfNote" type="text"></div></div>
+        <div class="actions pos-actions"><div class="pos-pay">До сплати <span id="sfTotal">₴ 0</span></div><span class="pos-spacer"></span><button type="button" class="btn-ghost" id="sfCancel">Скасувати</button><button type="button" class="btn-ghost" id="sfReceipt">Відкрити чек</button><button id="sfSubmitBtn" type="submit" class="btn">Прийняти оплату</button></div>
+    </form></div></div>
+
+    <div id="saleDetailsModal" class="modal-layer" hidden><div class="modal-card modal-wide"><div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h2 class="card-title" id="sdTitle">Деталі продажу</h2><button id="sdClose" class="btn-ghost" type="button">✕</button></div>
+        <div id="sdContent"></div>
+    </div></div></div>
+    <div id="rowMenuPortal" class="row-menu-portal" hidden></div>
+    <script src="../../core/config.js"></script>
+    <script src="../../core/common.js"></script>
+    <script src="./sales.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" /><title>Аналітика</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../dashboard/dashboard.css"><link rel="stylesheet" href="../analytics/analytics.css"><link rel="stylesheet" href="../../core/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <header class="appbar"><img src="../../assets/logo.jpg" alt="Контакт" class="brand-logo" /><div class="appbar-right"><button id="btnConfigurator" class="btn-config" type="button">Конфігуратор ПК</button><div class="today" id="today"></div></div></header>
+        <aside class="sidebar">
+            <div class="menu-title">МЕНЮ</div>
+            <nav class="menu">
+                <a href="../dashboard/dashboard.html"><img class="ico" src="../../assets/icons/dashboard.png" alt=""><span>Дашборд</span></a>
+                <a href="../sales/sales.html"><img class="ico" src="../../assets/icons/sales.png" alt=""><span>Продажі</span></a>
+                <a href="../repairs/repairs.html"><img class="ico" src="../../assets/icons/repairs.png" alt=""><span>Ремонти</span></a>
+                <a href="../clients/clients.html"><img class="ico" src="../../assets/icons/clients.png" alt=""><span>Клієнти</span></a>
+                <a class="active"><img class="ico" src="../../assets/icons/analytics.png" alt=""><span>Аналітика</span></a>
+            </nav>
+            <div class="menu-title small">ІНШЕ</div>
+            <nav class="menu">
+                <a><img class="ico" src="../../assets/icons/help.png" alt="">Допомога</a>
+                <a href="../settings/settings.html"><img class="ico" src="../../assets/icons/settings.png" alt="">Налаштування</a>
+                <a id="logout"><img class="ico" src="../../assets/icons/logout.png" alt="">Вихід</a>
+            </nav>
+            <div class="side-profile">
+                <div class="sp-avatar" id="sideProfileAvatar">?</div>
+                <div class="sp-meta"><div class="sp-name" id="sideProfileName">Користувач</div><div class="sp-role" id="sideProfileRole">—</div></div>
+            </div>
+        </aside>
+        <main class="main analytics">
+            <h1 class="page-title">Аналітика</h1>
+            <div class="toolbar">
+                <div class="left">
+                    <div class="seg" id="periodSeg"><button data-period="month" class="active" type="button">Місяць</button><button data-period="quarter" type="button">Квартал</button><button data-period="year" type="button">Рік</button></div>
+                    <details class="dropdown" id="dateDrop"><summary class="btn btn-ghost">Вибрати конкретну дату</summary>
+                        <div class="dropdown-menu narrow">
+                            <label>З <input id="fromDate" type="text" class="dp-input" readonly placeholder="дд.мм.рррр" autocomplete="off"></label>
+                            <label>По <input id="toDate" type="text" class="dp-input" readonly placeholder="дд.мм.рррр" autocomplete="off"></label>
+                            <div class="dropdown-actions"><button id="resetBtn" class="btn btn-ghost" type="button">Скинути</button><button id="applyBtn" class="btn" type="button">Застосувати</button></div></div></details>
+                    <details class="dropdown"><summary class="btn btn-ghost">Тип даних</summary>
+                        <div class="dropdown-menu narrow">
+                            <label>Показати<select id="typeSelect"><option>Продажі + Ремонти</option><option>Лише продажі</option><option>Лише ремонти</option></select></label></div></details>
+                </div>
+                <div class="right">
+                    <button id="btnExportCSV" class="btn btn-ghost" type="button">Експорт Excel</button>
+                    <button id="btnExportPDF" class="btn" type="button">Звіт (PDF)</button>
+                </div>
+            </div>
+            <section class="grid kpi">
+                <div class="card" data-modes="all sales repairs"><div class="title">Дохід за період</div><div class="value" id="kpiIncome">₴ 0</div></div>
+                <div class="card" data-modes="all sales"><div class="title">К-ть продажів</div><div class="value" id="kpiSalesCount">0</div></div>
+                <div class="card" data-modes="all repairs"><div class="title">К-ть ремонтів</div><div class="value" id="kpiRepairsCount">0</div></div>
+                <div class="card" data-modes="all sales"><div class="title">Сер. чек</div><div class="value" id="kpiAvgCheck">₴ 0</div></div>
+                <div class="card" data-modes="all sales repairs"><div class="title">Прибуток (оцінка)</div><div class="value" id="kpiProfit">₴ 0</div></div>
+                <div class="card" data-modes="all sales repairs"><div class="title">Нових клієнтів</div><div class="value" id="kpiNewClients">0</div></div>
+            </section>
+            <section class="split">
+                <div class="panel" data-modes="all sales"><h3>Дохід за категоріями</h3><div class="chart-box"><canvas id="catChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all repairs"><h3>Ремонти за статусами</h3><div class="chart-box"><canvas id="repStatusChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all repairs"><h3>Топ пристроїв (ремонти)</h3><div class="chart-box"><canvas id="repDeviceChartCanvas"></canvas></div></div>
+                <div class="panel wide" data-modes="repairs"><h3>Деталізація ремонтів за пристроями</h3>
+                    <div class="table-wrap"><table class="table"><thead><tr><th>Пристрій</th><th>К-ть ремонтів</th><th>Дохід</th><th>Сер. вартість</th></tr></thead><tbody id="repDeviceTbody"><tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr></tbody></table></div>
+                </div>
+                <div class="panel" data-modes="all sales"><h3>Топ послуг</h3><div class="chart-box"><canvas id="svcChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all sales"><h3>Продажі за період (ТОП товарів)</h3><div class="chart-box"><canvas id="salesChartCanvas"></canvas></div></div>
+                <div class="panel" data-modes="all sales"><h3>Кількість (ТОП товарів)</h3><div class="chart-box"><canvas id="profitChartCanvas"></canvas></div></div>
+                <div class="panel wide" data-modes="all sales"><h3>ТОП-10 продуктів</h3>
+                    <div class="table-wrap"><table class="table"><thead><tr><th>Продукт</th><th>Категорія</th><th>К-ть</th><th>Сума</th></tr></thead><tbody id="topTbody"><tr><td colspan="4" style="opacity:.7">Завантаження…</td></tr></tbody></table></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="../../core/config.js"></script>
+    <script src="../../core/common.js"></script>
+    <script src="./analytics.js"></script>
+</body>
+</html>

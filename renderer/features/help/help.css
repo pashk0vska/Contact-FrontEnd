@@ -1,0 +1,34 @@
+/* Допомога — акордеони (стиль як на Налаштуваннях) */
+.help-wrap { max-width: 860px; }
+.help-intro { color: #9aa4ad; margin: 0 0 14px; line-height: 1.5; }
+.help-search {
+    width: 100%; box-sizing: border-box; margin-bottom: 16px;
+    padding: 11px 14px; border-radius: 12px;
+    background: var(--bg); color: var(--fg); border: 1px solid var(--border);
+}
+.help-search:focus { outline: none; border-color: #1fe26a55; }
+
+.help-acc { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.help-acc > summary { list-style: none; cursor: pointer; padding: 15px 18px; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.help-acc > summary::-webkit-details-marker { display: none; }
+.help-acc > summary::after { content: '▾'; color: #9aa4ad; font-size: 13px; transition: transform .15s ease; flex-shrink: 0; }
+.help-acc[open] > summary::after { transform: rotate(180deg); }
+.help-acc > summary:hover { background: #0f1b22; }
+.help-acc .help-ico { width: 22px; text-align: center; margin-right: 4px; }
+.help-acc-title { display: flex; align-items: center; gap: 4px; }
+
+.help-body { padding: 2px 18px 18px; color: #c7ced4; line-height: 1.6; font-size: 14px; }
+.help-body p { margin: 0 0 10px; }
+.help-body ol, .help-body ul { margin: 0 0 10px; padding-left: 20px; }
+.help-body li { margin: 4px 0; }
+.help-body b { color: #e6e6e6; }
+.help-body .kbd { display: inline-block; min-width: 18px; text-align: center; padding: 2px 8px; border-radius: 7px; background: #0c141a; border: 1px solid #2a363f; border-bottom-width: 2px; font-size: 12px; font-weight: 700; color: #e6e6e6; font-family: ui-monospace, Consolas, monospace; }
+.help-body .tip { background: rgba(31,226,106,.08); border: 1px solid rgba(31,226,106,.25); border-radius: 10px; padding: 10px 12px; margin: 10px 0 0; }
+.help-body .warn { background: rgba(226,184,31,.08); border: 1px solid rgba(226,184,31,.28); border-radius: 10px; padding: 10px 12px; margin: 10px 0 0; }
+.help-empty { color: #9aa4ad; padding: 16px; text-align: center; }
+
+/* таблиця хоткеїв */
+.help-keys { width: 100%; border-collapse: collapse; }
+.help-keys td { padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.help-keys td:first-child { white-space: nowrap; width: 1%; padding-right: 16px; }
+.help-keys tr:last-child td { border-bottom: none; }
