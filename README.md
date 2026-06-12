@@ -50,7 +50,3 @@ renderer/features/      — сторінки: auth, dashboard, sales, repairs, c
                           analytics, users, settings, help, receipt
 renderer/assets/        — іконки та логотипи
 ```
-
-## Ліцензія
-
-Навчальний (дипломний) проєкт.
