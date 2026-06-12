@@ -1,4 +1,4 @@
-/**
+﻿/**
  * common.js — глобальні утиліти для проекту "Контакт"
 
  * Надає:
@@ -384,7 +384,7 @@ function applyMasterLocks(){
 }
 
 // ─── 11. Конфігуратор ПК (зовнішній сайт) + профіль у сайдбарі ─────────────
-const CONFIGURATOR_URL = "https://configurator.example.com"; // TODO: замінити на реальний URL конфігуратора
+const CONFIGURATOR_URL = "https://configuratorkontakt-production.up.railway.app/"; 
 document.addEventListener('DOMContentLoaded', function(){
   applyRoleGating();
   guardPageByRole();
