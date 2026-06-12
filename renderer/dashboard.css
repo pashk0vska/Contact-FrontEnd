@@ -1,0 +1,298 @@
+﻿:root {
+    /* кольори 1-в-1 */
+    --bg: #111418;
+    --panel: #151C22; /* appbar + sidebar */
+    --card: #1B1F24; /* картки/плитки */
+    --fg: #e6e6e6;
+    --muted: #9aa4ad;
+    --green: #00B712;
+    --border: #22303b;
+    --appbar-h: 88px; /* висота appbar як у макеті */
+}
+
+/* базове */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+
+/* ЛЕЙАУТ */
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* ширина лівої панелі з макета */
+    min-height: 100vh;
+}
+
+/* APPBAR — суцільний по верху */
+.appbar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: var(--appbar-h);
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 1000;
+}
+
+.brand-logo {
+    height: 64px;
+    display: block
+}
+
+.today {
+    color: var(--muted);
+    font-size: 14px
+}
+
+/* SIDEBAR — під appbar */
+.sidebar {
+    grid-column: 1;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: calc(var(--appbar-h) + 16px) 16px 18px;
+}
+
+.menu-title {
+    color: #7c8a93;
+    font-size: 12px;
+    letter-spacing: .08em;
+    margin: 10px 8px 8px
+}
+
+    .menu-title.small {
+        margin-top: 18px
+    }
+
+.menu {
+    display: grid;
+    gap: 8px;
+    margin: 6px 0 12px
+}
+
+    .menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        color: var(--fg);
+        text-decoration: none;
+        border: 1px solid transparent;
+    }
+
+        .menu a:hover {
+            background: #0f1b22;
+            border-color: var(--border)
+        }
+
+        .menu a.active {
+            background: #0f1b22;
+            border-color: #214b2c;
+            box-shadow: inset 0 0 0 1px #214b2c
+        }
+
+#logout {
+    color: #81f29a
+}
+
+.ico {
+    width: 22px;
+    height: 22px;
+    object-fit: contain
+}
+
+/* MAIN */
+.main {
+    grid-column: 2;
+    margin-top: var(--appbar-h);
+    padding: 24px 28px 28px;
+    display: grid;
+    gap: 14px;
+}
+
+/* Вітання — типографіка з макета */
+.welcome {
+    margin-bottom: 6px
+}
+
+    .welcome h1 {
+        font-size: 52px;
+        font-weight: 800;
+        letter-spacing: .2px;
+        margin: 0 0 2px 0;
+    }
+
+    .welcome .muted {
+        color: var(--muted)
+    }
+
+/* KPI 4×2, відступи з макета */
+.grid.kpi {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 16px;
+    margin-top: 0;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 16px;
+}
+
+    .card .title {
+        color: #e6e6e6;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+        .card .title .muted {
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
+    .card .value {
+        font-size: 34px;
+        line-height: 1;
+        margin-top: 8px
+    }
+
+    .card.action {
+        display: grid;
+        place-items: center
+    }
+
+/* “Всього клієнтів” + кнопка в одній картці на 2 колонки */
+.card-clients {
+    grid-column: span 2
+}
+
+    .card-clients .clients-row {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+/* Кнопка зеленого градієнта */
+.btn {
+    background: linear-gradient(180deg,#197120,#30D73C);
+    border: none;
+    color: #fff;
+    font-weight: 800;
+    padding: 12px 18px;
+    border-radius: 24px;
+    cursor: pointer;
+}
+
+/* НИЖНІ БЛОКИ: “Швидкий доступ” + “Останні продажі” */
+.split {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 18px
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+    .panel h3 {
+        margin: 0 0 12px;
+        font-size: 22px
+    }
+
+/* Плитки швидкого доступу */
+.quick {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px
+}
+
+.quick-tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: #81f29a;
+    padding: 18px;
+    font-weight: 700;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 120px;
+}
+
+    .quick-tile img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain
+    }
+
+    .quick-tile:hover {
+        border-color: #214b2c;
+        background: #142029
+    }
+
+/* Таблиця */
+.table-wrap {
+    overflow: auto
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse
+}
+
+    .table th, .table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border)
+    }
+
+    .table th {
+        text-align: left;
+        color: #81f29a
+    }
+
+/* Адаптив: звуження — зберігаємо пропорції макета */
+@media (max-width:1200px) {
+    .layout {
+        grid-template-columns: 84px 1fr
+    }
+
+    .menu a {
+        gap: 0;
+        justify-content: center
+    }
+
+        .menu a span {
+            display: none
+        }
+
+    .grid.kpi {
+        grid-template-columns: repeat(2,1fr)
+    }
+
+    .split {
+        grid-template-columns: 1fr
+    }
+}
