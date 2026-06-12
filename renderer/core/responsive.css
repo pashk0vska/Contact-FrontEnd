@@ -32,8 +32,22 @@
    KPI-сітки переходять у 3 колонки, заголовок трохи менший. */
 @media (max-width: 1440px) {
     .layout { grid-template-columns: 84px 1fr; }
-    .menu a { gap: 0; justify-content: center; }
-    .menu a span { display: none; }
+
+    /* Згорнутий сайдбар: лише іконки. Підписи ховаємо через font-size:0, бо в
+       розмітці вони здебільшого голим текстом (а не в <span>), тож display:none
+       на span їх не прибирав і вони вилазили за межі панелі. Іконки — це <img>,
+       на них font-size не впливає; overflow:hidden гарантує, що нічого не вилізе. */
+    .sidebar { overflow: hidden; }
+    .menu a {
+        gap: 0;
+        justify-content: center;
+        padding: 12px 0;
+        font-size: 0;
+        overflow: hidden;
+    }
+    .menu a .ico { margin: 0; }
+    .menu-title { text-align: center; font-size: 10px; overflow: hidden; }
+
     .side-profile { justify-content: center; }
     .sp-meta { display: none; }
 

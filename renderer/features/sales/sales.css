@@ -161,40 +161,47 @@
             background: #142029;
         }
 
-    /* ширини */
+    /* ширини колонок (9 шт: 1-чекбокс, 2-Дата, 3-Клієнт, 4-Товар,
+       5-К-ть, 6-Ціна, 7-Оплата, 8-Статус, 9-Дії).
+       Раніше правила були зсунуті на одну колонку (не враховували чекбокс),
+       через що «Товар» отримував 8% і центрувався, а «Статус» — 8% праворуч
+       і бейдж не вміщався. Тепер мапінг відповідає реальним колонкам. */
     .table-sales thead th:nth-child(1), .table-sales tbody td:nth-child(1) {
-        width: 12%;
+        width: 40px;
     }
 
     .table-sales thead th:nth-child(2), .table-sales tbody td:nth-child(2) {
-        width: 18%;
+        width: 13%;
     }
 
     .table-sales thead th:nth-child(3), .table-sales tbody td:nth-child(3) {
-        width: 22%;
+        width: 18%;
     }
 
     .table-sales thead th:nth-child(4), .table-sales tbody td:nth-child(4) {
+        width: 24%;
+    }
+
+    .table-sales thead th:nth-child(5), .table-sales tbody td:nth-child(5) {
         width: 8%;
         text-align: center;
     }
 
-    .table-sales thead th:nth-child(5), .table-sales tbody td:nth-child(5) {
+    .table-sales thead th:nth-child(6), .table-sales tbody td:nth-child(6) {
         width: 12%;
         text-align: right;
     }
 
-    .table-sales thead th:nth-child(6), .table-sales tbody td:nth-child(6) {
-        width: 10%;
-    }
-
     .table-sales thead th:nth-child(7), .table-sales tbody td:nth-child(7) {
-        width: 10%;
+        width: 12%;
     }
 
     .table-sales thead th:nth-child(8), .table-sales tbody td:nth-child(8) {
-        width: 8%;
-        text-align: right;
+        width: 13%;
+    }
+
+    .table-sales thead th:nth-child(9), .table-sales tbody td:nth-child(9) {
+        width: 60px;
     }
 
 .status-done {
