@@ -167,7 +167,9 @@
        через що «Товар» отримував 8% і центрувався, а «Статус» — 8% праворуч
        і бейдж не вміщався. Тепер мапінг відповідає реальним колонкам. */
     .table-sales thead th:nth-child(1), .table-sales tbody td:nth-child(1) {
-        width: 40px;
+        width: 44px;
+        padding-left: 14px;
+        padding-right: 6px;
     }
 
     .table-sales thead th:nth-child(2), .table-sales tbody td:nth-child(2) {
@@ -202,6 +204,19 @@
 
     .table-sales thead th:nth-child(9), .table-sales tbody td:nth-child(9) {
         width: 60px;
+    }
+
+    /* Колонки з віджетами (чекбокс, К-ть, чип оплати, бейдж статусу, кнопка дій)
+       НЕ обрізаємо в "…": ellipsis лишаємо лише для текстових колонок
+       (Дата/Клієнт/Товар). Інакше чекбокс/бейдж домальовують паразитні крапки
+       незалежно від ширини вікна. */
+    .table-sales thead th:nth-child(1), .table-sales tbody td:nth-child(1),
+    .table-sales thead th:nth-child(5), .table-sales tbody td:nth-child(5),
+    .table-sales thead th:nth-child(7), .table-sales tbody td:nth-child(7),
+    .table-sales thead th:nth-child(8), .table-sales tbody td:nth-child(8),
+    .table-sales thead th:nth-child(9), .table-sales tbody td:nth-child(9) {
+        overflow: visible;
+        text-overflow: clip;
     }
 
 .status-done {

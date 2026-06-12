@@ -177,6 +177,17 @@
         text-align: center;
     }
 
+    /* Віджетні колонки (Статус, Вартість, Дія) не обрізаємо в "…": бейдж і
+       кнопка ⋯ інакше домальовують паразитні крапки. Текстові колонки
+       (№/Дата/Клієнт/Пристрій/Проблема/Майстер) лишаємо з ellipsis. */
+    .table-repairs th:nth-child(6), .table-repairs td:nth-child(6),
+    .table-repairs th:nth-child(7), .table-repairs td:nth-child(7),
+    .table-repairs th:nth-child(9), .table-repairs td:nth-child(9),
+    .table-repairs td.more {
+        overflow: visible;
+        text-overflow: clip;
+    }
+
 .more {
     opacity: .7;
 }
